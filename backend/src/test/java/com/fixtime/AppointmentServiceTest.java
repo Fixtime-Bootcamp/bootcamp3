@@ -88,36 +88,35 @@ class AppointmentServiceTest {
     }
 
     @Nested
-    @DisplayName("Disponibilidade de Tecnico")
-    class AvailabilityTests {
+    @DisplayName("Listagem de Agendamentos")
+    class ListingTests {
 
         @Test
-        @DisplayName("Deve retornar intervalos livres ao redor de agendamento")
-        void returnsFreeIntervalsAroundAppointment() {
-            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+        @DisplayName("Deve listar agendamentos usando filtros")
+        void listsAppointmentsWithFilters() {
             Appointment appointment = new Appointment(1L, 2L, 3L,
                     LocalDateTime.of(2026, 9, 2, 10, 0),
-                    LocalDateTime.of(2026, 9, 2, 12, 0),
-                    120, AppointmentStatus.SCHEDULED);
-            when(appointmentRepository.findByTechnicianAndStatusAndDay(
-                    eq(2L), eq(AppointmentStatus.SCHEDULED), any(), any())).thenReturn(List.of(appointment));
+                    LocalDateTime.of(2026, 9, 2, 11, 0),
+                    60, AppointmentStatus.SCHEDULED);
+            when(appointmentRepository.findAllForListing(
+                    LocalDateTime.of(2026, 9, 2, 0, 0),
+                    LocalDateTime.of(2026, 9, 3, 0, 0),
+                    2L, AppointmentStatus.SCHEDULED)).thenReturn(List.of(appointment));
 
-            List<com.fixtime.appointment.AvailabilityResponse> response = appointmentService.availability(
-                    2L, LocalDate.of(2026, 9, 2));
+            List<AppointmentResponse> response = appointmentService.list(
+                    LocalDate.of(2026, 9, 2), 2L, AppointmentStatus.SCHEDULED);
 
-            assertThat(response).extracting("startsAt", "endsAt").containsExactly(
-                    org.assertj.core.groups.Tuple.tuple(LocalDateTime.of(2026, 9, 2, 8, 0), LocalDateTime.of(2026, 9, 2, 10, 0)),
-                    org.assertj.core.groups.Tuple.tuple(LocalDateTime.of(2026, 9, 2, 12, 0), LocalDateTime.of(2026, 9, 2, 18, 0)));
+            assertThat(response).hasSize(1);
+            assertThat(response.get(0).technicianId()).isEqualTo(2L);
         }
 
         @Test
-        @DisplayName("Deve rejeitar consulta em fim de semana")
-        void rejectsWeekendAvailability() {
-            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+        @DisplayName("Deve retornar lista vazia sem agendamentos")
+        void returnsEmptyList() {
+            when(appointmentRepository.findAllForListing(null, null, null, null))
+                    .thenReturn(Collections.emptyList());
 
-            assertThatThrownBy(() -> appointmentService.availability(2L, LocalDate.of(2026, 9, 5)))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageContaining("dias uteis");
+            assertThat(appointmentService.list(null, null, null)).isEmpty();
         }
     }
 

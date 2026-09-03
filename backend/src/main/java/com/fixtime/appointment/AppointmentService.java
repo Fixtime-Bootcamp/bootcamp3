@@ -8,6 +8,7 @@ import com.fixtime.service.ServiceEntity;
 import com.fixtime.technician.TechnicianService;
 import java.time.Clock;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -97,8 +98,10 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<AppointmentResponse> list() {
-        return repository.findAllByOrderByStartsAtAsc().stream()
+    public List<AppointmentResponse> list(LocalDate date, Long technicianId, AppointmentStatus status) {
+        LocalDateTime from = date == null ? null : date.atStartOfDay();
+        LocalDateTime to = date == null ? null : date.plusDays(1).atStartOfDay();
+        return repository.findAllForListing(from, to, technicianId, status).stream()
                 .map(AppointmentResponse::fromEntity)
                 .toList();
     }
