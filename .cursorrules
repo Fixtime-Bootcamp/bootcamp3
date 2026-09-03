@@ -1,0 +1,10 @@
+# Regras FixTime para Cursor
+
+## Fluxo Obrigatório
+- Leia `docs/specification.md` antes de qualquer alteração funcional (SDD).
+- Sempre consulte ou crie a GitHub Issue associada à sua tarefa (`gh issue list`).
+- Trabalhe em branches `feature/issue-<numero>-<nome>`. Nunca comite direto em `main` ou `develop`.
+- Regras de negócio residem no Service, não em Controllers.
+- Endpoints usam `/api/v1` com DTOs.
+- Execute os testes (`mvn test` e/ou `npm test`) antes de abrir PR.
+- Finalize o trabalho abrindo PR para `develop` com `Closes #<numero-da-issue>` e mova o status no GitHub Project para `Done`.
