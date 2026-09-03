@@ -9,6 +9,7 @@ import com.fixtime.technician.TechnicianService;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -100,6 +101,37 @@ public class AppointmentService {
         return repository.findAllByOrderByStartsAtAsc().stream()
                 .map(AppointmentResponse::fromEntity)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AvailabilityResponse> availability(Long technicianId, LocalDate date) {
+        technicianService.getActiveTechnicianOrThrow(technicianId);
+        if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            throw new IllegalArgumentException("A disponibilidade so pode ser consultada em dias uteis");
+        }
+
+        LocalDateTime dayStart = date.atTime(OPENING);
+        LocalDateTime dayEnd = date.atTime(CLOSING);
+        List<Appointment> appointments = repository.findByTechnicianAndStatusAndDay(
+                technicianId, AppointmentStatus.SCHEDULED, dayStart, dayEnd);
+        List<AvailabilityResponse> availableIntervals = new java.util.ArrayList<>();
+        LocalDateTime cursor = dayStart;
+        for (Appointment appointment : appointments) {
+            LocalDateTime occupiedStart = appointment.getStartsAt().isBefore(dayStart)
+                    ? dayStart : appointment.getStartsAt();
+            LocalDateTime occupiedEnd = appointment.getEndsAt().isAfter(dayEnd)
+                    ? dayEnd : appointment.getEndsAt();
+            if (cursor.isBefore(occupiedStart)) {
+                availableIntervals.add(new AvailabilityResponse(cursor, occupiedStart));
+            }
+            if (cursor.isBefore(occupiedEnd)) {
+                cursor = occupiedEnd;
+            }
+        }
+        if (cursor.isBefore(dayEnd)) {
+            availableIntervals.add(new AvailabilityResponse(cursor, dayEnd));
+        }
+        return availableIntervals;
     }
 
     @Transactional
