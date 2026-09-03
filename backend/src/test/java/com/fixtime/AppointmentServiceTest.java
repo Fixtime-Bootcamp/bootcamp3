@@ -28,6 +28,7 @@ import com.fixtime.technician.TechnicianService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -84,6 +85,39 @@ class AppointmentServiceTest {
 
         activeService = new ServiceEntity("Reparo", "Descricao", 60, new BigDecimal("150.00"), true);
         activeService.setId(3L);
+    }
+
+    @Nested
+    @DisplayName("Listagem de Agendamentos")
+    class ListingTests {
+
+        @Test
+        @DisplayName("Deve listar agendamentos usando filtros")
+        void listsAppointmentsWithFilters() {
+            Appointment appointment = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 10, 0),
+                    LocalDateTime.of(2026, 9, 2, 11, 0),
+                    60, AppointmentStatus.SCHEDULED);
+            when(appointmentRepository.findAllForListing(
+                    LocalDateTime.of(2026, 9, 2, 0, 0),
+                    LocalDateTime.of(2026, 9, 3, 0, 0),
+                    2L, AppointmentStatus.SCHEDULED)).thenReturn(List.of(appointment));
+
+            List<AppointmentResponse> response = appointmentService.list(
+                    LocalDate.of(2026, 9, 2), 2L, AppointmentStatus.SCHEDULED);
+
+            assertThat(response).hasSize(1);
+            assertThat(response.get(0).technicianId()).isEqualTo(2L);
+        }
+
+        @Test
+        @DisplayName("Deve retornar lista vazia sem agendamentos")
+        void returnsEmptyList() {
+            when(appointmentRepository.findAllForListing(null, null, null, null))
+                    .thenReturn(Collections.emptyList());
+
+            assertThat(appointmentService.list(null, null, null)).isEmpty();
+        }
     }
 
     @Nested
