@@ -12,12 +12,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     @Query("SELECT a FROM Appointment a " +
            "WHERE a.technicianId = :technicianId " +
-           "AND a.status = :status " +
+           "AND a.status IN :statuses " +
            "AND a.startsAt < :endsAt " +
            "AND a.endsAt > :startsAt")
     List<Appointment> findConflictingAppointments(
             @Param("technicianId") Long technicianId,
-            @Param("status") AppointmentStatus status,
+            @Param("statuses") List<AppointmentStatus> statuses,
             @Param("startsAt") LocalDateTime startsAt,
             @Param("endsAt") LocalDateTime endsAt);
 

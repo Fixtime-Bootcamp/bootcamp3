@@ -130,7 +130,7 @@ class AppointmentServiceTest {
             when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
             when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
             when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
-            when(appointmentRepository.findConflictingAppointments(eq(2L), eq(AppointmentStatus.SCHEDULED), any(), any()))
+            when(appointmentRepository.findConflictingAppointments(eq(2L), eq(List.of(AppointmentStatus.SCHEDULED)), any(), any()))
                     .thenReturn(Collections.emptyList());
 
             Appointment saved = new Appointment(1L, 2L, 3L,
@@ -215,7 +215,7 @@ class AppointmentServiceTest {
                     90,
                     AppointmentStatus.SCHEDULED);
 
-            when(appointmentRepository.findConflictingAppointments(eq(2L), eq(AppointmentStatus.SCHEDULED), any(), any()))
+            when(appointmentRepository.findConflictingAppointments(eq(2L), eq(List.of(AppointmentStatus.SCHEDULED)), any(), any()))
                     .thenReturn(List.of(existing));
 
             CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
