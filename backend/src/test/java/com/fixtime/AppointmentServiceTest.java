@@ -28,6 +28,7 @@ import com.fixtime.technician.TechnicianService;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
@@ -84,6 +85,40 @@ class AppointmentServiceTest {
 
         activeService = new ServiceEntity("Reparo", "Descricao", 60, new BigDecimal("150.00"), true);
         activeService.setId(3L);
+    }
+
+    @Nested
+    @DisplayName("Disponibilidade de Tecnico")
+    class AvailabilityTests {
+
+        @Test
+        @DisplayName("Deve retornar intervalos livres ao redor de agendamento")
+        void returnsFreeIntervalsAroundAppointment() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            Appointment appointment = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 10, 0),
+                    LocalDateTime.of(2026, 9, 2, 12, 0),
+                    120, AppointmentStatus.SCHEDULED);
+            when(appointmentRepository.findByTechnicianAndStatusAndDay(
+                    eq(2L), eq(AppointmentStatus.SCHEDULED), any(), any())).thenReturn(List.of(appointment));
+
+            List<com.fixtime.appointment.AvailabilityResponse> response = appointmentService.availability(
+                    2L, LocalDate.of(2026, 9, 2));
+
+            assertThat(response).extracting("startsAt", "endsAt").containsExactly(
+                    org.assertj.core.groups.Tuple.tuple(LocalDateTime.of(2026, 9, 2, 8, 0), LocalDateTime.of(2026, 9, 2, 10, 0)),
+                    org.assertj.core.groups.Tuple.tuple(LocalDateTime.of(2026, 9, 2, 12, 0), LocalDateTime.of(2026, 9, 2, 18, 0)));
+        }
+
+        @Test
+        @DisplayName("Deve rejeitar consulta em fim de semana")
+        void rejectsWeekendAvailability() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+
+            assertThatThrownBy(() -> appointmentService.availability(2L, LocalDate.of(2026, 9, 5)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("dias uteis");
+        }
     }
 
     @Nested

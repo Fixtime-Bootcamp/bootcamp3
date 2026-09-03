@@ -22,4 +22,16 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("endsAt") LocalDateTime endsAt);
 
     List<Appointment> findAllByOrderByStartsAtAsc();
+
+    @Query("SELECT a FROM Appointment a " +
+           "WHERE a.technicianId = :technicianId " +
+           "AND a.status = :status " +
+           "AND a.startsAt < :dayEnd " +
+           "AND a.endsAt > :dayStart " +
+           "ORDER BY a.startsAt ASC")
+    List<Appointment> findByTechnicianAndStatusAndDay(
+            @Param("technicianId") Long technicianId,
+            @Param("status") AppointmentStatus status,
+            @Param("dayStart") LocalDateTime dayStart,
+            @Param("dayEnd") LocalDateTime dayEnd);
 }
