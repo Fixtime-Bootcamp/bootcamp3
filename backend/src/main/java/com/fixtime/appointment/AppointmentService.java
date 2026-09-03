@@ -75,7 +75,7 @@ public class AppointmentService {
         // 5. Validar sobreposicao de horarios para o mesmo tecnico
         List<Appointment> conflicts = repository.findConflictingAppointments(
                 request.technicianId(),
-                AppointmentStatus.SCHEDULED,
+            List.of(AppointmentStatus.SCHEDULED),
                 startsAt,
                 endsAt);
         if (!conflicts.isEmpty()) {
