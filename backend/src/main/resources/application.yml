@@ -5,7 +5,6 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:fixtime}
     username: ${SPRING_DATASOURCE_USERNAME:sa}
     password: ${SPRING_DATASOURCE_PASSWORD:}
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER:org.h2.Driver}
   jpa:
     hibernate:
       ddl-auto: update
