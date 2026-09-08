@@ -39,7 +39,6 @@ export const createService = (input: CreateServiceInput) =>
 
 export const toggleServiceActive = (id: number) =>
   request<Service>(`/services/${id}/toggle-active`, { method: 'PATCH' });
-
 export const listAppointments = (
   filterOrInit?: ListAppointmentsFilter | RequestInit,
   init?: RequestInit,
