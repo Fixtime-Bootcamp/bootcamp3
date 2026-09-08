@@ -1,45 +1,106 @@
 import { useState } from 'react';
+import { AppointmentCard } from './components/AppointmentCard';
 import { CreateAppointmentModal } from './components/CreateAppointmentModal';
+import { useAppointmentResources } from './hooks/useAppointmentResources';
 import { useAppointments } from './hooks/useAppointments';
+import { ApiError } from './types';
+
+const getTodayISO = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 export function App() {
-  const { data, status, error, reload } = useAppointments();
+  const [selectedDate, setSelectedDate] = useState<string>(getTodayISO);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
-  const formatDateTime = (isoString: string) => {
+  const { data, status, error, reload, cancel, complete } = useAppointments(
+    selectedDate ? { date: selectedDate } : undefined,
+  );
+
+  const {
+    customersMap,
+    techniciansMap,
+    servicesMap,
+  } = useAppointmentResources(true);
+
+  const handlePreviousDay = () => {
+    const base = selectedDate || getTodayISO();
+    const current = new Date(`${base}T12:00:00`);
+    current.setDate(current.getDate() - 1);
+    const year = current.getFullYear();
+    const month = String(current.getMonth() + 1).padStart(2, '0');
+    const day = String(current.getDate()).padStart(2, '0');
+    setSelectedDate(`${year}-${month}-${day}`);
+  };
+
+  const handleNextDay = () => {
+    const base = selectedDate || getTodayISO();
+    const current = new Date(`${base}T12:00:00`);
+    current.setDate(current.getDate() + 1);
+    const year = current.getFullYear();
+    const month = String(current.getMonth() + 1).padStart(2, '0');
+    const day = String(current.getDate()).padStart(2, '0');
+    setSelectedDate(`${year}-${month}-${day}`);
+  };
+
+  const handleToday = () => {
+    setSelectedDate(getTodayISO());
+  };
+
+  const handleClearDate = () => {
+    setSelectedDate('');
+  };
+
+  const formatDateDisplay = (dateStr: string) => {
+    if (!dateStr) return 'Todas as datas';
     try {
-      const dateObj = new Date(isoString);
-      if (isNaN(dateObj.getTime())) {
-        return isoString.replace('T', ' ');
+      const [year, month, day] = dateStr.split('-');
+      if (year && month && day) {
+        const dateObj = new Date(Number(year), Number(month) - 1, Number(day));
+        const weekday = new Intl.DateTimeFormat('pt-BR', { weekday: 'long' }).format(dateObj);
+        const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+        return `${capitalizedWeekday}, ${day} de ${new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(dateObj)}`;
       }
-      return new Intl.DateTimeFormat('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }).format(dateObj);
+      return dateStr;
     } catch {
-      return isoString.replace('T', ' ');
+      return dateStr;
     }
   };
 
-  const getStatusLabel = (apptStatus: string) => {
-    switch (apptStatus) {
-      case 'SCHEDULED':
-        return 'Agendado';
-      case 'COMPLETED':
-        return 'Concluído';
-      case 'CANCELLED':
-        return 'Cancelado';
-      default:
-        return apptStatus;
+  const handleCancelAppointment = async (id: number) => {
+    setActionError(null);
+    try {
+      await cancel(id);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setActionError(`Erro ao cancelar agendamento #${id}: ${err.message}`);
+      } else {
+        setActionError(`Falha de comunicação ao cancelar o agendamento #${id}.`);
+      }
+    }
+  };
+
+  const handleCompleteAppointment = async (id: number) => {
+    setActionError(null);
+    try {
+      await complete(id);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setActionError(`Erro ao concluir agendamento #${id}: ${err.message}`);
+      } else {
+        setActionError(`Falha de comunicação ao concluir o agendamento #${id}.`);
+      }
     }
   };
 
   return (
     <main className="shell">
-      {/* Background ambient decorative shapes */}
+      {/* Ambient decorative glow */}
       <div className="ambient-glow glow-1" aria-hidden="true" />
       <div className="ambient-glow glow-2" aria-hidden="true" />
 
@@ -93,22 +154,88 @@ export function App() {
 
       <section className="workspace">
         <div className="workspace-title-area">
-          <div className="section-tag">VISITAS AGENDADAS</div>
+          <div className="section-tag">AGENDA OPERACIONAL</div>
           <h2>Agenda de hoje</h2>
-          <p className="muted">Quarta-feira, 02 de setembro</p>
+          <p className="muted">{formatDateDisplay(selectedDate)}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
-          className="btn-create-appointment"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="btn-icon">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Novo agendamento
-        </button>
+
+        <div className="workspace-controls">
+          <div className="date-filter-bar" aria-label="Navegação por data">
+            <button
+              type="button"
+              onClick={handlePreviousDay}
+              className="btn-date-nav"
+              title="Dia anterior"
+              aria-label="Dia anterior"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              onClick={handleToday}
+              className={`btn-date-preset ${selectedDate === getTodayISO() ? 'active' : ''}`}
+            >
+              Hoje
+            </button>
+            <button
+              type="button"
+              onClick={handleNextDay}
+              className="btn-date-nav"
+              title="Próximo dia"
+              aria-label="Próximo dia"
+            >
+              ›
+            </button>
+            <input
+              type="date"
+              id="filter-date"
+              aria-label="Filtrar data da agenda"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="input-filter-date"
+            />
+            {selectedDate && (
+              <button
+                type="button"
+                onClick={handleClearDate}
+                className="btn-date-clear"
+                title="Ver todas as datas"
+              >
+                Todas
+              </button>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="btn-create-appointment"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="btn-icon">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Novo agendamento
+          </button>
+        </div>
       </section>
+
+      {actionError && (
+        <div className="alert alert-error action-error-alert" role="alert">
+          <div className="alert-content">
+            <strong>Erro na operação:</strong>
+            <p>{actionError}</p>
+          </div>
+          <button
+            type="button"
+            className="btn-alert-dismiss"
+            onClick={() => setActionError(null)}
+            aria-label="Fechar aviso de erro"
+          >
+            &times;
+          </button>
+        </div>
+      )}
 
       {status === 'loading' && (
         <section className="empty" aria-live="polite">
@@ -129,7 +256,11 @@ export function App() {
         <section className="empty">
           <span className="mark">+</span>
           <h2>Nenhuma visita agendada</h2>
-          <p>Crie o primeiro atendimento para começar a organizar sua operação.</p>
+          <p>
+            {selectedDate
+              ? 'Não há atendimentos agendados para esta data.'
+              : 'Crie o primeiro atendimento para começar a organizar sua operação.'}
+          </p>
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
@@ -141,37 +272,17 @@ export function App() {
       )}
 
       {status === 'success' && data.length > 0 && (
-        <section className="appointments" aria-label="Agendamentos">
+        <section className="appointments-grid" aria-label="Agendamentos">
           {data.map((appointment) => (
-            <article className="appointment" key={appointment.id}>
-              <div className="appointment-time-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-                <strong>{appointment.startsAt.replace('T', ' ')}</strong>
-                <span className="time-formatted">{formatDateTime(appointment.startsAt)}</span>
-              </div>
-
-              <div className="appointment-info">
-                <span className="appointment-id">Agendamento #{appointment.id}</span>
-                <div className="appointment-meta">
-                  <span>Cliente #{appointment.customerId}</span>
-                  <span>•</span>
-                  <span>Técnico #{appointment.technicianId}</span>
-                  <span>•</span>
-                  <span>Serviço #{appointment.serviceId}</span>
-                </div>
-              </div>
-
-              <div className="appointment-status-col">
-                <small className={`status-pill status-${appointment.status.toLowerCase()}`}>
-                  <span className="status-dot"></span>
-                  {appointment.status}
-                </small>
-                <span className="status-subtext">{getStatusLabel(appointment.status)}</span>
-              </div>
-            </article>
+            <AppointmentCard
+              key={appointment.id}
+              appointment={appointment}
+              customer={customersMap.get(appointment.customerId)}
+              technician={techniciansMap.get(appointment.technicianId)}
+              service={servicesMap.get(appointment.serviceId)}
+              onCancel={handleCancelAppointment}
+              onComplete={handleCompleteAppointment}
+            />
           ))}
         </section>
       )}
