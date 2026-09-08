@@ -14,6 +14,9 @@ import com.fixtime.appointment.AppointmentResponse;
 import com.fixtime.appointment.AppointmentService;
 import com.fixtime.appointment.AppointmentStatus;
 import com.fixtime.appointment.CreateAppointmentRequest;
+import com.fixtime.blockeddate.BlockedDateRepository;
+import com.fixtime.blockeddate.BlockedDateService;
+import com.fixtime.blockeddate.NationalHolidayProvider;
 import com.fixtime.customer.Customer;
 import com.fixtime.customer.CustomerRepository;
 import com.fixtime.customer.CustomerService;
@@ -45,10 +48,12 @@ class AppointmentServiceTest {
     private CustomerRepository customerRepository;
     private TechnicianRepository technicianRepository;
     private ServiceRepository serviceRepository;
+    private BlockedDateRepository blockedDateRepository;
 
     private CustomerService customerService;
     private TechnicianService technicianService;
     private ServiceCatalogService serviceCatalogService;
+    private BlockedDateService blockedDateService;
 
     // Fixed clock on a Wednesday at 08:00 UTC
     private final Clock clock = Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneId.of("UTC"));
@@ -65,16 +70,19 @@ class AppointmentServiceTest {
         customerRepository = mock(CustomerRepository.class);
         technicianRepository = mock(TechnicianRepository.class);
         serviceRepository = mock(ServiceRepository.class);
+        blockedDateRepository = mock(BlockedDateRepository.class);
 
         customerService = new CustomerService(customerRepository);
         technicianService = new TechnicianService(technicianRepository);
         serviceCatalogService = new ServiceCatalogService(serviceRepository);
+        blockedDateService = new BlockedDateService(blockedDateRepository, new NationalHolidayProvider(), clock);
 
         appointmentService = new AppointmentService(
                 appointmentRepository,
                 customerService,
                 technicianService,
                 serviceCatalogService,
+                blockedDateService,
                 clock);
 
         activeCustomer = new Customer("Cliente Exemplo", "cliente@email.com", "11999999999", true);
@@ -203,6 +211,22 @@ class AppointmentServiceTest {
         }
 
         @Test
+        @DisplayName("Deve rejeitar agendamento em data bloqueada / feriado")
+        void rejectsBlockedDate() {
+            when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 2))).thenReturn(true);
+
+            CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 11, 0));
+
+            assertThatThrownBy(() -> appointmentService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("bloqueada para agendamentos");
+        }
+
+        @Test
         @DisplayName("Deve rejeitar sobreposicao de horario para o mesmo tecnico")
         void rejectsOverlappingAppointments() {
             when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
@@ -224,6 +248,48 @@ class AppointmentServiceTest {
             assertThatThrownBy(() -> appointmentService.create(request))
                     .isInstanceOf(ConflictException.class)
                     .hasMessageContaining("ja possui uma visita nesse intervalo");
+        }
+    }
+
+    @Nested
+    @DisplayName("Consulta de Disponibilidade")
+    class AvailabilityTests {
+
+        @Test
+        @DisplayName("Deve retornar lista de horarios vazia em data bloqueada ou feriado")
+        void returnsEmptyAvailabilityOnBlockedDate() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 2))).thenReturn(true);
+
+            var availability = appointmentService.availability(2L, LocalDate.of(2026, 9, 2));
+
+            assertThat(availability).isEmpty();
+        }
+
+        @Test
+        @DisplayName("Deve retornar horarios livres em dia util sem bloqueio")
+        void returnsAvailableSlotsOnNonBlockedDay() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 2))).thenReturn(false);
+            when(appointmentRepository.findByTechnicianAndStatusAndDay(eq(2L), eq(AppointmentStatus.SCHEDULED), any(), any()))
+                    .thenReturn(Collections.emptyList());
+
+            var availability = appointmentService.availability(2L, LocalDate.of(2026, 9, 2));
+
+            assertThat(availability).hasSize(1);
+            assertThat(availability.get(0).startsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 8, 0));
+            assertThat(availability.get(0).endsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 18, 0));
+        }
+
+        @Test
+        @DisplayName("Deve rejeitar consulta de disponibilidade em finais de semana")
+        void rejectsWeekendAvailability() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 5))).thenReturn(false);
+
+            assertThatThrownBy(() -> appointmentService.availability(2L, LocalDate.of(2026, 9, 5)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("dias uteis");
         }
     }
 

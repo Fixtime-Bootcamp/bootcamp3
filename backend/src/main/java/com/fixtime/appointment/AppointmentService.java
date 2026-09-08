@@ -1,5 +1,6 @@
 package com.fixtime.appointment;
 
+import com.fixtime.blockeddate.BlockedDateService;
 import com.fixtime.customer.CustomerService;
 import com.fixtime.exception.ConflictException;
 import com.fixtime.exception.ResourceNotFoundException;
@@ -10,7 +11,6 @@ import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -26,6 +26,7 @@ public class AppointmentService {
     private final CustomerService customerService;
     private final TechnicianService technicianService;
     private final ServiceCatalogService serviceCatalogService;
+    private final BlockedDateService blockedDateService;
     private final Clock clock;
 
     public AppointmentService(
@@ -33,11 +34,13 @@ public class AppointmentService {
             CustomerService customerService,
             TechnicianService technicianService,
             ServiceCatalogService serviceCatalogService,
+            BlockedDateService blockedDateService,
             Clock clock) {
         this.repository = repository;
         this.customerService = customerService;
         this.technicianService = technicianService;
         this.serviceCatalogService = serviceCatalogService;
+        this.blockedDateService = blockedDateService;
         this.clock = clock;
     }
 
@@ -56,24 +59,29 @@ public class AppointmentService {
         LocalDateTime startsAt = request.startsAt();
         LocalDateTime endsAt = startsAt.plusMinutes(durationMinutes);
 
-        // 2. Validar antecedencia minima de 2 horas
+        // 2. Validar data bloqueada (feriados / recessos)
+        if (blockedDateService.isDateBlocked(startsAt.toLocalDate())) {
+            throw new IllegalArgumentException("A data " + startsAt.toLocalDate() + " esta bloqueada para agendamentos");
+        }
+
+        // 3. Validar antecedencia minima de 2 horas
         LocalDateTime minimumStart = LocalDateTime.now(clock).plusHours(MINIMUM_NOTICE_HOURS);
         if (!startsAt.isAfter(minimumStart)) {
             throw new IllegalArgumentException("O agendamento exige duas horas de antecedencia");
         }
 
-        // 3. Validar dias uteis (Segunda a Sexta)
+        // 4. Validar dias uteis (Segunda a Sexta)
         if (startsAt.getDayOfWeek() == DayOfWeek.SATURDAY || startsAt.getDayOfWeek() == DayOfWeek.SUNDAY) {
             throw new IllegalArgumentException("O horario deve estar em um dia util entre 08:00 e 18:00");
         }
 
-        // 4. Validar horario de funcionamento (08:00 as 18:00 e mesmo dia)
+        // 5. Validar horario de funcionamento (08:00 as 18:00 e mesmo dia)
         if (startsAt.toLocalTime().isBefore(OPENING) || endsAt.toLocalTime().isAfter(CLOSING)
                 || !startsAt.toLocalDate().equals(endsAt.toLocalDate())) {
             throw new IllegalArgumentException("O horario deve estar em um dia util entre 08:00 e 18:00");
         }
 
-        // 5. Validar sobreposicao de horarios para o mesmo tecnico
+        // 6. Validar sobreposicao de horarios para o mesmo tecnico
         List<Appointment> conflicts = repository.findConflictingAppointments(
                 request.technicianId(),
             List.of(AppointmentStatus.SCHEDULED),
@@ -83,7 +91,7 @@ public class AppointmentService {
             throw new ConflictException("O tecnico ja possui uma visita nesse intervalo");
         }
 
-        // 6. Persistir novo agendamento
+        // 7. Persistir novo agendamento
         Appointment appointment = new Appointment(
                 request.customerId(),
                 request.technicianId(),
@@ -109,6 +117,9 @@ public class AppointmentService {
     @Transactional(readOnly = true)
     public List<AvailabilityResponse> availability(Long technicianId, LocalDate date) {
         technicianService.getActiveTechnicianOrThrow(technicianId);
+        if (blockedDateService.isDateBlocked(date)) {
+            return List.of();
+        }
         if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
             throw new IllegalArgumentException("A disponibilidade so pode ser consultada em dias uteis");
         }
