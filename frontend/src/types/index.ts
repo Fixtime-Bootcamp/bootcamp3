@@ -41,7 +41,12 @@ export type CreateAppointmentInput = {
   technicianId: number;
   serviceId: number;
   startsAt: string;
-  durationMinutes: number;
+  durationMinutes?: number;
+};
+
+export type AvailabilitySlot = {
+  startsAt: string;
+  endsAt: string;
 };
 
 export type ApiErrorResponse = {
