@@ -27,6 +27,15 @@ public class TechnicianService {
                 .toList();
     }
 
+    @Transactional
+    public TechnicianResponse toggleActive(Long id) {
+        Technician technician = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tecnico com ID " + id + " nao encontrado"));
+        technician.setActive(!technician.isActive());
+        Technician saved = repository.save(technician);
+        return TechnicianResponse.fromEntity(saved);
+    }
+
     @Transactional(readOnly = true)
     public Technician getActiveTechnicianOrThrow(Long id) {
         Technician technician = repository.findById(id)

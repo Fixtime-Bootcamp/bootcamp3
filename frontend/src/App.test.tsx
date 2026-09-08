@@ -8,12 +8,12 @@ describe('FixTime shell', () => {
   });
 
   it('presents loading and then the empty agenda state', async () => {
-    let resolveRequest: (response: Response) => void = () => undefined;
-    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>((resolve) => { resolveRequest = resolve; })));
+    const resolvers: Array<(response: Response) => void> = [];
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>((resolve) => { resolvers.push(resolve); })));
     render(<App />);
 
     expect(screen.getByText('Carregando agendamentos...')).toBeInTheDocument();
-    resolveRequest(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    resolvers.forEach((resolve) => resolve(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } })));
     await waitFor(() => expect(screen.getByText('Nenhuma visita agendada')).toBeInTheDocument());
   });
 
@@ -71,7 +71,7 @@ describe('FixTime shell', () => {
 
     render(<App />);
 
-    await waitFor(() => expect(screen.getByText('Agendamento #1')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText('ID #1')).toBeInTheDocument());
 
     fireEvent.click(screen.getByRole('button', { name: /novo agendamento/i }));
 
@@ -87,7 +87,7 @@ describe('FixTime shell', () => {
 
     await waitFor(() => {
       expect(screen.queryByText('Agendar Visita Técnica')).not.toBeInTheDocument();
-      expect(screen.getByText('Agendamento #2')).toBeInTheDocument();
+      expect(screen.getByText('ID #2')).toBeInTheDocument();
     });
   });
 });

@@ -27,6 +27,15 @@ public class CustomerService {
                 .toList();
     }
 
+    @Transactional
+    public CustomerResponse toggleActive(Long id) {
+        Customer customer = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente com ID " + id + " nao encontrado"));
+        customer.setActive(!customer.isActive());
+        Customer saved = repository.save(customer);
+        return CustomerResponse.fromEntity(saved);
+    }
+
     @Transactional(readOnly = true)
     public Customer getActiveCustomerOrThrow(Long id) {
         Customer customer = repository.findById(id)

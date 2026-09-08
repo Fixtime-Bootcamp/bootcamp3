@@ -44,6 +44,25 @@ export type CreateAppointmentInput = {
   durationMinutes?: number;
 };
 
+export type CreateCustomerInput = {
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export type CreateTechnicianInput = {
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export type CreateServiceInput = {
+  name: string;
+  description?: string;
+  durationMinutes: number;
+  price: number;
+};
+
 export type AvailabilitySlot = {
   startsAt: string;
   endsAt: string;

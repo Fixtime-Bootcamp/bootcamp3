@@ -6,6 +6,9 @@ export type AppointmentResourcesState = {
   customers: Customer[];
   technicians: Technician[];
   services: Service[];
+  customersMap: Map<number, Customer>;
+  techniciansMap: Map<number, Technician>;
+  servicesMap: Map<number, Service>;
   status: 'idle' | 'loading' | 'success' | 'error';
   error: ApiError | null;
   reload: () => void;
@@ -55,5 +58,19 @@ export function useAppointmentResources(enabled: boolean = true): AppointmentRes
     return () => controller.abort();
   }, [enabled, reloadKey]);
 
-  return { customers, technicians, services, status, error, reload };
+  const customersMap = new Map(customers.map((c) => [c.id, c]));
+  const techniciansMap = new Map(technicians.map((t) => [t.id, t]));
+  const servicesMap = new Map(services.map((s) => [s.id, s]));
+
+  return {
+    customers,
+    technicians,
+    services,
+    customersMap,
+    techniciansMap,
+    servicesMap,
+    status,
+    error,
+    reload,
+  };
 }
