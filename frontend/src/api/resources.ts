@@ -3,6 +3,9 @@ import type {
   AppointmentStatus,
   AvailabilitySlot,
   CreateAppointmentInput,
+  CreateCustomerInput,
+  CreateServiceInput,
+  CreateTechnicianInput,
   Customer,
   Service,
   Technician,
@@ -19,6 +22,23 @@ export const listCustomers = (init?: RequestInit) => request<Customer[]>('/custo
 export const listTechnicians = (init?: RequestInit) => request<Technician[]>('/technicians', init);
 export const listServices = (init?: RequestInit) => request<Service[]>('/services', init);
 
+export const createCustomer = (input: CreateCustomerInput) =>
+  request<Customer>('/customers', { method: 'POST', body: JSON.stringify(input) });
+
+export const toggleCustomerActive = (id: number) =>
+  request<Customer>(`/customers/${id}/toggle-active`, { method: 'PATCH' });
+
+export const createTechnician = (input: CreateTechnicianInput) =>
+  request<Technician>('/technicians', { method: 'POST', body: JSON.stringify(input) });
+
+export const toggleTechnicianActive = (id: number) =>
+  request<Technician>(`/technicians/${id}/toggle-active`, { method: 'PATCH' });
+
+export const createService = (input: CreateServiceInput) =>
+  request<Service>('/services', { method: 'POST', body: JSON.stringify(input) });
+
+export const toggleServiceActive = (id: number) =>
+  request<Service>(`/services/${id}/toggle-active`, { method: 'PATCH' });
 export const listAppointments = (
   filterOrInit?: ListAppointmentsFilter | RequestInit,
   init?: RequestInit,

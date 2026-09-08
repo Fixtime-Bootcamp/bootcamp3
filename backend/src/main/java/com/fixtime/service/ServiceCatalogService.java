@@ -32,6 +32,15 @@ public class ServiceCatalogService {
                 .toList();
     }
 
+    @Transactional
+    public ServiceResponse toggleActive(Long id) {
+        ServiceEntity entity = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Servico com ID " + id + " nao encontrado"));
+        entity.setActive(!entity.isActive());
+        ServiceEntity saved = repository.save(entity);
+        return ServiceResponse.fromEntity(saved);
+    }
+
     @Transactional(readOnly = true)
     public ServiceEntity getActiveServiceOrThrow(Long id) {
         ServiceEntity entity = repository.findById(id)

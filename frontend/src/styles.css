@@ -286,10 +286,10 @@ h1 {
 .workspace {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   border-top: 1px solid var(--color-border);
   padding: 32px 0 20px;
-  margin-top: 20px;
+  margin-top: 10px;
   gap: 20px;
   flex-wrap: wrap;
 }
@@ -1141,5 +1141,393 @@ button:disabled {
   }
   .modal-actions button {
     width: 100%;
+  }
+}
+
+
+/* ─── Tab Navigation ────────────────────────────────────────────────────────── */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  max-width: 1160px;
+  margin: 0 auto 28px auto;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 5;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 18px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: calc(var(--radius-xl) - 4px);
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  background: rgba(27, 73, 56, 0.08);
+  color: var(--color-primary);
+  box-shadow: none;
+  transform: none;
+}
+
+.tab-btn--active {
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(27, 73, 56, 0.25);
+}
+
+.tab-btn--active:hover {
+  background: var(--color-primary-hover);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(27, 73, 56, 0.25);
+  transform: none;
+}
+
+/* ─── Entity Page ───────────────────────────────────────────────────────────── */
+.entity-page {
+  max-width: 1160px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 5;
+  animation: fadeIn 0.22s ease;
+}
+
+.entity-page-header {
+  margin-bottom: 24px;
+}
+
+.entity-page-title h2 {
+  margin: 4px 0 6px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ─── Entity Form ───────────────────────────────────────────────────────────── */
+.entity-form {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-md);
+}
+
+.entity-form-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 160px;
+}
+
+.form-field--wide {
+  flex: 2;
+  min-width: 220px;
+}
+
+.form-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.form-field input {
+  padding: 9px 12px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.form-field input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(46, 117, 90, 0.12);
+}
+
+.form-field input.input-error {
+  border-color: var(--color-error);
+}
+
+.field-error {
+  font-size: 0.76rem;
+  color: var(--color-error);
+  font-weight: 500;
+}
+
+.form-submit-error {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin-bottom: 14px;
+}
+
+.btn-form-submit {
+  padding: 10px 24px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+  align-self: flex-end;
+}
+
+.btn-form-submit:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-form-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ─── Entity Grid & Cards ───────────────────────────────────────────────────── */
+.entity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.entity-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, transform 0.15s;
+  animation: fadeIn 0.2s ease;
+}
+
+.entity-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.entity-card--inactive {
+  opacity: 0.65;
+  background: rgba(245, 247, 245, 0.7);
+}
+
+.entity-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-active {
+  background: #d8f3dc;
+  color: #1b4938;
+}
+
+.badge-inactive {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.btn-toggle-status {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1.5px solid;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.15s;
+}
+
+.btn-toggle-deactivate {
+  border-color: var(--color-error-border);
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.btn-toggle-deactivate:hover:not(:disabled) {
+  background: #fed7d7;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-toggle-activate {
+  border-color: var(--color-border);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.btn-toggle-activate:hover:not(:disabled) {
+  background: #b7e4c7;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-toggle-status:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.entity-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entity-card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.entity-card-detail {
+  font-size: 0.83rem;
+  color: var(--color-text-muted);
+}
+
+.entity-card-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.entity-card-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  background: var(--color-primary-light);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.entity-card-chip--price {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+/* ─── Entity state messages ─────────────────────────────────────────────────── */
+.entity-loading,
+.entity-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--color-text-muted);
+}
+
+.entity-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.entity-error {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  color: var(--color-error);
+}
+
+.btn-retry {
+  margin-top: 10px;
+  padding: 7px 18px;
+  border: 1.5px solid var(--color-error-border);
+  background: transparent;
+  color: var(--color-error);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.btn-retry:hover:not(:disabled) {
+  background: var(--color-error-bg);
+  box-shadow: none;
+  transform: none;
+}
+
+@media (max-width: 600px) {
+  .tab-nav {
+    width: 100%;
+    justify-content: space-around;
+    gap: 2px;
+    padding: 4px;
+  }
+
+  .tab-btn {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    gap: 5px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-field {
+    min-width: 100%;
+  }
+
+  .btn-form-submit {
+    width: 100%;
+  }
+
+  .entity-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -8,18 +8,12 @@ describe('FixTime shell & operational agenda', () => {
   });
 
   it('presents loading and then the empty agenda state', async () => {
-    let resolveRequest: (response: Response) => void = () => undefined;
-    vi.stubGlobal('fetch', vi.fn((url: string) => {
-      if (url.includes('/api/v1/appointments')) {
-        return new Promise<Response>((resolve) => { resolveRequest = resolve; });
-      }
-      return Promise.resolve(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }));
-    }));
-
+    const resolvers: Array<(response: Response) => void> = [];
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>((resolve) => { resolvers.push(resolve); })));
     render(<App />);
 
     expect(screen.getByText('Carregando agendamentos...')).toBeInTheDocument();
-    resolveRequest(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    resolvers.forEach((resolve) => resolve(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } })));
     await waitFor(() => expect(screen.getByText('Nenhuma visita agendada')).toBeInTheDocument());
   });
 
@@ -122,7 +116,6 @@ describe('FixTime shell & operational agenda', () => {
   });
 
   it('cancels an appointment and updates status locally without full reload', async () => {
-    // 2026-09-02T16:00:00 is far in advance if tested against past date or current
     const initialAppointments = [
       { id: 99, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2099-09-02T16:00:00', endsAt: '2099-09-02T17:30:00', status: 'SCHEDULED' },
     ];
@@ -162,7 +155,7 @@ describe('FixTime shell & operational agenda', () => {
       { id: 88, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2099-09-02T16:00:00', endsAt: '2099-09-02T17:30:00', status: 'SCHEDULED' },
     ];
 
-    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
       if (url.includes('/api/v1/appointments/88/cancel')) {
         return new Response(JSON.stringify({ status: 500, error: 'SERVER_ERROR', message: 'Erro interno ao cancelar' }), {
           status: 500,
