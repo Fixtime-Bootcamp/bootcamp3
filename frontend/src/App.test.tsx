@@ -150,6 +150,92 @@ describe('FixTime shell & operational agenda', () => {
     });
   });
 
+  it('completes an appointment and updates status locally without full reload', async () => {
+    const initialAppointments = [
+      { id: 77, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2020-09-02T16:00:00', endsAt: '2020-09-02T17:30:00', status: 'SCHEDULED' },
+    ];
+
+    const completedAppointment = {
+      ...initialAppointments[0],
+      status: 'COMPLETED',
+    };
+
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      if (url.includes('/api/v1/appointments/77/complete') && init?.method === 'PATCH') {
+        return new Response(JSON.stringify(completedAppointment), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+      if (url.includes('/api/v1/appointments')) {
+        return new Response(JSON.stringify(initialAppointments), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+      return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }));
+
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByText('ID #77')).toBeInTheDocument());
+
+    const completeButton = screen.getByRole('button', { name: 'Concluir agendamento #77' });
+    expect(completeButton).not.toBeDisabled();
+
+    fireEvent.click(completeButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('✓ Visita Concluída')).toBeInTheDocument();
+      expect(screen.getByText('COMPLETED')).toBeInTheDocument();
+    });
+  });
+
+  it('displays error alert when complete action fails', async () => {
+    const initialAppointments = [
+      { id: 66, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2020-09-02T16:00:00', endsAt: '2020-09-02T17:30:00', status: 'SCHEDULED' },
+    ];
+
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (url.includes('/api/v1/appointments/66/complete')) {
+        return new Response(JSON.stringify({ status: 500, error: 'SERVER_ERROR', message: 'Erro interno ao concluir' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+      if (url.includes('/api/v1/appointments')) {
+        return new Response(JSON.stringify(initialAppointments), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+      return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }));
+
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByText('ID #66')).toBeInTheDocument());
+
+    const completeButton = screen.getByRole('button', { name: 'Concluir agendamento #66' });
+    fireEvent.click(completeButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Erro ao concluir agendamento #66: Erro interno ao concluir')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText('SCHEDULED')).toBeInTheDocument();
+  });
+
+  it('presents an error state (not stuck loading) when the agenda fails with a non-conflict server error', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      status: 500,
+      error: 'SERVER_ERROR',
+      message: 'Falha ao consultar agendamentos',
+    }), { status: 500, headers: { 'Content-Type': 'application/json' } })));
+
+    render(<App />);
+
+    expect(screen.getByText('Carregando agendamentos...')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText('Não foi possível carregar a agenda')).toBeInTheDocument();
+      expect(screen.getByText('Falha ao consultar agendamentos')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText('Carregando agendamentos...')).not.toBeInTheDocument();
+  });
+
   it('displays error alert when cancel action fails', async () => {
     const initialAppointments = [
       { id: 88, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2099-09-02T16:00:00', endsAt: '2099-09-02T17:30:00', status: 'SCHEDULED' },
