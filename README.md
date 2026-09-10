@@ -4,7 +4,7 @@ Plataforma de agendamento de visitas para assistencia tecnica. Este repositorio 
 
 ## Stack
 
-- Java 21, Spring Boot 3.5, Maven, PostgreSQL
+- Java 21, Spring Boot 3.4.5, Maven, PostgreSQL
 - React 19, TypeScript, Vite
 - JUnit, MockMvc, Vitest
 
