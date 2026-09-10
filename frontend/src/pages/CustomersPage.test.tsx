@@ -48,6 +48,26 @@ describe('CustomersPage', () => {
     expect(await screen.findByText(/Nenhum cliente cadastrado/)).toBeInTheDocument();
   });
 
+  it('exibe estado de carregamento e o remove assim que os dados chegam', async () => {
+    let resolveList: (customers: Customer[]) => void = () => {};
+    vi.mocked(resources.listCustomers).mockReturnValue(
+      new Promise<Customer[]>((resolve) => {
+        resolveList = resolve;
+      }),
+    );
+
+    render(<CustomersPage />);
+
+    expect(screen.getByText('Carregando clientes...')).toBeInTheDocument();
+
+    resolveList(mockCustomers);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Carregando clientes...')).not.toBeInTheDocument();
+      expect(screen.getByText('Ana Silva')).toBeInTheDocument();
+    });
+  });
+
   it('exibe erro de carregamento quando a API falha', async () => {
     vi.mocked(resources.listCustomers).mockRejectedValue(
       new ApiError('NETWORK_ERROR', 'Não foi possível conectar à API.'),
