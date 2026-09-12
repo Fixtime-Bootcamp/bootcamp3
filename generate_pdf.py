@@ -216,7 +216,7 @@ def build_pdf(filename="Relatorio_Entrega_FixTime.pdf"):
     team_data = [
         [Paragraph("<b>Caio Boudens de Castro</b><br/>RA: 22304522", table_cell_style), Paragraph("<b>Eduardo Frois Drumond</b><br/>RA: 22303035", table_cell_style)],
         [Paragraph("<b>Fernando Medeiros Farias</b><br/>RA: 22306100", table_cell_style), Paragraph("<b>Larissa Queiroz Ramos</b><br/>RA: 22304308", table_cell_style)],
-        [Paragraph("<b>Mayssa Barobas Dias</b><br/>RA: 22303603", table_cell_style), Paragraph("<b>Thiago Venâncio Gomides</b><br/>RA: 22307398", table_cell_style)]
+        [Paragraph("<b>Mayssa Barbosa Dias</b><br/>RA: 22303603", table_cell_style), Paragraph("<b>Thiago Venâncio Gomides</b><br/>RA: 22307398", table_cell_style)]
     ]
     team_table = Table(team_data, colWidths=[90 * mm, 90 * mm])
     team_table.setStyle(TableStyle([
