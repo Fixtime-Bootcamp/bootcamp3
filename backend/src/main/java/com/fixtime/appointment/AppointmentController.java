@@ -55,6 +55,8 @@ public class AppointmentController {
             @RequestParam(required = false) Long technicianId,
             @RequestParam(required = false) AppointmentStatus status,
             HttpServletResponse response) throws IOException {
+        exportService.validatePeriod(startDate, endDate);
+
         String filename = "appointments-" + LocalDate.now(clock).format(FILENAME_DATE_FORMAT) + ".csv";
         response.setContentType("text/csv; charset=UTF-8");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);

@@ -55,6 +55,12 @@ public class AppointmentExportService {
         this.serviceRepository = serviceRepository;
     }
 
+    public void validatePeriod(LocalDate startDate, LocalDate endDate) {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("startDate nao pode ser posterior a endDate");
+        }
+    }
+
     @Transactional(readOnly = true)
     public void writeCsv(
             OutputStream outputStream,
@@ -63,9 +69,7 @@ public class AppointmentExportService {
             Long technicianId,
             AppointmentStatus status) throws IOException {
 
-        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("startDate nao pode ser posterior a endDate");
-        }
+        validatePeriod(startDate, endDate);
 
         LocalDateTime from = startDate == null ? null : startDate.atStartOfDay();
         LocalDateTime to = endDate == null ? null : endDate.plusDays(1).atStartOfDay();
