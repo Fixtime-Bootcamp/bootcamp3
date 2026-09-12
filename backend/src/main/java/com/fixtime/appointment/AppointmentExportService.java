@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +76,8 @@ public class AppointmentExportService {
         LocalDateTime from = startDate == null ? null : startDate.atStartOfDay();
         LocalDateTime to = endDate == null ? null : endDate.plusDays(1).atStartOfDay();
 
-        List<Appointment> appointments = appointmentRepository.findAllForListing(from, to, technicianId, status);
+        Specification<Appointment> spec = AppointmentSpecifications.filterBy(from, to, technicianId, null, status);
+        List<Appointment> appointments = appointmentRepository.findAll(spec, Sort.by("startsAt").ascending());
 
         Map<Long, String> customerNames = loadNames(
                 appointments, Appointment::getCustomerId, customerRepository::findAllById, Customer::getId, Customer::getName);

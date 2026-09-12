@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Stream;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,12 +113,14 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<AppointmentResponse> list(LocalDate date, Long technicianId, AppointmentStatus status) {
-        LocalDateTime from = date == null ? null : date.atStartOfDay();
-        LocalDateTime to = date == null ? null : date.plusDays(1).atStartOfDay();
-        return repository.findAllForListing(from, to, technicianId, status).stream()
-                .map(AppointmentResponse::fromEntity)
-                .toList();
+    public Page<AppointmentResponse> list(
+            LocalDate startDate, LocalDate endDate, Long technicianId, Long customerId,
+            AppointmentStatus status, Pageable pageable) {
+        LocalDateTime from = startDate == null ? null : startDate.atStartOfDay();
+        LocalDateTime to = endDate == null ? null : endDate.plusDays(1).atStartOfDay();
+        Specification<Appointment> spec =
+                AppointmentSpecifications.filterBy(from, to, technicianId, customerId, status);
+        return repository.findAll(spec, pageable).map(AppointmentResponse::fromEntity);
     }
 
     public String exportFilename() {
