@@ -7,12 +7,16 @@ import com.fixtime.exception.ResourceNotFoundException;
 import com.fixtime.service.ServiceCatalogService;
 import com.fixtime.service.ServiceEntity;
 import com.fixtime.technician.TechnicianService;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.time.Clock;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,6 +116,33 @@ public class AppointmentService {
         return repository.findAllForListing(from, to, technicianId, status).stream()
                 .map(AppointmentResponse::fromEntity)
                 .toList();
+    }
+
+    public String exportFilename() {
+        return "appointments-" + LocalDate.now(clock) + ".csv";
+    }
+
+    public void validateExportPeriod(LocalDate startDate, LocalDate endDate) {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("startDate nao pode ser posterior a endDate");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public void writeExportCsv(
+            OutputStream outputStream,
+            LocalDate startDate,
+            LocalDate endDate,
+            Long technicianId,
+            AppointmentStatus status) {
+        validateExportPeriod(startDate, endDate);
+        LocalDateTime from = startDate == null ? null : startDate.atStartOfDay();
+        LocalDateTime to = endDate == null ? null : endDate.plusDays(1).atStartOfDay();
+        try (Stream<AppointmentExportRow> rows = repository.streamForExport(from, to, technicianId, status)) {
+            AppointmentCsvWriter.write(outputStream, rows);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
     @Transactional(readOnly = true)

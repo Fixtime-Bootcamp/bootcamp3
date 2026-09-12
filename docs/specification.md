@@ -19,6 +19,7 @@ Assistencias tecnicas pequenas controlam visitas por telefone e planilhas, causa
 - RF05: criar e listar agendamentos.
 - RF06: cancelar um agendamento elegivel.
 - RF07: concluir um agendamento apos seu horario final.
+- RF08: exportar historico de agendamentos em CSV.
 
 ## Requisitos nao funcionais
 
@@ -64,6 +65,27 @@ Resposta `201 Created`:
   "status": "SCHEDULED"
 }
 ```
+
+## Contrato de exportacao CSV
+
+`GET /api/v1/appointments/export`
+
+Parametros opcionais de query:
+
+- `startDate` e `endDate` (`LocalDate`): periodo inclusivo com base em `startsAt`.
+- `technicianId`: filtra pelo tecnico.
+- `status`: `SCHEDULED`, `CANCELLED` ou `COMPLETED`.
+
+Se `startDate` for posterior a `endDate`, a API responde `400` no formato JSON padrao.
+
+Resposta `200`:
+
+- `Content-Type: text/csv; charset=UTF-8`
+- `Content-Disposition: attachment; filename=appointments-YYYY-MM-DD.csv`
+- corpo em streaming com BOM UTF-8, cabecalho e linhas RFC 4180
+- sem resultados: somente BOM e cabecalho
+
+Colunas: `ID`, `Data Inicio`, `Data Fim`, `ID Cliente`, `Nome Cliente`, `ID Tecnico`, `Nome Tecnico`, `ID Servico`, `Nome Servico`, `Duracao (min)`, `Preco (R$)`, `Status`.
 
 ## Componentes
 
