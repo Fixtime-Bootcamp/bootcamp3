@@ -6,6 +6,17 @@ O FixTime é uma plataforma de agendamento de visitas para pequenas assistência
 
 O sistema permite consultar a disponibilidade de técnicos, criar e listar agendamentos, cancelar visitas elegíveis e registrar sua conclusão. Este repositório usa SDD (Spec-Driven Development) e é dividido em backend Spring Boot e frontend React.
 
+
+# Integrantes 
+
+- Caio Boudens de Castro - RA: 22304522
+- Eduardo Frois Drumond - RA: 22303035
+- Fernando Medeiros Farias - RA: 22306100
+- Larissa Queiroz Ramos - RA: 22304308
+- Mayssa Barobas Dias - RA: 22303603
+- Thiago Venâncio Gomides - RA: 22307398
+
+
 ## Stack
 
 - Java 21, Spring Boot 3.4.5, Maven, PostgreSQL e H2
@@ -24,8 +35,8 @@ O sistema permite consultar a disponibilidade de técnicos, criar e listar agend
 Clone o repositório e entre na pasta do projeto:
 
 ```bash
-git clone https://github.com/Fixtime-Bootcamp/bootcamp4.git
-cd bootcamp4
+git clone https://github.com/Fixtime-Bootcamp/bootcamp3.git
+cd bootcamp3
 ```
 
 Os blocos de comandos abaixo partem da raiz do repositório. Execute backend e frontend em terminais separados e mantenha ambos em execução.
