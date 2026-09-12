@@ -13,7 +13,7 @@ O sistema permite consultar a disponibilidade de técnicos, criar e listar agend
 - Eduardo Frois Drumond - RA: 22303035
 - Fernando Medeiros Farias - RA: 22306100
 - Larissa Queiroz Ramos - RA: 22304308
-- Mayssa Barobas Dias - RA: 22303603
+- Mayssa Barbosa Dias - RA: 22303603
 - Thiago Venâncio Gomides - RA: 22307398
 
 
