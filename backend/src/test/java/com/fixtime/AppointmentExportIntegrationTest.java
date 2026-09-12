@@ -24,6 +24,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Testes de integração para a exportação de agendamentos em CSV via API REST.
+ * Valida o requisito funcional RF08, conformidade RFC 4180, codificação UTF-8 com BOM e tratamento de erros (RNF03).
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -37,6 +41,10 @@ class AppointmentExportIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Valida RF08: Exportação de CSV com BOM UTF-8 (para compatibilidade com Excel),
+     * cabeçalho RFC 4180 e dados formatados com caracteres acentuados.
+     */
     @Test
     @DisplayName("Exporta CSV com BOM UTF-8, cabecalho e dados, incluindo caracteres acentuados")
     void exportsCsvWithDataAndAccentedCharacters() throws Exception {
@@ -74,6 +82,9 @@ class AppointmentExportIntegrationTest {
         assertThat(lines[1]).contains("SCHEDULED");
     }
 
+    /**
+     * Valida RF08: Exportação de CSV quando a busca não retorna registros, gerando apenas o cabeçalho e BOM UTF-8.
+     */
     @Test
     @DisplayName("Exporta apenas BOM e cabecalho quando o filtro nao encontra resultados")
     void exportsHeaderOnlyWhenFilterHasNoResults() throws Exception {
@@ -91,6 +102,9 @@ class AppointmentExportIntegrationTest {
                 "ID,Data Inicio,Data Fim,ID Cliente,Nome Cliente,ID Tecnico,Nome Tecnico,ID Servico,Nome Servico,Duracao (min),Preco (R$),Status");
     }
 
+    /**
+     * Valida RF08 e RNF03: Resposta de erro 400 Bad Request com payload padronizado JSON quando startDate > endDate.
+     */
     @Test
     @DisplayName("Responde 400 no formato JSON padrao quando startDate e posterior a endDate")
     void returns400WhenStartDateIsAfterEndDate() throws Exception {

@@ -2,11 +2,18 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { App } from './App';
 
+/**
+ * Suíte de testes do shell principal da aplicação e Agenda Operacional FixTime.
+ * Valida a integração do frontend React com os endpoints da API (RF01 a RF08, RN06 e RN07).
+ */
 describe('FixTime shell & operational agenda', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
+  /**
+   * Valida RF05 e RNF02: Exibição do estado de loading e mensagem de agenda vazia quando não há agendamentos.
+   */
   it('presents loading and then the empty agenda state', async () => {
     const resolvers: Array<(response: Response) => void> = [];
     vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>((resolve) => { resolvers.push(resolve); })));
@@ -17,6 +24,9 @@ describe('FixTime shell & operational agenda', () => {
     await waitFor(() => expect(screen.getByText('Nenhuma visita agendada')).toBeInTheDocument());
   });
 
+  /**
+   * Valida RN05 e RNF03: Apresentação de banner de erro padronizado para respostas 409 Conflict.
+   */
   it('presents a standardized conflict error', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
       status: 409,
@@ -28,6 +38,9 @@ describe('FixTime shell & operational agenda', () => {
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('O técnico já possui uma visita nesse intervalo'));
   });
 
+  /**
+   * Valida RF01, RF02, RF03, RF05: Abertura do modal de criação, preenchimento de formulário e atualização reativa da agenda.
+   */
   it('opens appointment modal and refreshes agenda on successful creation', async () => {
     let appointments = [
       { id: 1, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2026-09-02T09:00:00', endsAt: '2026-09-02T10:00:00', status: 'SCHEDULED' },
@@ -91,6 +104,9 @@ describe('FixTime shell & operational agenda', () => {
     });
   });
 
+  /**
+   * Valida RF05: Filtragem de agendamentos por data selecionada na barra de controle do calendário.
+   */
   it('filters appointments when changing date in date bar', async () => {
     const mockAppointments = [
       { id: 10, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2026-09-05T09:00:00', endsAt: '2026-09-05T10:00:00', status: 'SCHEDULED' },
@@ -115,6 +131,9 @@ describe('FixTime shell & operational agenda', () => {
     });
   });
 
+  /**
+   * Valida RF08: O link de exportação CSV reflete dinamicamente a data e filtros selecionados na interface.
+   */
   it('exposes a CSV export link that reflects the selected date filter', async () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }))));
 
@@ -140,6 +159,9 @@ describe('FixTime shell & operational agenda', () => {
     });
   });
 
+  /**
+   * Valida RF06 e RN06: Cancelamento de agendamento e atualização otimista/local do status para CANCELLED.
+   */
   it('cancels an appointment and updates status locally without full reload', async () => {
     const initialAppointments = [
       { id: 99, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2099-09-02T16:00:00', endsAt: '2099-09-02T17:30:00', status: 'SCHEDULED' },
@@ -175,6 +197,9 @@ describe('FixTime shell & operational agenda', () => {
     });
   });
 
+  /**
+   * Valida RF07 e RN07: Conclusão de agendamento e atualização local do status para COMPLETED.
+   */
   it('completes an appointment and updates status locally without full reload', async () => {
     const initialAppointments = [
       { id: 77, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2020-09-02T16:00:00', endsAt: '2020-09-02T17:30:00', status: 'SCHEDULED' },
@@ -210,6 +235,9 @@ describe('FixTime shell & operational agenda', () => {
     });
   });
 
+  /**
+   * Valida RNF03: Exibição de mensagem de erro clara quando a ação de concluir falha no backend.
+   */
   it('displays error alert when complete action fails', async () => {
     const initialAppointments = [
       { id: 66, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2020-09-02T16:00:00', endsAt: '2020-09-02T17:30:00', status: 'SCHEDULED' },
@@ -242,6 +270,9 @@ describe('FixTime shell & operational agenda', () => {
     expect(screen.getByText('SCHEDULED')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RNF03: Exibição de estado de erro sem travamento no loading quando a consulta da agenda falha.
+   */
   it('presents an error state (not stuck loading) when the agenda fails with a non-conflict server error', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
       status: 500,
@@ -261,6 +292,9 @@ describe('FixTime shell & operational agenda', () => {
     expect(screen.queryByText('Carregando agendamentos...')).not.toBeInTheDocument();
   });
 
+  /**
+   * Valida RNF03: Exibição de alerta de erro quando a ação de cancelamento falha.
+   */
   it('displays error alert when cancel action fails', async () => {
     const initialAppointments = [
       { id: 88, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2099-09-02T16:00:00', endsAt: '2099-09-02T17:30:00', status: 'SCHEDULED' },

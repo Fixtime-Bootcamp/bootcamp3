@@ -17,6 +17,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Testes unitários para o CustomerService.
+ * Valida os requisitos de gestão de clientes (RF01) e regras de integridade cadastral e ativação (RN01).
+ */
 class CustomerServiceTest {
 
     private CustomerRepository repository;
@@ -28,6 +32,9 @@ class CustomerServiceTest {
         service = new CustomerService(repository);
     }
 
+    /**
+     * Valida RF01 e RN01: Criação e ativação padrão de novo cliente.
+     */
     @Test
     @DisplayName("Deve cadastrar cliente com sucesso")
     void createsCustomer() {
@@ -43,6 +50,9 @@ class CustomerServiceTest {
         assertThat(response.active()).isTrue();
     }
 
+    /**
+     * Valida RN01 e RNF03: Lançamento de ResourceNotFoundException ao buscar cliente inexistente.
+     */
     @Test
     @DisplayName("Deve lancar excecao ao buscar cliente inexistente")
     void throwsOnMissingCustomer() {
@@ -53,6 +63,9 @@ class CustomerServiceTest {
                 .hasMessageContaining("ID 99");
     }
 
+    /**
+     * Valida RN01: Rejeição com exceção ao buscar cliente inativo para agendamento.
+     */
     @Test
     @DisplayName("Deve lancar excecao ao buscar cliente inativo")
     void throwsOnInactiveCustomer() {
