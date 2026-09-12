@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Entrega: FixTime</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 15mm 20mm 15mm;
+            @bottom-right {
+                content: counter(page);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #1e293b;
+            background-color: #ffffff;
+            line-height: 1.55;
+            font-size: 10.5pt;
+        }
+
+        .cover-page {
+            page-break-after: always;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 240mm;
+            padding: 30px 20px;
+        }
+
+        .cover-header {
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 25px;
+        }
+
+        .badge-tag {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1e40af;
+            font-weight: 700;
+            font-size: 9pt;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .cover-title {
+            font-size: 28pt;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.15;
+            margin-bottom: 10px;
+        }
+
+        .cover-subtitle {
+            font-size: 13pt;
+            color: #475569;
+            font-weight: 400;
+        }
+
+        .team-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+
+        .team-box h3 {
+            font-size: 11pt;
+            color: #0f172a;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 6px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 20px;
+        }
+
+        .member-item {
+            font-size: 10pt;
+            color: #334155;
+        }
+
+        .member-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .cover-footer {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 9pt;
+            color: #64748b;
+        }
+
+        .section {
+            margin-bottom: 22px;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #0f172a;
+            border-left: 4px solid #2563eb;
+            padding-left: 8px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h3 {
+            font-size: 11pt;
+            font-weight: 600;
+            color: #1e293b;
+            margin-top: 14px;
+            margin-bottom: 6px;
+        }
+
+        p {
+            margin-bottom: 8px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 18px;
+            margin-bottom: 10px;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0 14px 0;
+            font-size: 9pt;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 7px 9px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            font-size: 8pt;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+        }
+
+        .status-pass {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .code-block {
+            background-color: #0f172a;
+            color: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-family: Consolas, "Courier New", Courier, monospace;
+            font-size: 8.5pt;
+            line-height: 1.4;
+            margin: 8px 0 12px 0;
+            overflow-x: auto;
+        }
+
+        .inline-code {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-family: Consolas, "Courier New", Courier, monospace;
+            font-size: 9pt;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-card {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #16a34a;
+            border-radius: 4px;
+            padding: 10px 14px;
+            margin: 12px 0;
+            font-size: 9.5pt;
+        }
+
+        .info-card {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid #2563eb;
+            border-radius: 4px;
+            padding: 10px 14px;
+            margin: 12px 0;
+            font-size: 9.5pt;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .metric-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 16pt;
+            font-weight: 800;
+            color: #2563eb;
+        }
+
+        .metric-label {
+            font-size: 8pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CAPA -->
+    <div class="cover-page">
+        <div class="cover-header">
+            <span class="badge-tag">Documento de Entrega Oficial</span>
+            <h1 class="cover-title">FixTime</h1>
+            <p class="cover-subtitle">Plataforma de Agendamento e Gestão Operacional de Visitas Técnicas com SDD e Test Harness</p>
+        </div>
+
+        <div class="summary-card">
+            <strong>Status da Entrega:</strong> 100% Conforme com todas as diretrizes de Governança GitHub, Especificação Técnica (SDD), Assistência de IA com Ambiente Dockerizado e Suíte de Testes Automatizados (104 testes aprovados).
+        </div>
+
+        <div class="team-box">
+            <h3>Integrantes da Equipe</h3>
+            <div class="team-grid">
+                <div class="member-item"><span class="member-name">Caio Boudens de Castro</span><br>RA: 22304522</div>
+                <div class="member-item"><span class="member-name">Eduardo Frois Drumond</span><br>RA: 22303035</div>
+                <div class="member-item"><span class="member-name">Fernando Medeiros Farias</span><br>RA: 22306100</div>
+                <div class="member-item"><span class="member-name">Larissa Queiroz Ramos</span><br>RA: 22304308</div>
+                <div class="member-item"><span class="member-name">Mayssa Barobas Dias</span><br>RA: 22303603</div>
+                <div class="member-item"><span class="member-name">Thiago Venâncio Gomides</span><br>RA: 22307398</div>
+            </div>
+        </div>
+
+        <div class="metric-grid">
+            <div class="metric-card">
+                <div class="metric-value">104</div>
+                <div class="metric-label">Testes Automatizados</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">100%</div>
+                <div class="metric-label">Cobertura de Regras</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Commits Diretos na Main</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">1 Cmd</div>
+                <div class="metric-label">Docker Compose UP</div>
+            </div>
+        </div>
+
+        <div class="cover-footer">
+            <span><strong>Repositório:</strong> github.com/Fixtime-Bootcamp/bootcamp3</span>
+            <span>Setembro / 2026</span>
+        </div>
+    </div>
+
+    <!-- SEÇÃO 1: GOVERNANÇA GITHUB -->
+    <div class="section page-break">
+        <h2>1. Repositório GitHub com Governança</h2>
+        <p>O ciclo de vida do código no FixTime obedece rigorosamente às práticas de engenharia e governança em equipe:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 32%;">Item Obrigatório</th>
+                    <th style="width: 18%;">Status</th>
+                    <th>Evidência e Implementação no Repositório</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Estratégia de Branches</strong><br><span class="inline-code">main</span>, <span class="inline-code">develop</span>, <span class="inline-code">feature/*</span></td>
+                    <td><span class="status-badge status-pass">CONFORME</span></td>
+                    <td>Branch <span class="inline-code">main</span> reservada para releases, <span class="inline-code">develop</span> para integração da sprint e branches isoladas de feature nomeadas por issue (ex: <span class="inline-code">feature/issue-1-contrato-agendamento</span>, <span class="inline-code">feature/issue-28-exportacao-csv</span>).</td>
+                </tr>
+                <tr>
+                    <td><strong>Proteção de Branches</strong></td>
+                    <td><span class="status-badge status-pass">CONFORME</span></td>
+                    <td>Branch Protection Rules configuradas no GitHub exigindo abertura obrigatória de Pull Request, aprovação de pelo menos 1 revisor e sucesso na suíte do GitHub Actions CI antes do merge.</td>
+                </tr>
+                <tr>
+                    <td><strong>Zero Commits Diretos na Main</strong></td>
+                    <td><span class="status-badge status-pass">CONFORME</span></td>
+                    <td>Todo o histórico de commits foi gerado exclusivamente via branches de feature e integrado via Pull Requests aprovados.</td>
+                </tr>
+                <tr>
+                    <td><strong>GitHub Projects & Issues</strong></td>
+                    <td><span class="status-badge status-pass">CONFORME</span></td>
+                    <td>Quadro Kanban do projeto <strong>FixTime</strong> alimentado com Issues decompostas, labels de prioridade e épicos, estimativas e assignees atribuídos aos integrantes.</td>
+                </tr>
+                <tr>
+                    <td><strong>Pull Requests & Revisão Cruzada</strong></td>
+                    <td><span class="status-badge status-pass">CONFORME</span></td>
+                    <td>Histórico com mais de 35 Pull Requests (PR #24 a #60) revisados e aprovados por membros distintos dos autores do código.</td>
+                </tr>
+                <tr>
+                    <td><strong>README Completo com ADRs</strong></td>
+                    <td><span class="status-badge status-pass">CONFORME</span></td>
+                    <td>README na raiz com visão geral, integrantes, guia de execução local e Docker, testes e Registro de Decisões Arquiteturais (ADR-001: Spring Boot & React, ADR-002: Regras no Service, ADR-003: PostgreSQL & H2).</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Resumo dos Registros de Decisões Arquiteturais (ADRs)</h3>
+        <ul>
+            <li><strong>ADR-001 (Spring Boot 3.4.5 & React 19):</strong> Escolha pela maturidade no ecossistema corporativo para APIs REST robustas, validação declarativa e agilidade de tipagem no frontend com TypeScript e Vite.</li>
+            <li><strong>ADR-002 (Regras Exclusivas na Camada de Serviço):</strong> Todas as validações de conflito, antecedência, jornada comercial e feriados residem no <span class="inline-code">AppointmentService</span>, desacoplando os Controllers que apenas validam contratos HTTP.</li>
+            <li><strong>ADR-003 (PostgreSQL no Docker Compose e H2 nos Testes):</strong> PostgreSQL para persistência transacional com integridade referencial em produção/ambiente local; H2 em memória para execução ultrarrápida e isolada da suíte de testes.</li>
+        </ul>
+    </div>
+
+    <!-- SEÇÃO 2: ESPECIFICAÇÃO TÉCNICA (SDD) -->
+    <div class="section page-break">
+        <h2>2. Especificação Técnica (SDD) — em docs/SPEC.md</h2>
+        <p>A arquitetura e as regras de negócio foram estruturadas a partir de Spec-Driven Development (SDD), documentadas de forma canônica no arquivo <span class="inline-code">docs/SPEC.md</span>.</p>
+
+        <h3>2.1. Problema Real e Personas</h3>
+        <p>Pequenas assistências técnicas perdem receita e credibilidade gerenciando visitas por cadernos e planilhas, gerando conflitos de horário para técnicos e falta de visibilidade para clientes. As personas atendidas são o <strong>Operador/Gestor</strong> (cadastros e conciliação), o <strong>Técnico</strong> (cumprimento da jornada de campo) e o <strong>Cliente</strong> (atendimento agendado).</p>
+
+        <h3>2.2. Requisitos Funcionais (RF) e Não-Funcionais Mensuráveis (RNF)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Código</th>
+                    <th style="width: 35%;">Descrição do Requisito</th>
+                    <th>Critério de Aceite / Métrica Mensurável</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>RF01 a RF03</strong></td>
+                    <td>Gestão de Clientes, Técnicos e Catálogo de Serviços</td>
+                    <td>CRUDs RESTful ativos com validação de dados obrigatórios e unicidade.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF04</strong></td>
+                    <td>Consulta de Disponibilidade por Técnico e Data</td>
+                    <td>Retorna janelas de horários livres em dias úteis; lista vazia em feriados/bloqueios.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF05</strong></td>
+                    <td>Criação e Listagem de Agendamentos</td>
+                    <td>Cálculo automático de término (<span class="inline-code">endsAt</span>); paginação e filtros combinados.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF06 / RF07</strong></td>
+                    <td>Cancelamento e Conclusão de Visita</td>
+                    <td>Transições de status (<span class="inline-code">SCHEDULED</span> ➔ <span class="inline-code">CANCELLED</span> / <span class="inline-code">COMPLETED</span>) via endpoints PATCH.</td>
+                </tr>
+                <tr>
+                    <td><strong>RF08</strong></td>
+                    <td>Exportação em Streaming CSV</td>
+                    <td>Arquivo com cabeçalho RFC 4180 e UTF-8 BOM para compatibilidade com planilhas.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF01 / RNF02</strong></td>
+                    <td>Padronização REST e Desempenho</td>
+                    <td>Endpoints versionados em <span class="inline-code">/api/v1</span> com tempo de resposta <strong>P95 &lt; 300ms</strong>.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF03 / RNF04</strong></td>
+                    <td>Erros Estruturados e Cobertura</td>
+                    <td>Payload JSON <span class="inline-code">ErrorResponse</span> sem stack traces; <strong>cobertura &gt; 85%</strong> no domínio.</td>
+                </tr>
+                <tr>
+                    <td><strong>RNF05</strong></td>
+                    <td>Reprodutibilidade do Ambiente</td>
+                    <td>Execução fullstack com único comando <span class="inline-code">docker compose up --build</span>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>2.3. Regras de Negócio Numeradas (RN)</h3>
+        <ol>
+            <li><strong>RN01 (Integridade Cadastral):</strong> Cliente, técnico e serviço informados devem existir e estar com <span class="inline-code">active = true</span>.</li>
+            <li><strong>RN02 (Duração e Preço):</strong> Duração &gt; 0 minutos e preço &gt;= R$ 0.00. Término é somado automaticamente à data de início.</li>
+            <li><strong>RN03 (Antecedência Mínima):</strong> Agendamento deve iniciar com no mínimo <strong>2 horas de antecedência</strong> em relação ao relógio atual.</li>
+            <li><strong>RN04 (Jornada Comercial):</strong> Visita ocorre exclusivamente de <strong>segunda a sexta-feira, das 08:00 às 18:00</strong>.</li>
+            <li><strong>RN05 (Bloqueio de Sobreposição):</strong> Rejeição de agendamentos sobrepostos para o mesmo técnico; intervalos adjacentes são permitidos.</li>
+            <li><strong>RN06 (Política de Cancelamento):</strong> Permitido apenas em status <span class="inline-code">SCHEDULED</span> e com &gt;= 2 horas de antecedência.</li>
+            <li><strong>RN07 (Política de Conclusão):</strong> Permitido apenas em status <span class="inline-code">SCHEDULED</span> e estritamente após o término da visita (<span class="inline-code">endsAt</span>).</li>
+            <li><strong>RN08 (Bloqueio de Feriados):</strong> Bloqueio automático de feriados nacionais e indisponibilidades cadastradas pelo operador.</li>
+        </ol>
+
+        <h3>2.4. Exemplo Literal de Contrato HTTP e Erro Padronizado</h3>
+        <div class="code-block">
+POST /api/v1/appointments
+Request:  { "customerId": 1, "technicianId": 2, "serviceId": 3, "startsAt": "2026-09-14T10:00:00" }
+Response 201: { "id": 10, "customerId": 1, "technicianId": 2, "serviceId": 3, "startsAt": "2026-09-14T10:00:00", "endsAt": "2026-09-14T11:30:00", "status": "SCHEDULED" }
+
+Response 409 Conflict:
+{ "status": 409, "error": "CONFLICT", "message": "O tecnico ja possui uma visita nesse intervalo", "timestamp": "2026-09-12T17:00:00.000", "path": "/api/v1/appointments" }
+        </div>
+    </div>
+
+    <!-- SEÇÃO 3: IA & AMBIENTE -->
+    <div class="section page-break">
+        <h2>3. Agente de IA + Ambiente Padronizado</h2>
+        
+        <h3>3.1. Uso de IA e Arquivos de Contexto Versionados</h3>
+        <p>O desenvolvimento utilizou agentes de IA (GitHub Copilot, Cursor e Antigravity) como copilotos de engenharia sob governança humana. Os arquivos de regras e contexto estão versionados no repositório:</p>
+        <ul>
+            <li><span class="inline-code">AGENTS.md</span>: Diretrizes operacionais de governança, convenções de código Spring/React e fluxo SDD.</li>
+            <li><span class="inline-code">.cursorrules</span>: Regras de contexto de arquitetura e validações para editores baseados em Cursor.</li>
+            <li><span class="inline-code">.github/copilot-instructions.md</span>: Instruções de alinhamento com a especificação <span class="inline-code">docs/SPEC.md</span> para o Copilot.</li>
+            <li><strong>Documentação em PRs:</strong> Descrição transparente nos PRs apontando como o agente foi utilizado e quais testes foram validados por humanos.</li>
+        </ul>
+
+        <h3>3.2. Reprodutibilidade com Docker Compose</h3>
+        <p>A arquitetura em contêineres foi padronizada para permitir que qualquer avaliador clone o repositório e execute a aplicação completa sem instalar JDK, Maven ou Node.js:</p>
+
+        <div class="code-block">
+# Clonagem e Execução Unificada:
+git clone https://github.com/Fixtime-Bootcamp/bootcamp3.git
+cd bootcamp3
+docker compose up --build
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Serviço</th>
+                    <th>Tecnologia / Imagem</th>
+                    <th>Porta Mapeada</th>
+                    <th>Papel no Ambiente</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>database</strong></td>
+                    <td>PostgreSQL 16 Alpine</td>
+                    <td><span class="inline-code">5432:5432</span></td>
+                    <td>Banco relacional transacional com healthcheck ativo.</td>
+                </tr>
+                <tr>
+                    <td><strong>backend</strong></td>
+                    <td>Java 21 / Eclipse Temurin</td>
+                    <td><span class="inline-code">8080:8080</span></td>
+                    <td>API REST Spring Boot com DTOs, Services e JPA.</td>
+                </tr>
+                <tr>
+                    <td><strong>frontend</strong></td>
+                    <td>React 19 / Nginx Alpine</td>
+                    <td><span class="inline-code">5173:80</span> e <span class="inline-code">80:80</span></td>
+                    <td>SPA React com proxy reverso automático para a API.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SEÇÃO 4: TEST HARNESS -->
+    <div class="section page-break">
+        <h2>4. Test Harness (Suíte de Testes Automatizados)</h2>
+        <p>O Test Harness do FixTime é determinístico e automatizado, composto por <strong>104 testes em verde</strong> que cobrem os fluxos felizes e os limites das regras de negócio:</p>
+
+        <div class="info-card">
+            <strong>Execução em Comando Único via Docker:</strong><br>
+            <span class="inline-code">docker compose run --rm backend mvn test</span>
+        </div>
+
+        <h3>4.1. Resumo Consolidado da Suíte</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Suíte / Componente</th>
+                    <th>Framework</th>
+                    <th>Qtd. Testes</th>
+                    <th>Status</th>
+                    <th>Rastreabilidade & Escopo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>AppointmentServiceTest</strong></td>
+                    <td>JUnit 5 / Mockito</td>
+                    <td>19</td>
+                    <td><span class="status-badge status-pass">PASS</span></td>
+                    <td>Docstrings cobrindo RN01, RN02, RN03, RN04, RN05, RN06, RN07, RN08 com Clock fixo.</td>
+                </tr>
+                <tr>
+                    <td><strong>AppointmentIntegrationTest</strong></td>
+                    <td>MockMvc / H2</td>
+                    <td>11</td>
+                    <td><span class="status-badge status-pass">PASS</span></td>
+                    <td>Fluxo ponta a ponta, paginação, filtros combinados e resposta estruturada 400.</td>
+                </tr>
+                <tr>
+                    <td><strong>BlockedDateIntegrationTest</strong></td>
+                    <td>MockMvc / H2</td>
+                    <td>5</td>
+                    <td><span class="status-badge status-pass">PASS</span></td>
+                    <td>Cadastro de bloqueios, feriados nacionais automáticos e conflito 409.</td>
+                </tr>
+                <tr>
+                    <td><strong>AppointmentExportTest</strong></td>
+                    <td>MockMvc / Unit</td>
+                    <td>5</td>
+                    <td><span class="status-badge status-pass">PASS</span></td>
+                    <td>Conformidade RFC 4180, codificação UTF-8 BOM e validação de período startDate &lt;= endDate.</td>
+                </tr>
+                <tr>
+                    <td><strong>Customer & Health Tests</strong></td>
+                    <td>JUnit 5 / WebMvc</td>
+                    <td>4</td>
+                    <td><span class="status-badge status-pass">PASS</span></td>
+                    <td>Integridade cadastral (RN01) e endpoint de saúde (/api/v1/health).</td>
+                </tr>
+                <tr>
+                    <td><strong>Frontend Test Suite</strong></td>
+                    <td>Vitest / RTL</td>
+                    <td>60</td>
+                    <td><span class="status-badge status-pass">PASS</span></td>
+                    <td>8 arquivos de teste cobrindo telas, modais, elegibilidade de botões e cliente HTTP.</td>
+                </tr>
+                <tr style="font-weight: 700; background-color: #f1f5f9;">
+                    <td>TOTAL CONSOLIDADO</td>
+                    <td>-</td>
+                    <td>104</td>
+                    <td><span class="status-badge status-pass">100% SUCESSO</span></td>
+                    <td>Zero falhas, zero erros e zero testes ignorados.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>4.2. Exemplo de Rastreabilidade nos Testes (Docstrings Javadoc e JSDoc)</h3>
+        <div class="code-block">
+/**
+ * Valida RN05 e RF05: Bloqueio de sobreposição de horários para o mesmo técnico com status SCHEDULED.
+ */
+@Test
+@DisplayName("Deve rejeitar sobreposicao de horario para o mesmo tecnico")
+void rejectsOverlappingAppointments() { ... }
+
+/**
+ * Valida RN06 e RF06: Elegível para cancelamento quando antecedência é superior a 2 horas.
+ */
+it('is eligible when scheduled and more than 2 hours before start time', () => { ... });
+        </div>
+
+        <p>O log de execução integral e o histórico de execução estão registrados e citados no README em <span class="inline-code">docs/test-report.md</span>.</p>
+    </div>
+
+</body>
+</html>
