@@ -115,6 +115,31 @@ describe('FixTime shell & operational agenda', () => {
     });
   });
 
+  it('exposes a CSV export link that reflects the selected date filter', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } })));
+
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByText('Nenhuma visita agendada')).toBeInTheDocument());
+
+    const now = new Date();
+    const todayISO = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const exportLink = screen.getByRole('link', { name: /exportar csv/i });
+    const hrefWithDate = exportLink.getAttribute('href') ?? '';
+
+    expect(hrefWithDate).toContain('/appointments/export');
+    expect(hrefWithDate).toContain(`startDate=${todayISO}`);
+    expect(hrefWithDate).toContain(`endDate=${todayISO}`);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Todas' }));
+
+    await waitFor(() => {
+      const hrefWithoutDate = screen.getByRole('link', { name: /exportar csv/i }).getAttribute('href') ?? '';
+      expect(hrefWithoutDate).not.toContain('startDate');
+      expect(hrefWithoutDate).not.toContain('endDate');
+    });
+  });
+
   it('cancels an appointment and updates status locally without full reload', async () => {
     const initialAppointments = [
       { id: 99, customerId: 1, technicianId: 10, serviceId: 100, startsAt: '2099-09-02T16:00:00', endsAt: '2099-09-02T17:30:00', status: 'SCHEDULED' },
