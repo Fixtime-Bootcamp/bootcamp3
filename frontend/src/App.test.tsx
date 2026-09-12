@@ -116,7 +116,7 @@ describe('FixTime shell & operational agenda', () => {
   });
 
   it('exposes a CSV export link that reflects the selected date filter', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } })));
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } }))));
 
     render(<App />);
 
