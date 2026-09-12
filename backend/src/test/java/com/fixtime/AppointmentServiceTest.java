@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fixtime.appointment.Appointment;
+import com.fixtime.appointment.AppointmentCsvWriter;
 import com.fixtime.appointment.AppointmentRepository;
 import com.fixtime.appointment.AppointmentResponse;
 import com.fixtime.appointment.AppointmentService;
@@ -37,6 +38,8 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.io.ByteArrayOutputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -137,6 +140,51 @@ class AppointmentServiceTest {
 
             assertThat(response.getContent()).isEmpty();
             assertThat(response.getTotalElements()).isEqualTo(0);
+        }
+    }
+
+    @Nested
+    @DisplayName("Exportacao CSV")
+    class ExportTests {
+
+        @Test
+        @DisplayName("Deve mapear startDate e endDate para intervalo inclusivo de startsAt")
+        void mapsPeriodToListingBounds() {
+            when(appointmentRepository.streamForExport(
+                    LocalDateTime.of(2026, 9, 1, 0, 0),
+                    LocalDateTime.of(2026, 9, 4, 0, 0),
+                    2L,
+                    AppointmentStatus.SCHEDULED)).thenReturn(Stream.empty());
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            appointmentService.writeExportCsv(
+                    out,
+                    LocalDate.of(2026, 9, 1),
+                    LocalDate.of(2026, 9, 3),
+                    2L,
+                    AppointmentStatus.SCHEDULED);
+
+            verify(appointmentRepository).streamForExport(
+                    LocalDateTime.of(2026, 9, 1, 0, 0),
+                    LocalDateTime.of(2026, 9, 4, 0, 0),
+                    2L,
+                    AppointmentStatus.SCHEDULED);
+            assertThat(out.toByteArray()).startsWith(AppointmentCsvWriter.UTF8_BOM);
+        }
+
+        @Test
+        @DisplayName("Deve rejeitar periodo com startDate posterior a endDate")
+        void rejectsInvertedPeriod() {
+            assertThatThrownBy(() -> appointmentService.validateExportPeriod(
+                    LocalDate.of(2026, 9, 10), LocalDate.of(2026, 9, 1)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("startDate");
+        }
+
+        @Test
+        @DisplayName("Deve gerar nome de arquivo com a data do relogio")
+        void exportFilenameUsesClock() {
+            assertThat(appointmentService.exportFilename()).isEqualTo("appointments-2026-09-02.csv");
         }
     }
 

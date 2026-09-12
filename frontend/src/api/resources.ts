@@ -10,12 +10,30 @@ import type {
   Service,
   Technician,
 } from '../types';
-import { request } from './client';
+import { API_BASE_URL, request } from './client';
 
 export type ListAppointmentsFilter = {
   date?: string;
   technicianId?: number;
   status?: AppointmentStatus;
+};
+
+export type ExportAppointmentsFilter = {
+  startDate?: string;
+  endDate?: string;
+  technicianId?: number;
+  status?: AppointmentStatus;
+};
+
+export const getAppointmentsExportUrl = (filter?: ExportAppointmentsFilter): string => {
+  const params = new URLSearchParams();
+  if (filter?.startDate) params.set('startDate', filter.startDate);
+  if (filter?.endDate) params.set('endDate', filter.endDate);
+  if (filter?.technicianId) params.set('technicianId', String(filter.technicianId));
+  if (filter?.status) params.set('status', filter.status);
+  const queryString = params.toString();
+  const base = `${API_BASE_URL.replace(/\/$/, '')}/appointments/export`;
+  return queryString ? `${base}?${queryString}` : base;
 };
 
 export const listCustomers = (init?: RequestInit) => request<Customer[]>('/customers', init);

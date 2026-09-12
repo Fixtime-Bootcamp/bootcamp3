@@ -8,3 +8,4 @@
 | 2026-09-03 | Duracao calculada a partir de `ServiceEntity` (Issue #1) | Garante integridade cadastral e evita divergencia com `durationMinutes` enviado pelo cliente. |
 | 2026-09-03 | Padronizacao de erros HTTP com `GlobalExceptionHandler` (Issue #3) | Retorno uniforme de erros JSON com `status`, `error`, `message` e `fieldErrors`. |
 | 2026-09-03 | Transicoes de status `CANCELLED` e `COMPLETED` (Issues #12 e #13) | Implementacao dos endpoints `PATCH` com validacao de antecedencia e horario de conclusao. |
+| 2026-09-12 | Exportacao CSV de agendamentos (`GET /api/v1/appointments/export`) | Conciliacao operacional e relatorios externos com streaming UTF-8 (BOM) e filtros de periodo, tecnico e status. |

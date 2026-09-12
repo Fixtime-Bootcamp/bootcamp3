@@ -44,9 +44,34 @@ async function readPayload(response: Response): Promise<unknown> {
 }
 
 export async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  let response: Response;
+  const response = await fetchApi(path, init);
+  const payload = await readPayload(response);
+  if (!response.ok) throw errorFromResponse(response.status, payload);
+  return payload as T;
+}
+
+export async function downloadFile(path: string, fallbackFilename: string, init: RequestInit = {}): Promise<void> {
+  const response = await fetchApi(path, init);
+  if (!response.ok) {
+    const payload = await readPayload(response);
+    throw errorFromResponse(response.status, payload);
+  }
+
+  const blob = await response.blob();
+  const filename = filenameFromContentDisposition(response.headers.get('Content-Disposition'), fallbackFilename);
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = objectUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(objectUrl);
+}
+
+async function fetchApi(path: string, init: RequestInit = {}): Promise<Response> {
   try {
-    response = await fetch(joinUrl(path), {
+    return await fetch(joinUrl(path), {
       ...init,
       headers: {
         ...(init.body ? { 'Content-Type': 'application/json' } : {}),
@@ -56,8 +81,20 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
   } catch {
     throw new ApiError('NETWORK_ERROR', 'Não foi possível conectar à API.');
   }
+}
 
-  const payload = await readPayload(response);
-  if (!response.ok) throw errorFromResponse(response.status, payload);
-  return payload as T;
+export function filenameFromContentDisposition(header: string | null, fallback: string): string {
+  if (!header) return fallback;
+  const utf8Match = /filename\*=UTF-8''([^;]+)/i.exec(header);
+  if (utf8Match?.[1]) {
+    try {
+      return decodeURIComponent(utf8Match[1]);
+    } catch {
+      return utf8Match[1];
+    }
+  }
+  const quoted = /filename="([^"]+)"/i.exec(header);
+  if (quoted?.[1]) return quoted[1];
+  const plain = /filename=([^;]+)/i.exec(header);
+  return plain?.[1]?.trim() || fallback;
 }
