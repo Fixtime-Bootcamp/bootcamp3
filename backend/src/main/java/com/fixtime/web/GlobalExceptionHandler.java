@@ -14,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,6 +58,13 @@ public class GlobalExceptionHandler {
             errors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
         ErrorResponse response = ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "VALIDATION_FAILED", "Erros de validacao nos campos", errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String message = "Parametro invalido: '" + ex.getName() + "'";
+        ErrorResponse response = ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 

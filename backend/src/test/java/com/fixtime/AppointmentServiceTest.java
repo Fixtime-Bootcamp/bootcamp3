@@ -41,6 +41,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 class AppointmentServiceTest {
 
@@ -106,25 +112,31 @@ class AppointmentServiceTest {
                     LocalDateTime.of(2026, 9, 2, 10, 0),
                     LocalDateTime.of(2026, 9, 2, 11, 0),
                     60, AppointmentStatus.SCHEDULED);
-            when(appointmentRepository.findAllForListing(
-                    LocalDateTime.of(2026, 9, 2, 0, 0),
-                    LocalDateTime.of(2026, 9, 3, 0, 0),
-                    2L, AppointmentStatus.SCHEDULED)).thenReturn(List.of(appointment));
+            Pageable pageable = PageRequest.of(0, 20, Sort.by("startsAt").ascending());
+            when(appointmentRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(new PageImpl<>(List.of(appointment), pageable, 1));
 
-            List<AppointmentResponse> response = appointmentService.list(
-                    LocalDate.of(2026, 9, 2), 2L, AppointmentStatus.SCHEDULED);
+            Page<AppointmentResponse> response = appointmentService.list(
+                    LocalDate.of(2026, 9, 2), LocalDate.of(2026, 9, 2), 2L, 1L,
+                    AppointmentStatus.SCHEDULED, pageable);
 
-            assertThat(response).hasSize(1);
-            assertThat(response.get(0).technicianId()).isEqualTo(2L);
+            assertThat(response.getContent()).hasSize(1);
+            assertThat(response.getContent().get(0).technicianId()).isEqualTo(2L);
+            assertThat(response.getTotalElements()).isEqualTo(1);
         }
 
         @Test
-        @DisplayName("Deve retornar lista vazia sem agendamentos")
-        void returnsEmptyList() {
-            when(appointmentRepository.findAllForListing(null, null, null, null))
-                    .thenReturn(Collections.emptyList());
+        @DisplayName("Deve retornar pagina vazia sem agendamentos")
+        void returnsEmptyPage() {
+            Pageable pageable = PageRequest.of(0, 20, Sort.by("startsAt").ascending());
+            when(appointmentRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(Page.empty(pageable));
 
-            assertThat(appointmentService.list(null, null, null)).isEmpty();
+            Page<AppointmentResponse> response = appointmentService.list(
+                    null, null, null, null, null, pageable);
+
+            assertThat(response.getContent()).isEmpty();
+            assertThat(response.getTotalElements()).isEqualTo(0);
         }
     }
 

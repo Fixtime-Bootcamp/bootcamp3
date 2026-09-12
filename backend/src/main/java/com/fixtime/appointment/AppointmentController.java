@@ -1,8 +1,11 @@
 package com.fixtime.appointment;
 
+import com.fixtime.web.PageResponse;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
-import java.util.List;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,11 +33,14 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public List<AppointmentResponse> list(
-            @RequestParam(required = false) LocalDate date,
+    public PageResponse<AppointmentResponse> list(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) Long technicianId,
-            @RequestParam(required = false) AppointmentStatus status) {
-        return service.list(date, technicianId, status);
+            @RequestParam(required = false) Long customerId,
+            @RequestParam(required = false) AppointmentStatus status,
+            @PageableDefault(size = 20, sort = "startsAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return PageResponse.from(service.list(startDate, endDate, technicianId, customerId, status, pageable));
     }
 
     @PatchMapping("/{id}/cancel")
