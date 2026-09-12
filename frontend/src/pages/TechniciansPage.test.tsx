@@ -12,6 +12,10 @@ const mockTechnicians: Technician[] = [
   { id: 2, name: 'Diego Eletricista', email: 'diego@fixtime.com', phone: '11 93333-4444', active: false },
 ];
 
+/**
+ * Testes unitários para a página de Gestão de Técnicos (TechniciansPage).
+ * Valida o requisito funcional RF02 e as regras de ativação e integridade cadastral de técnicos (RN01).
+ */
 describe('TechniciansPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -29,18 +33,27 @@ describe('TechniciansPage', () => {
     });
   });
 
+  /**
+   * Valida RF02: Exibição da lista de técnicos cadastrados retornada pela API.
+   */
   it('exibe lista de técnicos ao carregar', async () => {
     render(<TechniciansPage />);
     expect(await screen.findByText('Carlos Mecânico')).toBeInTheDocument();
     expect(screen.getByText('Diego Eletricista')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RF02: Exibição de mensagem informativa quando a lista de técnicos está vazia.
+   */
   it('exibe estado vazio quando não há técnicos', async () => {
     vi.mocked(resources.listTechnicians).mockResolvedValue([]);
     render(<TechniciansPage />);
     expect(await screen.findByText(/Nenhum técnico cadastrado/)).toBeInTheDocument();
   });
 
+  /**
+   * Valida RNF03: Exibição de banner de erro quando a API falha ao carregar a lista.
+   */
   it('exibe erro quando a API falha ao carregar', async () => {
     vi.mocked(resources.listTechnicians).mockRejectedValue(
       new ApiError('NETWORK_ERROR', 'Não foi possível conectar à API.'),
@@ -49,6 +62,9 @@ describe('TechniciansPage', () => {
     expect(await screen.findByText(/Erro ao carregar técnicos/)).toBeInTheDocument();
   });
 
+  /**
+   * Valida RNF02: Validação de campos obrigatórios no formulário de cadastro de técnico.
+   */
   it('valida campos obrigatórios ao tentar cadastrar', async () => {
     render(<TechniciansPage />);
     await screen.findByText('Carlos Mecânico');
@@ -56,6 +72,9 @@ describe('TechniciansPage', () => {
     expect(await screen.findByText('Nome é obrigatório.')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RF02: Cadastro de novo técnico e atualização reativa da lista.
+   */
   it('cadastra técnico válido e atualiza lista reativamente', async () => {
     render(<TechniciansPage />);
     await screen.findByText('Carlos Mecânico');
@@ -68,6 +87,9 @@ describe('TechniciansPage', () => {
     });
   });
 
+  /**
+   * Valida RNF03: Exibição de erro da API quando o cadastro de técnico falha (ex.: e-mail em conflito).
+   */
   it('exibe erro HTTP ao falhar no cadastro', async () => {
     vi.mocked(resources.createTechnician).mockRejectedValue(
       new ApiError('CONFLICT', 'E-mail já cadastrado.'),
@@ -81,6 +103,9 @@ describe('TechniciansPage', () => {
     expect(await screen.findByText('E-mail já cadastrado.')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RN01: Alternância do status ativo/inativo do técnico.
+   */
   it('alterna status do técnico ao clicar em Desativar', async () => {
     render(<TechniciansPage />);
     await screen.findByText('Carlos Mecânico');

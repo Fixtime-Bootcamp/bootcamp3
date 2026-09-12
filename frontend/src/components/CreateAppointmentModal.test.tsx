@@ -33,10 +33,7 @@ function setupFetchMock(customHandlers: Record<string, Response> = {}) {
     }),
   };
 
-  const handlers = { ...defaultHandlers, ...customHandlers };
-
-  vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
-    // Check custom handlers first
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => {
     for (const [route, response] of Object.entries(customHandlers)) {
       if (url.includes(route)) {
         return response.clone();
@@ -63,11 +60,18 @@ function setupFetchMock(customHandlers: Record<string, Response> = {}) {
   }));
 }
 
+/**
+ * Testes unitários do modal de criação de agendamento (CreateAppointmentModal).
+ * Valida os requisitos RF01, RF02, RF03, RF04, RF05 e regras RN01, RN02, RN04 e RN05.
+ */
 describe('CreateAppointmentModal', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
+  /**
+   * Valida RF01, RF02, RF03: Carregamento de clientes, técnicos e catálogo de serviços na abertura do modal.
+   */
   it('renders modal when isOpen is true and loads initial resources', async () => {
     setupFetchMock();
     const handleClose = vi.fn();
@@ -91,6 +95,9 @@ describe('CreateAppointmentModal', () => {
     });
   });
 
+  /**
+   * Valida RNF02: Validação de preenchimento obrigatório dos campos do formulário no cliente antes do envio.
+   */
   it('validates required fields on submit without inputs', async () => {
     setupFetchMock();
     render(
@@ -114,6 +121,9 @@ describe('CreateAppointmentModal', () => {
     });
   });
 
+  /**
+   * Valida RF03 e RN02: Exibição da duração e descrição do serviço selecionado no resumo visual.
+   */
   it('displays service duration and price when service is selected', async () => {
     setupFetchMock();
     render(
@@ -135,6 +145,9 @@ describe('CreateAppointmentModal', () => {
     });
   });
 
+  /**
+   * Valida RF04: Consulta e exibição das janelas de disponibilidade livre do técnico selecionado na data escolhida.
+   */
   it('queries and displays technician availability when technician and date are chosen', async () => {
     const availabilitySlots = [
       { startsAt: '2026-09-10T08:00:00', endsAt: '2026-09-10T12:00:00' },
@@ -167,6 +180,9 @@ describe('CreateAppointmentModal', () => {
     });
   });
 
+  /**
+   * Valida RN04: Validação do horário de início no formulário proibindo horários fora da jornada comercial (08:00 às 18:00).
+   */
   it('validates invalid start time outside business hours', async () => {
     setupFetchMock();
     render(
@@ -192,6 +208,9 @@ describe('CreateAppointmentModal', () => {
     });
   });
 
+  /**
+   * Valida RF05: Envio do payload de criação de agendamento e acionamento da callback onSuccess com o objeto criado.
+   */
   it('submits valid payload and triggers onSuccess upon successful API response', async () => {
     const createdAppointment = {
       id: 50,
@@ -235,6 +254,9 @@ describe('CreateAppointmentModal', () => {
     });
   });
 
+  /**
+   * Valida RN05 e RNF03: Exibição de banner de conflito ao receber resposta 409 CONFLICT da API.
+   */
   it('displays conflict error alert when API returns 409 CONFLICT', async () => {
     setupFetchMock({
       '/api/v1/appointments': new Response(
@@ -274,6 +296,9 @@ describe('CreateAppointmentModal', () => {
     });
   });
 
+  /**
+   * Valida RNF03: Exibição de alerta quando ocorre erro 500 no processamento do agendamento.
+   */
   it('displays API error when server fails with 500 error', async () => {
     setupFetchMock({
       '/api/v1/appointments': new Response(

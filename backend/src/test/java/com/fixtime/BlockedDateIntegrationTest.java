@@ -28,6 +28,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Testes de integração para bloqueio de datas, feriados nacionais e impacto em agendamentos/disponibilidade.
+ * Valida o cumprimento estrito da regra de negócio RN08 e requisitos funcionais RF04 e RF05.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -39,6 +43,9 @@ class BlockedDateIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Valida RN08 e RNF01: Cadastro e listagem de datas bloqueadas personalizadas via endpoints REST.
+     */
     @Test
     @DisplayName("Deve cadastrar e listar datas bloqueadas com sucesso via API")
     void createAndListBlockedDates() throws Exception {
@@ -62,6 +69,9 @@ class BlockedDateIntegrationTest {
                 .andExpect(jsonPath("$[0].reason", is("Feriado Nacional")));
     }
 
+    /**
+     * Valida RN08 e RNF03: Retorno de 409 Conflict ao tentar cadastrar duplicidade de bloqueio para a mesma data.
+     */
     @Test
     @DisplayName("Deve retornar 409 Conflict ao tentar cadastrar bloqueio para data ja bloqueada")
     void rejectsDuplicateBlockedDate() throws Exception {
@@ -82,6 +92,9 @@ class BlockedDateIntegrationTest {
                 .andExpect(jsonPath("$.message", is("A data " + holiday + " ja esta bloqueada")));
     }
 
+    /**
+     * Valida RN08 e RF05: Rejeição de agendamento em data previamente bloqueada por operador com 400 Bad Request.
+     */
     @Test
     @DisplayName("Deve rejeitar criacao de agendamento em data bloqueada (400 Bad Request)")
     void rejectsAppointmentCreationOnBlockedDate() throws Exception {
@@ -127,6 +140,9 @@ class BlockedDateIntegrationTest {
                 .andExpect(jsonPath("$.message", is("A data " + blockedDate + " esta bloqueada para agendamentos")));
     }
 
+    /**
+     * Valida RN08 e RF04: Consulta de disponibilidade em data bloqueada retorna lista vazia de horários.
+     */
     @Test
     @DisplayName("Deve retornar lista de horarios vazia ao consultar disponibilidade em data bloqueada")
     void returnsEmptyAvailabilityOnBlockedDate() throws Exception {
@@ -153,6 +169,10 @@ class BlockedDateIntegrationTest {
                 .andExpect(jsonPath("$", empty()));
     }
 
+    /**
+     * Valida RN08 e RF04/RF05: Bloqueio automático de feriado nacional brasileiro fixo (ex: Natal 25/12)
+     * sem necessidade de inserção manual de registro na tabela de bloqueios.
+     */
     @Test
     @DisplayName("Deve rejeitar agendamento e zerar disponibilidade em feriado nacional automatico (ex: Natal)")
     void automaticNationalHolidayBlocked() throws Exception {

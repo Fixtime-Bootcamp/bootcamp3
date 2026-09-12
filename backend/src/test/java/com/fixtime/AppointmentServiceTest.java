@@ -29,6 +29,7 @@ import com.fixtime.service.ServiceRepository;
 import com.fixtime.technician.Technician;
 import com.fixtime.technician.TechnicianRepository;
 import com.fixtime.technician.TechnicianService;
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
@@ -39,7 +40,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.io.ByteArrayOutputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,6 +51,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * Testes unitários para o AppointmentService.
+ * Valida o cumprimento das regras de negócio de agendamento (RN01 a RN08) e requisitos funcionais (RF04 a RF08).
+ */
 class AppointmentServiceTest {
 
     private AppointmentRepository appointmentRepository;
@@ -64,7 +68,7 @@ class AppointmentServiceTest {
     private ServiceCatalogService serviceCatalogService;
     private BlockedDateService blockedDateService;
 
-    // Fixed clock on a Wednesday at 08:00 UTC
+    // Fixed clock on a Wednesday at 08:00 UTC (2026-09-02)
     private final Clock clock = Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneId.of("UTC"));
 
     private AppointmentService appointmentService;
@@ -108,6 +112,9 @@ class AppointmentServiceTest {
     @DisplayName("Listagem de Agendamentos")
     class ListingTests {
 
+        /**
+         * Valida RF05: Listagem de agendamentos com filtros combinados (data, técnico, cliente, status) e paginação.
+         */
         @Test
         @DisplayName("Deve listar agendamentos usando filtros")
         void listsAppointmentsWithFilters() {
@@ -128,6 +135,9 @@ class AppointmentServiceTest {
             assertThat(response.getTotalElements()).isEqualTo(1);
         }
 
+        /**
+         * Valida RF05: Comportamento de listagem retornando página vazia quando não há registros correspondentes.
+         */
         @Test
         @DisplayName("Deve retornar pagina vazia sem agendamentos")
         void returnsEmptyPage() {
@@ -147,6 +157,9 @@ class AppointmentServiceTest {
     @DisplayName("Exportacao CSV")
     class ExportTests {
 
+        /**
+         * Valida RF08: Mapeamento de período de exportação CSV para intervalo inclusivo de startsAt e inclusão de UTF-8 BOM.
+         */
         @Test
         @DisplayName("Deve mapear startDate e endDate para intervalo inclusivo de startsAt")
         void mapsPeriodToListingBounds() {
@@ -172,6 +185,9 @@ class AppointmentServiceTest {
             assertThat(out.toByteArray()).startsWith(AppointmentCsvWriter.UTF8_BOM);
         }
 
+        /**
+         * Valida RF08 e RNF03: Rejeição de período de exportação inválido onde startDate é posterior a endDate.
+         */
         @Test
         @DisplayName("Deve rejeitar periodo com startDate posterior a endDate")
         void rejectsInvertedPeriod() {
@@ -181,6 +197,9 @@ class AppointmentServiceTest {
                     .hasMessageContaining("startDate");
         }
 
+        /**
+         * Valida RF08: Geração do nome padrão do arquivo CSV baseado na data atual do Clock do sistema.
+         */
         @Test
         @DisplayName("Deve gerar nome de arquivo com a data do relogio")
         void exportFilenameUsesClock() {
@@ -192,6 +211,9 @@ class AppointmentServiceTest {
     @DisplayName("Criação de Agendamentos")
     class CreationTests {
 
+        /**
+         * Valida RF05, RN01, RN02, RN03 e RN04: Criação de agendamento válido em horário comercial futuro com cálculo de término.
+         */
         @Test
         @DisplayName("Deve criar agendamento com sucesso dentro do horario comercial e respeitando antecedencia")
         void createsAppointmentSuccessfully() {
@@ -222,6 +244,9 @@ class AppointmentServiceTest {
             assertThat(response.status()).isEqualTo(AppointmentStatus.SCHEDULED);
         }
 
+        /**
+         * Valida RN03: Rejeição de agendamento solicitado com menos de 2 horas de antecedência em relação ao Clock atual.
+         */
         @Test
         @DisplayName("Deve rejeitar agendamento sem antecedencia minima de 2 horas")
         void rejectsInsufficientNotice() {
@@ -238,6 +263,9 @@ class AppointmentServiceTest {
                     .hasMessageContaining("duas horas de antecedencia");
         }
 
+        /**
+         * Valida RN04: Rejeição de agendamento em fins de semana (Sábado ou Domingo).
+         */
         @Test
         @DisplayName("Deve rejeitar agendamentos no fim de semana")
         void rejectsWeekend() {
@@ -254,6 +282,9 @@ class AppointmentServiceTest {
                     .hasMessageContaining("dia util");
         }
 
+        /**
+         * Valida RN04: Rejeição de agendamentos cujo horário extrapole o limite das 18:00 do mesmo dia.
+         */
         @Test
         @DisplayName("Deve rejeitar agendamentos fora do horario das 08:00 as 18:00")
         void rejectsOutsideBusinessHours() {
@@ -270,6 +301,9 @@ class AppointmentServiceTest {
                     .hasMessageContaining("08:00 e 18:00");
         }
 
+        /**
+         * Valida RN08: Rejeição de criação de agendamento em datas bloqueadas ou feriados nacionais.
+         */
         @Test
         @DisplayName("Deve rejeitar agendamento em data bloqueada / feriado")
         void rejectsBlockedDate() {
@@ -286,6 +320,9 @@ class AppointmentServiceTest {
                     .hasMessageContaining("bloqueada para agendamentos");
         }
 
+        /**
+         * Valida RN05: Bloqueio de sobreposição de horários para o mesmo técnico com status SCHEDULED.
+         */
         @Test
         @DisplayName("Deve rejeitar sobreposicao de horario para o mesmo tecnico")
         void rejectsOverlappingAppointments() {
@@ -315,6 +352,9 @@ class AppointmentServiceTest {
     @DisplayName("Consulta de Disponibilidade")
     class AvailabilityTests {
 
+        /**
+         * Valida RF04 e RN08: Consulta de disponibilidade em data bloqueada ou feriado deve retornar lista vazia de horários.
+         */
         @Test
         @DisplayName("Deve retornar lista de horarios vazia em data bloqueada ou feriado")
         void returnsEmptyAvailabilityOnBlockedDate() {
@@ -326,6 +366,9 @@ class AppointmentServiceTest {
             assertThat(availability).isEmpty();
         }
 
+        /**
+         * Valida RF04 e RN04: Retorno da janela integral de atendimento (08:00 às 18:00) em dia útil sem agendamentos conflitantes.
+         */
         @Test
         @DisplayName("Deve retornar horarios livres em dia util sem bloqueio")
         void returnsAvailableSlotsOnNonBlockedDay() {
@@ -341,6 +384,9 @@ class AppointmentServiceTest {
             assertThat(availability.get(0).endsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 18, 0));
         }
 
+        /**
+         * Valida RF04 e RN04: Rejeição de consulta de disponibilidade em fins de semana (Sábado/Domingo).
+         */
         @Test
         @DisplayName("Deve rejeitar consulta de disponibilidade em finais de semana")
         void rejectsWeekendAvailability() {
@@ -357,6 +403,9 @@ class AppointmentServiceTest {
     @DisplayName("Cancelamento e Conclusão")
     class TransitionTests {
 
+        /**
+         * Valida RF06 e RN06: Cancelamento com sucesso de agendamento com antecedência de pelo menos 2 horas.
+         */
         @Test
         @DisplayName("Deve cancelar agendamento com antecedencia de 2 horas")
         void cancelsAppointmentSuccessfully() {
@@ -376,6 +425,9 @@ class AppointmentServiceTest {
             verify(appointmentRepository).save(appointment);
         }
 
+        /**
+         * Valida RN06: Rejeição de cancelamento quando a antecedência é inferior a 2 horas em relação ao Clock.
+         */
         @Test
         @DisplayName("Deve rejeitar cancelamento com menos de 2 horas de antecedencia")
         void rejectsCancellationWithShortNotice() {
@@ -394,6 +446,9 @@ class AppointmentServiceTest {
                     .hasMessageContaining("duas horas de antecedencia");
         }
 
+        /**
+         * Valida RF07 e RN07: Conclusão bem-sucedida de agendamento estritamente após o horário final previsto (endsAt).
+         */
         @Test
         @DisplayName("Deve concluir agendamento estritamente apos o termino da visita")
         void completesAppointmentSuccessfully() {
@@ -413,6 +468,9 @@ class AppointmentServiceTest {
             assertThat(response.status()).isEqualTo(AppointmentStatus.COMPLETED);
         }
 
+        /**
+         * Valida RN07: Rejeição de tentativa de conclusão antes do término previsto da visita.
+         */
         @Test
         @DisplayName("Deve rejeitar conclusao antes do horario final da visita")
         void rejectsCompletionBeforeEnd() {
@@ -431,6 +489,9 @@ class AppointmentServiceTest {
                     .hasMessageContaining("apos o horario final");
         }
 
+        /**
+         * Valida RNF03: Lançamento de ResourceNotFoundException ao tentar operar sobre ID de agendamento inexistente.
+         */
         @Test
         @DisplayName("Deve lancar ResourceNotFoundException para agendamento inexistente")
         void throwsNotFoundForInvalidId() {

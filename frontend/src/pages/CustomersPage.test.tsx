@@ -12,6 +12,10 @@ const mockCustomers: Customer[] = [
   { id: 2, name: 'Bruno Costa', email: 'bruno@exemplo.com', phone: '11 92222-2222', active: false },
 ];
 
+/**
+ * Testes unitários para a página de Gestão de Clientes (CustomersPage).
+ * Valida o requisito funcional RF01 e as regras de ativação e integridade cadastral (RN01).
+ */
 describe('CustomersPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -29,12 +33,18 @@ describe('CustomersPage', () => {
     });
   });
 
+  /**
+   * Valida RF01: Exibição da lista de clientes cadastrados retornados pela API.
+   */
   it('exibe lista de clientes existentes ao carregar', async () => {
     render(<CustomersPage />);
     expect(await screen.findByText('Ana Silva')).toBeInTheDocument();
     expect(screen.getByText('Bruno Costa')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RN01: Exibição correta dos badges de status Ativo e Inativo.
+   */
   it('exibe badge Ativo e Inativo corretamente', async () => {
     render(<CustomersPage />);
     await screen.findByText('Ana Silva');
@@ -42,12 +52,18 @@ describe('CustomersPage', () => {
     expect(badges.length).toBeGreaterThanOrEqual(2);
   });
 
+  /**
+   * Valida RF01: Exibição de mensagem informativa quando a listagem de clientes está vazia.
+   */
   it('exibe mensagem de estado vazio quando não há clientes', async () => {
     vi.mocked(resources.listCustomers).mockResolvedValue([]);
     render(<CustomersPage />);
     expect(await screen.findByText(/Nenhum cliente cadastrado/)).toBeInTheDocument();
   });
 
+  /**
+   * Valida RNF02: Exibição de estado de carregamento e remoção após retorno dos dados.
+   */
   it('exibe estado de carregamento e o remove assim que os dados chegam', async () => {
     let resolveList: (customers: Customer[]) => void = () => {};
     vi.mocked(resources.listCustomers).mockReturnValue(
@@ -68,6 +84,9 @@ describe('CustomersPage', () => {
     });
   });
 
+  /**
+   * Valida RNF03: Exibição de banner de erro ao falhar a requisição de carregamento.
+   */
   it('exibe erro de carregamento quando a API falha', async () => {
     vi.mocked(resources.listCustomers).mockRejectedValue(
       new ApiError('NETWORK_ERROR', 'Não foi possível conectar à API.'),
@@ -76,6 +95,9 @@ describe('CustomersPage', () => {
     expect(await screen.findByText(/Erro ao carregar clientes/)).toBeInTheDocument();
   });
 
+  /**
+   * Valida RNF02: Validação no formulário dos campos obrigatórios (nome, email, telefone).
+   */
   it('valida campos obrigatórios antes de enviar o formulário', async () => {
     render(<CustomersPage />);
     await screen.findByText('Ana Silva');
@@ -85,6 +107,9 @@ describe('CustomersPage', () => {
     expect(screen.getByText('Telefone é obrigatório.')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RNF02: Validação de formato correto de e-mail no formulário.
+   */
   it('exibe erro de e-mail inválido', async () => {
     render(<CustomersPage />);
     await screen.findByText('Ana Silva');
@@ -95,6 +120,9 @@ describe('CustomersPage', () => {
     expect(await screen.findByText('E-mail inválido.')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RF01: Criação de novo cliente e atualização reativa da lista.
+   */
   it('cadastra cliente válido e atualiza a lista reativamente', async () => {
     render(<CustomersPage />);
     await screen.findByText('Ana Silva');
@@ -112,6 +140,9 @@ describe('CustomersPage', () => {
     });
   });
 
+  /**
+   * Valida RNF03: Exibição de erro da API quando o cadastro de cliente falha (ex.: e-mail duplicado).
+   */
   it('exibe erro da API ao falhar no cadastro', async () => {
     vi.mocked(resources.createCustomer).mockRejectedValue(
       new ApiError('CONFLICT', 'E-mail já cadastrado.'),
@@ -125,6 +156,9 @@ describe('CustomersPage', () => {
     expect(await screen.findByText('E-mail já cadastrado.')).toBeInTheDocument();
   });
 
+  /**
+   * Valida RN01: Alternância de status ativo/inativo do cliente.
+   */
   it('alterna status do cliente ao clicar em Desativar', async () => {
     render(<CustomersPage />);
     await screen.findByText('Ana Silva');

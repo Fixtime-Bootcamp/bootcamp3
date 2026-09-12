@@ -28,6 +28,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Testes de integração ponta a ponta para a API de Agendamentos e Domínios Core (FixTime).
+ * Valida o ciclo completo HTTP REST, persistência H2, validações Bean Validation e regras RN01 a RN07.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -39,10 +43,15 @@ class AppointmentIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Valida RF01, RF02, RF03, RF05, RF06, RN01, RN02, RN03, RN04, RN05 e RN06:
+     * Fluxo completo de criação de entidades, cálculo de término, bloqueio de conflito (409 Conflict),
+     * permissão de horários adjacentes (sem conflito), cancelamento com antecedência e listagem paginada.
+     */
     @Test
     @DisplayName("Fluxo completo: Cadastrar Cliente, Tecnico, Servico e criar Agendamento com persistencia H2")
     void fullSchedulingFlowIntegrationTest() throws Exception {
-        // 1. Cadastrar Cliente
+        // 1. Cadastrar Cliente (RF01, RN01)
         CreateCustomerRequest customerReq = new CreateCustomerRequest("Ana Silva", "ana.silva@example.com", "11988887777");
         String customerResponse = mockMvc.perform(post("/api/v1/customers")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -55,7 +64,7 @@ class AppointmentIntegrationTest {
 
         Long customerId = objectMapper.readTree(customerResponse).get("id").asLong();
 
-        // 2. Cadastrar Tecnico
+        // 2. Cadastrar Tecnico (RF02, RN01)
         CreateTechnicianRequest techReq = new CreateTechnicianRequest("Carlos Santos", "carlos.santos@example.com", "11977776666");
         String techResponse = mockMvc.perform(post("/api/v1/technicians")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +76,7 @@ class AppointmentIntegrationTest {
 
         Long techId = objectMapper.readTree(techResponse).get("id").asLong();
 
-        // 3. Cadastrar Servico
+        // 3. Cadastrar Servico (RF03, RN01, RN02)
         CreateServiceRequest serviceReq = new CreateServiceRequest(
                 "Troca de Placa",
                 "Substituicao de componente principal",
@@ -84,7 +93,7 @@ class AppointmentIntegrationTest {
 
         Long serviceId = objectMapper.readTree(serviceResponse).get("id").asLong();
 
-        // 4. Criar Agendamento em dia util futuro (Segunda-feira 09:00)
+        // 4. Criar Agendamento em dia util futuro (RF05, RN03, RN04)
         LocalDateTime futureMonday = LocalDateTime.now().plusWeeks(1)
                 .with(java.time.DayOfWeek.MONDAY)
                 .withHour(9)
@@ -112,7 +121,7 @@ class AppointmentIntegrationTest {
 
         Long appointmentId = objectMapper.readTree(appointmentResponse).get("id").asLong();
 
-        // 5. Rejeitar conflito de horario para o mesmo tecnico (mesma segunda-feira 09:30, 90min de duracao colide com 09:00-10:30)
+        // 5. Rejeitar conflito de horario para o mesmo tecnico (RN05, RNF03)
         CreateAppointmentRequest conflictReq = new CreateAppointmentRequest(
                 customerId,
                 techId,
@@ -126,7 +135,7 @@ class AppointmentIntegrationTest {
                 .andExpect(jsonPath("$.error", is("CONFLICT")))
                 .andExpect(jsonPath("$.message", notNullValue()));
 
-        // 6. Permitir horario adjacente (mesma segunda-feira 10:30, logo apos o fim das 10:30)
+        // 6. Permitir horario adjacente (RN05)
         CreateAppointmentRequest adjacentReq = new CreateAppointmentRequest(
                 customerId,
                 techId,
@@ -138,12 +147,12 @@ class AppointmentIntegrationTest {
                         .content(objectMapper.writeValueAsString(adjacentReq)))
                 .andExpect(status().isCreated());
 
-        // 7. Cancelar agendamento com antecedencia
+        // 7. Cancelar agendamento com antecedencia (RF06, RN06)
         mockMvc.perform(patch("/api/v1/appointments/" + appointmentId + "/cancel"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("CANCELLED")));
 
-        // 8. Listar agendamentos
+        // 8. Listar agendamentos (RF05, RNF01)
         mockMvc.perform(get("/api/v1/appointments"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
@@ -153,6 +162,9 @@ class AppointmentIntegrationTest {
                 .andExpect(jsonPath("$.size", is(20)));
     }
 
+    /**
+     * Valida RNF02 e RNF03: Resposta estruturada 400 Bad Request com lista de fieldErrors ao violar Bean Validation.
+     */
     @Test
     @DisplayName("Validar resposta 400 estruturada ao enviar payload invalido")
     void returns400OnInvalidPayload() throws Exception {
@@ -196,6 +208,9 @@ class AppointmentIntegrationTest {
             cancelAppointment(apt3);
         }
 
+        /**
+         * Valida RF05 e RNF01: Paginação padrão (page 0, size 20, sort startsAt ASC) e payload envelopado com metadados.
+         */
         @Test
         @DisplayName("Deve usar paginacao padrao: pagina 0, tamanho 20, ordenado por startsAt ASC")
         void defaultPagination() throws Exception {
@@ -210,6 +225,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.content[2].id", is(apt3.intValue())));
         }
 
+        /**
+         * Valida RF05: Consulta em página além do número total de registros retorna lista vazia mantendo totalElements correto.
+         */
         @Test
         @DisplayName("Deve retornar pagina vazia ao paginar alem do limite de dados")
         void pageBeyondAvailableData() throws Exception {
@@ -221,6 +239,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.size", is(10)));
         }
 
+        /**
+         * Valida RF05: Filtragem de agendamentos pelo ID do técnico.
+         */
         @Test
         @DisplayName("Deve filtrar por technicianId")
         void filtersByTechnicianId() throws Exception {
@@ -230,6 +251,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.totalElements", is(2)));
         }
 
+        /**
+         * Valida RF05: Filtragem de agendamentos pelo ID do cliente.
+         */
         @Test
         @DisplayName("Deve filtrar por customerId")
         void filtersByCustomerId() throws Exception {
@@ -238,6 +262,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.content", hasSize(2)));
         }
 
+        /**
+         * Valida RF05: Filtragem de agendamentos pelo status operacional (ex: CANCELLED).
+         */
         @Test
         @DisplayName("Deve filtrar por status")
         void filtersByStatus() throws Exception {
@@ -247,6 +274,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.content[0].id", is(apt3.intValue())));
         }
 
+        /**
+         * Valida RF05: Filtragem de agendamentos por intervalo de datas (startDate e endDate inclusivos).
+         */
         @Test
         @DisplayName("Deve filtrar por intervalo de startDate e endDate")
         void filtersByDateRange() throws Exception {
@@ -257,6 +287,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.content", hasSize(2)));
         }
 
+        /**
+         * Valida RF05: Combinação simultânea de múltiplos filtros (técnico, status e intervalo de datas).
+         */
         @Test
         @DisplayName("Deve combinar multiplos filtros simultaneamente")
         void combinesMultipleFilters() throws Exception {
@@ -269,6 +302,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.content", hasSize(2)));
         }
 
+        /**
+         * Valida RF05: Ordenação de agendamentos de forma ascendente e descendente por data de início (startsAt).
+         */
         @Test
         @DisplayName("Deve ordenar de forma ascendente e descendente por startsAt")
         void sortsAscendingAndDescending() throws Exception {
@@ -283,6 +319,9 @@ class AppointmentIntegrationTest {
                     .andExpect(jsonPath("$.content[2].id", is(apt1.intValue())));
         }
 
+        /**
+         * Valida RNF02 e RNF03: Retorno de 400 Bad Request ao passar valor inválido para enum de status.
+         */
         @Test
         @DisplayName("Deve retornar 400 para valor de status invalido")
         void invalidStatusReturns400() throws Exception {
