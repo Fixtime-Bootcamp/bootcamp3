@@ -1,75 +1,143 @@
 # FixTime
 
-Plataforma de agendamento de visitas para assistencia tecnica. Este repositorio usa SDD (Spec-Driven Development) e e dividido em backend Spring Boot e frontend React.
+## Visão Geral do Projeto
 
-## Stack
+O **FixTime** é uma plataforma determinística e escalável de agendamento de visitas para pequenas e médias assistências técnicas. Centraliza cadastros de clientes, técnicos e catálogo de serviços para eliminar conflitos de agenda, perda de histórico e falta de visibilidade comum em controles informais por telefone e planilhas.
 
-- Java 21, Spring Boot 3.5, Maven, PostgreSQL
-- React 19, TypeScript, Vite
-- JUnit, MockMvc, Vitest
+O sistema permite consultar a disponibilidade técnica em tempo real, criar e listar agendamentos com filtros e paginação, cancelar visitas elegíveis, registrar conclusão pós-atendimento, bloquear feriados nacionais e exportar históricos operacionais em CSV (RFC 4180 / UTF-8 BOM).
 
-## Executar localmente
+O repositório segue rigorosamente o modelo **SDD (Spec-Driven Development)**, dividindo-se em backend Spring Boot e frontend React.
 
-### Backend
+---
 
+## Integrantes 
+
+- Caio Boudens de Castro - RA: 22304522
+- Eduardo Frois Drumond - RA: 22303035
+- Fernando Medeiros Farias - RA: 22306100
+- Larissa Queiroz Ramos - RA: 22304308
+- Mayssa Barbosa Dias - RA: 22303603
+- Thiago Venâncio Gomides - RA: 22307398
+
+---
+
+## Stack Tecnológica
+
+- **Backend:** Java 21, Spring Boot 3.4.5, Maven, Spring Data JPA, PostgreSQL e H2 Database (testes)
+- **Frontend:** React 19, TypeScript, Vite, Nginx
+- **Testes & Qualidade:** JUnit 5, MockMvc, AssertJ, Vitest, Testing Library
+
+---
+
+## Guia de Instalação e Execução
+
+### Pré-requisitos
+- **Git** para clonagem do repositório.
+- **Docker & Docker Compose** (método recomendado — não exige Java, Maven ou Node.js instalados na máquina).
+- *Opcional para desenvolvimento nativo local:* JDK 21, Maven 3.9+ e Node.js 22+.
+
+Clone o repositório:
 ```bash
-cd backend
-mvn spring-boot:run
+git clone https://github.com/Fixtime-Bootcamp/bootcamp3.git
+cd bootcamp3
 ```
 
-A API fica em `http://localhost:8080`.
+---
 
-### Frontend
+### 🚀 Execução Completa com Docker (Recomendado)
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-A interface fica em `http://localhost:5173`.
-
-### Ambiente com Docker
+Inicie toda a aplicação (Banco PostgreSQL + API Backend + SPA Frontend) com um único comando:
 
 ```bash
 docker compose up --build
 ```
 
-## Testes
+* **Frontend (React/Nginx):** `http://localhost:5173` ou `http://localhost:80`
+* **Backend API (Spring Boot):** `http://localhost:8080/api/v1`
+* **Banco PostgreSQL:** `localhost:5432`
 
+---
+
+### Execução Local Nativa (Alternativa)
+
+#### 1. Backend (Spring Boot)
 ```bash
-cd backend && mvn test
-cd frontend && npm install && npm test -- --run
+cd backend
+mvn spring-boot:run
+```
+*A API estará disponível em `http://localhost:8080/api/v1` (usando banco H2 em memória por padrão).*
+
+#### 2. Frontend (React/Vite)
+Em outro terminal:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*A interface estará disponível em `http://localhost:5173` com proxy reverso automático para o backend.*
+
+---
+
+## Test Harness (Suíte de Testes Automatizados)
+
+A suíte cobre 100% dos Requisitos Funcionais (`RF01` a `RF08`) e Regras de Negócio (`RN01` a `RN08`), com rastreabilidade formal via docstrings em cada teste.
+
+### Executar Testes com Docker (Comando Único)
+```bash
+docker compose run --rm backend mvn test
 ```
 
-O resultado da primeira execucao sera registrado em [docs/test-report.md](docs/test-report.md).
+### Executar Testes Localmente
 
-## Governanca
+**Backend (JUnit 5 & MockMvc):**
+```bash
+cd backend
+mvn clean test
+```
 
-- `main`: branch protegida de release; nenhum commit direto.
-- `develop`: integracao da sprint.
-- `feature/*`: trabalho isolado por tarefa.
-- Toda mudanca deve entrar por Pull Request com revisao e aprovacao de outro membro.
-- Issues e GitHub Projects registram a decomposicao do trabalho.
+**Frontend (Vitest):**
+```bash
+cd frontend
+npm install
+npm test -- --run
+```
 
-## SDD
+O relatório consolidado de execução do Test Harness encontra-se em [docs/test-report.md](docs/test-report.md).
 
-A especificacao esta em [docs/specification.md](docs/specification.md), e suas revisoes em [docs/spec-changelog.md](docs/spec-changelog.md). O fluxo e: Specification -> Plan -> Implement -> Test -> Review.
+---
 
-## ADRs
+## Governança do Repositório
+
+- `main`: Branch protegida de release para produção; commits diretos são estritamente bloqueados.
+- `develop`: Branch de integração da sprint.
+- `feature/*`: Branches isoladas por Issue/tarefa.
+- Todo código é integrado exclusivamente via **Pull Requests** com revisão humana, verificação de CI e aprovação por outro membro da equipe.
+- Rastreamento e divisão de tarefas documentados via **Issues** e **GitHub Projects**.
+
+---
+
+## Especificação Técnica (SDD)
+
+A especificação canônica do FixTime encontra-se em [docs/SPEC.md](docs/SPEC.md), e o histórico evolutivo de refinamentos em [docs/spec-changelog.md](docs/spec-changelog.md).
+
+O ciclo de desenvolvimento segue o fluxo:  
+`Specification` ➔ `Plan` ➔ `Implement` ➔ `Test` ➔ `Review`
+
+---
+
+## ADRs — Decisões Arquiteturais Técnicas
 
 ### ADR-001: Spring Boot e React
+Escolhemos Spring Boot pela maturidade para APIs REST, validação declarativa e testes de integração. React com TypeScript e Vite oferece ciclo rápido de desenvolvimento e tipagem estática no cliente.
 
-Escolhemos Spring Boot pela maturidade para APIs REST, validacao e testes de integracao. React com TypeScript e Vite oferece ciclo rapido e tipagem no cliente.
+### ADR-002: Regras de Negócio na Camada de Serviço
+Regras de conflito, horário comercial, antecedência e transição de status ficam concentradas exclusivamente na camada de serviço (`AppointmentService`). Controllers apenas validam contratos HTTP e delegam para o domínio.
 
-### ADR-002: Regras no Service
+### ADR-003: PostgreSQL em Produção/Compose e H2 em Testes
+PostgreSQL é adotado no ambiente Docker Compose por seu suporte a transações ACID e integridade referencial. O banco em memória H2 é utilizado na execução isolada de testes para garantir velocidade e independência de infraestrutura externa.
 
-Regras de conflito, horario e transicao de status ficam na camada de servico. Controllers apenas validam o contrato HTTP e delegam o caso de uso.
-
-### ADR-003: PostgreSQL em runtime e H2 em testes
-
-PostgreSQL representa o ambiente de execucao; H2 reduz o custo e acelera testes automatizados isolados.
+---
 
 ## Agentes de IA
 
-O uso do GitHub Copilot e documentado em [AGENTS.md](AGENTS.md) e [.github/copilot-instructions.md](.github/copilot-instructions.md). Toda sugestao gerada passa por revisao humana, testes e code review.
+As diretrizes operacionais de assistência por IA são versionadas em [AGENTS.md](AGENTS.md), [.cursorrules](.cursorrules) e [.github/copilot-instructions.md](.github/copilot-instructions.md). Toda sugestão gerada passa por testes automatizados e code review humano rigoroso antes do merge.

@@ -1,43 +1,505 @@
 package com.fixtime;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import com.fixtime.appointment.Appointment;
+import com.fixtime.appointment.AppointmentCsvWriter;
+import com.fixtime.appointment.AppointmentRepository;
+import com.fixtime.appointment.AppointmentResponse;
 import com.fixtime.appointment.AppointmentService;
+import com.fixtime.appointment.AppointmentStatus;
 import com.fixtime.appointment.CreateAppointmentRequest;
+import com.fixtime.blockeddate.BlockedDateRepository;
+import com.fixtime.blockeddate.BlockedDateService;
+import com.fixtime.blockeddate.NationalHolidayProvider;
+import com.fixtime.customer.Customer;
+import com.fixtime.customer.CustomerRepository;
+import com.fixtime.customer.CustomerService;
+import com.fixtime.exception.ConflictException;
+import com.fixtime.exception.ResourceNotFoundException;
+import com.fixtime.service.ServiceCatalogService;
+import com.fixtime.service.ServiceEntity;
+import com.fixtime.service.ServiceRepository;
+import com.fixtime.technician.Technician;
+import com.fixtime.technician.TechnicianRepository;
+import com.fixtime.technician.TechnicianService;
+import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.ZoneId;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
+/**
+ * Testes unitários para o AppointmentService.
+ * Valida o cumprimento das regras de negócio de agendamento (RN01 a RN08) e requisitos funcionais (RF04 a RF08).
+ */
 class AppointmentServiceTest {
+
+    private AppointmentRepository appointmentRepository;
+    private CustomerRepository customerRepository;
+    private TechnicianRepository technicianRepository;
+    private ServiceRepository serviceRepository;
+    private BlockedDateRepository blockedDateRepository;
+
+    private CustomerService customerService;
+    private TechnicianService technicianService;
+    private ServiceCatalogService serviceCatalogService;
+    private BlockedDateService blockedDateService;
+
+    // Fixed clock on a Wednesday at 08:00 UTC (2026-09-02)
     private final Clock clock = Clock.fixed(Instant.parse("2026-09-02T08:00:00Z"), ZoneId.of("UTC"));
 
-    @Test
-    void createsAppointmentWithinBusinessHours() {
-        AppointmentService service = new AppointmentService(clock);
-        var appointment = service.create(new CreateAppointmentRequest(1L, 2L, 3L,
-                LocalDateTime.of(2026, 9, 2, 11, 0), 60));
-        assertThat(appointment.endsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 12, 0));
+    private AppointmentService appointmentService;
+
+    private Customer activeCustomer;
+    private Technician activeTechnician;
+    private ServiceEntity activeService;
+
+    @BeforeEach
+    void setUp() {
+        appointmentRepository = mock(AppointmentRepository.class);
+        customerRepository = mock(CustomerRepository.class);
+        technicianRepository = mock(TechnicianRepository.class);
+        serviceRepository = mock(ServiceRepository.class);
+        blockedDateRepository = mock(BlockedDateRepository.class);
+
+        customerService = new CustomerService(customerRepository);
+        technicianService = new TechnicianService(technicianRepository);
+        serviceCatalogService = new ServiceCatalogService(serviceRepository);
+        blockedDateService = new BlockedDateService(blockedDateRepository, new NationalHolidayProvider(), clock);
+
+        appointmentService = new AppointmentService(
+                appointmentRepository,
+                customerService,
+                technicianService,
+                serviceCatalogService,
+                blockedDateService,
+                clock);
+
+        activeCustomer = new Customer("Cliente Exemplo", "cliente@email.com", "11999999999", true);
+        activeCustomer.setId(1L);
+
+        activeTechnician = new Technician("Tecnico Exemplo", "tecnico@email.com", "11888888888", true);
+        activeTechnician.setId(2L);
+
+        activeService = new ServiceEntity("Reparo", "Descricao", 60, new BigDecimal("150.00"), true);
+        activeService.setId(3L);
     }
 
-    @Test
-    void rejectsOverlappingVisitsForSameTechnician() {
-        AppointmentService service = new AppointmentService(clock);
-        service.create(new CreateAppointmentRequest(1L, 2L, 3L,
-                LocalDateTime.of(2026, 9, 2, 11, 0), 60));
-        assertThatThrownBy(() -> service.create(new CreateAppointmentRequest(4L, 2L, 3L,
-                LocalDateTime.of(2026, 9, 2, 11, 30), 30)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("intervalo");
+    @Nested
+    @DisplayName("Listagem de Agendamentos")
+    class ListingTests {
+
+        /**
+         * Valida RF05: Listagem de agendamentos com filtros combinados (data, técnico, cliente, status) e paginação.
+         */
+        @Test
+        @DisplayName("Deve listar agendamentos usando filtros")
+        void listsAppointmentsWithFilters() {
+            Appointment appointment = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 10, 0),
+                    LocalDateTime.of(2026, 9, 2, 11, 0),
+                    60, AppointmentStatus.SCHEDULED);
+            Pageable pageable = PageRequest.of(0, 20, Sort.by("startsAt").ascending());
+            when(appointmentRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(new PageImpl<>(List.of(appointment), pageable, 1));
+
+            Page<AppointmentResponse> response = appointmentService.list(
+                    LocalDate.of(2026, 9, 2), LocalDate.of(2026, 9, 2), 2L, 1L,
+                    AppointmentStatus.SCHEDULED, pageable);
+
+            assertThat(response.getContent()).hasSize(1);
+            assertThat(response.getContent().get(0).technicianId()).isEqualTo(2L);
+            assertThat(response.getTotalElements()).isEqualTo(1);
+        }
+
+        /**
+         * Valida RF05: Comportamento de listagem retornando página vazia quando não há registros correspondentes.
+         */
+        @Test
+        @DisplayName("Deve retornar pagina vazia sem agendamentos")
+        void returnsEmptyPage() {
+            Pageable pageable = PageRequest.of(0, 20, Sort.by("startsAt").ascending());
+            when(appointmentRepository.findAll(any(Specification.class), eq(pageable)))
+                    .thenReturn(Page.empty(pageable));
+
+            Page<AppointmentResponse> response = appointmentService.list(
+                    null, null, null, null, null, pageable);
+
+            assertThat(response.getContent()).isEmpty();
+            assertThat(response.getTotalElements()).isEqualTo(0);
+        }
     }
 
-    @Test
-    void rejectsWeekendVisits() {
-        AppointmentService service = new AppointmentService(clock);
-        assertThatThrownBy(() -> service.create(new CreateAppointmentRequest(1L, 2L, 3L,
-                LocalDateTime.of(2026, 9, 5, 11, 0), 60)))
-                .isInstanceOf(IllegalArgumentException.class);
+    @Nested
+    @DisplayName("Exportacao CSV")
+    class ExportTests {
+
+        /**
+         * Valida RF08: Mapeamento de período de exportação CSV para intervalo inclusivo de startsAt e inclusão de UTF-8 BOM.
+         */
+        @Test
+        @DisplayName("Deve mapear startDate e endDate para intervalo inclusivo de startsAt")
+        void mapsPeriodToListingBounds() {
+            when(appointmentRepository.streamForExport(
+                    LocalDateTime.of(2026, 9, 1, 0, 0),
+                    LocalDateTime.of(2026, 9, 4, 0, 0),
+                    2L,
+                    AppointmentStatus.SCHEDULED)).thenReturn(Stream.empty());
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            appointmentService.writeExportCsv(
+                    out,
+                    LocalDate.of(2026, 9, 1),
+                    LocalDate.of(2026, 9, 3),
+                    2L,
+                    AppointmentStatus.SCHEDULED);
+
+            verify(appointmentRepository).streamForExport(
+                    LocalDateTime.of(2026, 9, 1, 0, 0),
+                    LocalDateTime.of(2026, 9, 4, 0, 0),
+                    2L,
+                    AppointmentStatus.SCHEDULED);
+            assertThat(out.toByteArray()).startsWith(AppointmentCsvWriter.UTF8_BOM);
+        }
+
+        /**
+         * Valida RF08 e RNF03: Rejeição de período de exportação inválido onde startDate é posterior a endDate.
+         */
+        @Test
+        @DisplayName("Deve rejeitar periodo com startDate posterior a endDate")
+        void rejectsInvertedPeriod() {
+            assertThatThrownBy(() -> appointmentService.validateExportPeriod(
+                    LocalDate.of(2026, 9, 10), LocalDate.of(2026, 9, 1)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("startDate");
+        }
+
+        /**
+         * Valida RF08: Geração do nome padrão do arquivo CSV baseado na data atual do Clock do sistema.
+         */
+        @Test
+        @DisplayName("Deve gerar nome de arquivo com a data do relogio")
+        void exportFilenameUsesClock() {
+            assertThat(appointmentService.exportFilename()).isEqualTo("appointments-2026-09-02.csv");
+        }
+    }
+
+    @Nested
+    @DisplayName("Criação de Agendamentos")
+    class CreationTests {
+
+        /**
+         * Valida RF05, RN01, RN02, RN03 e RN04: Criação de agendamento válido em horário comercial futuro com cálculo de término.
+         */
+        @Test
+        @DisplayName("Deve criar agendamento com sucesso dentro do horario comercial e respeitando antecedencia")
+        void createsAppointmentSuccessfully() {
+            when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
+            when(appointmentRepository.findConflictingAppointments(eq(2L), eq(List.of(AppointmentStatus.SCHEDULED)), any(), any()))
+                    .thenReturn(Collections.emptyList());
+
+            Appointment saved = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 11, 0),
+                    LocalDateTime.of(2026, 9, 2, 12, 0),
+                    60,
+                    AppointmentStatus.SCHEDULED);
+            saved.setId(10L);
+            when(appointmentRepository.save(any(Appointment.class))).thenReturn(saved);
+
+            CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 11, 0));
+
+            AppointmentResponse response = appointmentService.create(request);
+
+            assertThat(response).isNotNull();
+            assertThat(response.id()).isEqualTo(10L);
+            assertThat(response.startsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 11, 0));
+            assertThat(response.endsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 12, 0));
+            assertThat(response.durationMinutes()).isEqualTo(60);
+            assertThat(response.status()).isEqualTo(AppointmentStatus.SCHEDULED);
+        }
+
+        /**
+         * Valida RN03: Rejeição de agendamento solicitado com menos de 2 horas de antecedência em relação ao Clock atual.
+         */
+        @Test
+        @DisplayName("Deve rejeitar agendamento sem antecedencia minima de 2 horas")
+        void rejectsInsufficientNotice() {
+            when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
+
+            // Clock is 08:00, 09:30 is only 1.5 hours in advance
+            CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 9, 30));
+
+            assertThatThrownBy(() -> appointmentService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("duas horas de antecedencia");
+        }
+
+        /**
+         * Valida RN04: Rejeição de agendamento em fins de semana (Sábado ou Domingo).
+         */
+        @Test
+        @DisplayName("Deve rejeitar agendamentos no fim de semana")
+        void rejectsWeekend() {
+            when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
+
+            // 2026-09-05 is Saturday
+            CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 5, 10, 0));
+
+            assertThatThrownBy(() -> appointmentService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("dia util");
+        }
+
+        /**
+         * Valida RN04: Rejeição de agendamentos cujo horário extrapole o limite das 18:00 do mesmo dia.
+         */
+        @Test
+        @DisplayName("Deve rejeitar agendamentos fora do horario das 08:00 as 18:00")
+        void rejectsOutsideBusinessHours() {
+            when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
+
+            // Starts at 17:30 with 60min duration ends at 18:30 (after 18:00)
+            CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 17, 30));
+
+            assertThatThrownBy(() -> appointmentService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("08:00 e 18:00");
+        }
+
+        /**
+         * Valida RN08: Rejeição de criação de agendamento em datas bloqueadas ou feriados nacionais.
+         */
+        @Test
+        @DisplayName("Deve rejeitar agendamento em data bloqueada / feriado")
+        void rejectsBlockedDate() {
+            when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 2))).thenReturn(true);
+
+            CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 11, 0));
+
+            assertThatThrownBy(() -> appointmentService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("bloqueada para agendamentos");
+        }
+
+        /**
+         * Valida RN05: Bloqueio de sobreposição de horários para o mesmo técnico com status SCHEDULED.
+         */
+        @Test
+        @DisplayName("Deve rejeitar sobreposicao de horario para o mesmo tecnico")
+        void rejectsOverlappingAppointments() {
+            when(customerRepository.findById(1L)).thenReturn(Optional.of(activeCustomer));
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(serviceRepository.findById(3L)).thenReturn(Optional.of(activeService));
+
+            Appointment existing = new Appointment(9L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 10, 0),
+                    LocalDateTime.of(2026, 9, 2, 11, 30),
+                    90,
+                    AppointmentStatus.SCHEDULED);
+
+            when(appointmentRepository.findConflictingAppointments(eq(2L), eq(List.of(AppointmentStatus.SCHEDULED)), any(), any()))
+                    .thenReturn(List.of(existing));
+
+            CreateAppointmentRequest request = new CreateAppointmentRequest(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 11, 0));
+
+            assertThatThrownBy(() -> appointmentService.create(request))
+                    .isInstanceOf(ConflictException.class)
+                    .hasMessageContaining("ja possui uma visita nesse intervalo");
+        }
+    }
+
+    @Nested
+    @DisplayName("Consulta de Disponibilidade")
+    class AvailabilityTests {
+
+        /**
+         * Valida RF04 e RN08: Consulta de disponibilidade em data bloqueada ou feriado deve retornar lista vazia de horários.
+         */
+        @Test
+        @DisplayName("Deve retornar lista de horarios vazia em data bloqueada ou feriado")
+        void returnsEmptyAvailabilityOnBlockedDate() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 2))).thenReturn(true);
+
+            var availability = appointmentService.availability(2L, LocalDate.of(2026, 9, 2));
+
+            assertThat(availability).isEmpty();
+        }
+
+        /**
+         * Valida RF04 e RN04: Retorno da janela integral de atendimento (08:00 às 18:00) em dia útil sem agendamentos conflitantes.
+         */
+        @Test
+        @DisplayName("Deve retornar horarios livres em dia util sem bloqueio")
+        void returnsAvailableSlotsOnNonBlockedDay() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 2))).thenReturn(false);
+            when(appointmentRepository.findByTechnicianAndStatusAndDay(eq(2L), eq(AppointmentStatus.SCHEDULED), any(), any()))
+                    .thenReturn(Collections.emptyList());
+
+            var availability = appointmentService.availability(2L, LocalDate.of(2026, 9, 2));
+
+            assertThat(availability).hasSize(1);
+            assertThat(availability.get(0).startsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 8, 0));
+            assertThat(availability.get(0).endsAt()).isEqualTo(LocalDateTime.of(2026, 9, 2, 18, 0));
+        }
+
+        /**
+         * Valida RF04 e RN04: Rejeição de consulta de disponibilidade em fins de semana (Sábado/Domingo).
+         */
+        @Test
+        @DisplayName("Deve rejeitar consulta de disponibilidade em finais de semana")
+        void rejectsWeekendAvailability() {
+            when(technicianRepository.findById(2L)).thenReturn(Optional.of(activeTechnician));
+            when(blockedDateRepository.existsByDate(LocalDate.of(2026, 9, 5))).thenReturn(false);
+
+            assertThatThrownBy(() -> appointmentService.availability(2L, LocalDate.of(2026, 9, 5)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("dias uteis");
+        }
+    }
+
+    @Nested
+    @DisplayName("Cancelamento e Conclusão")
+    class TransitionTests {
+
+        /**
+         * Valida RF06 e RN06: Cancelamento com sucesso de agendamento com antecedência de pelo menos 2 horas.
+         */
+        @Test
+        @DisplayName("Deve cancelar agendamento com antecedencia de 2 horas")
+        void cancelsAppointmentSuccessfully() {
+            Appointment appointment = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 14, 0),
+                    LocalDateTime.of(2026, 9, 2, 15, 0),
+                    60,
+                    AppointmentStatus.SCHEDULED);
+            appointment.setId(10L);
+
+            when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+            when(appointmentRepository.save(any(Appointment.class))).thenAnswer(i -> i.getArgument(0));
+
+            AppointmentResponse response = appointmentService.cancel(10L);
+
+            assertThat(response.status()).isEqualTo(AppointmentStatus.CANCELLED);
+            verify(appointmentRepository).save(appointment);
+        }
+
+        /**
+         * Valida RN06: Rejeição de cancelamento quando a antecedência é inferior a 2 horas em relação ao Clock.
+         */
+        @Test
+        @DisplayName("Deve rejeitar cancelamento com menos de 2 horas de antecedencia")
+        void rejectsCancellationWithShortNotice() {
+            // Clock is 08:00, appointment at 09:00 (only 1 hour notice)
+            Appointment appointment = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 9, 0),
+                    LocalDateTime.of(2026, 9, 2, 10, 0),
+                    60,
+                    AppointmentStatus.SCHEDULED);
+            appointment.setId(10L);
+
+            when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+
+            assertThatThrownBy(() -> appointmentService.cancel(10L))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("duas horas de antecedencia");
+        }
+
+        /**
+         * Valida RF07 e RN07: Conclusão bem-sucedida de agendamento estritamente após o horário final previsto (endsAt).
+         */
+        @Test
+        @DisplayName("Deve concluir agendamento estritamente apos o termino da visita")
+        void completesAppointmentSuccessfully() {
+            // Appointment ended at 07:30, clock is 08:00 (after endsAt)
+            Appointment appointment = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 6, 30),
+                    LocalDateTime.of(2026, 9, 2, 7, 30),
+                    60,
+                    AppointmentStatus.SCHEDULED);
+            appointment.setId(10L);
+
+            when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+            when(appointmentRepository.save(any(Appointment.class))).thenAnswer(i -> i.getArgument(0));
+
+            AppointmentResponse response = appointmentService.complete(10L);
+
+            assertThat(response.status()).isEqualTo(AppointmentStatus.COMPLETED);
+        }
+
+        /**
+         * Valida RN07: Rejeição de tentativa de conclusão antes do término previsto da visita.
+         */
+        @Test
+        @DisplayName("Deve rejeitar conclusao antes do horario final da visita")
+        void rejectsCompletionBeforeEnd() {
+            // Appointment ends at 10:00, clock is 08:00
+            Appointment appointment = new Appointment(1L, 2L, 3L,
+                    LocalDateTime.of(2026, 9, 2, 9, 0),
+                    LocalDateTime.of(2026, 9, 2, 10, 0),
+                    60,
+                    AppointmentStatus.SCHEDULED);
+            appointment.setId(10L);
+
+            when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+
+            assertThatThrownBy(() -> appointmentService.complete(10L))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("apos o horario final");
+        }
+
+        /**
+         * Valida RNF03: Lançamento de ResourceNotFoundException ao tentar operar sobre ID de agendamento inexistente.
+         */
+        @Test
+        @DisplayName("Deve lancar ResourceNotFoundException para agendamento inexistente")
+        void throwsNotFoundForInvalidId() {
+            when(appointmentRepository.findById(999L)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> appointmentService.cancel(999L))
+                    .isInstanceOf(ResourceNotFoundException.class)
+                    .hasMessageContaining("ID 999");
+        }
     }
 }
