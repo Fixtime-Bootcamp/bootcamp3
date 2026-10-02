@@ -54,6 +54,7 @@ docker compose up --build
 
 * **Frontend (React/Nginx):** `http://localhost:5173` ou `http://localhost:80`
 * **Backend API (Spring Boot):** `http://localhost:8080/api/v1`
+* **Documentação da API (Swagger UI):** `http://localhost:8080/swagger-ui.html` (especificação OpenAPI JSON em `http://localhost:8080/v3/api-docs`)
 * **Banco PostgreSQL:** `localhost:5432`
 
 ---
