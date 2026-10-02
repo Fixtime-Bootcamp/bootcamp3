@@ -1,5 +1,7 @@
 package com.fixtime.appointment;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import com.fixtime.web.PageResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Agendamentos", description = "Criacao, consulta e transicao de status de agendamentos")
 @RestController
 @RequestMapping("/api/v1/appointments")
 public class AppointmentController {
@@ -39,11 +42,13 @@ public class AppointmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Criar agendamento")
     public AppointmentResponse create(@Valid @RequestBody CreateAppointmentRequest request) {
         return service.create(request);
     }
 
     @GetMapping
+    @Operation(summary = "Listar agendamentos com filtros e paginacao")
     public PageResponse<AppointmentResponse> list(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
@@ -55,6 +60,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/export")
+    @Operation(summary = "Exportar agendamentos em CSV")
     public void export(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
@@ -71,11 +77,13 @@ public class AppointmentController {
     }
 
     @PatchMapping("/{id}/cancel")
+    @Operation(summary = "Cancelar agendamento")
     public AppointmentResponse cancel(@PathVariable Long id) {
         return service.cancel(id);
     }
 
     @PatchMapping("/{id}/complete")
+    @Operation(summary = "Concluir agendamento")
     public AppointmentResponse complete(@PathVariable Long id) {
         return service.complete(id);
     }
