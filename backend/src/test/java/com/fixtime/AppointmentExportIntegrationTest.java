@@ -41,6 +41,9 @@ class AppointmentExportIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private com.fixtime.blockeddate.NationalHolidayProvider holidayProvider;
+
     /**
      * Valida RF08: Exportação de CSV com BOM UTF-8 (para compatibilidade com Excel),
      * cabeçalho RFC 4180 e dados formatados com caracteres acentuados.
@@ -55,6 +58,9 @@ class AppointmentExportIntegrationTest {
         LocalDateTime futureMonday = LocalDateTime.now().plusWeeks(1)
                 .with(java.time.DayOfWeek.MONDAY)
                 .withHour(9).withMinute(0).withSecond(0).withNano(0);
+        while (holidayProvider.isNationalHoliday(futureMonday.toLocalDate())) {
+            futureMonday = futureMonday.plusWeeks(1);
+        }
 
         createAppointment(customerId, technicianId, serviceId, futureMonday);
 

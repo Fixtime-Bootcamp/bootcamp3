@@ -43,6 +43,9 @@ class AppointmentIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private com.fixtime.blockeddate.NationalHolidayProvider holidayProvider;
+
     /**
      * Valida RF01, RF02, RF03, RF05, RF06, RN01, RN02, RN03, RN04, RN05 e RN06:
      * Fluxo completo de criação de entidades, cálculo de término, bloqueio de conflito (409 Conflict),
@@ -94,12 +97,7 @@ class AppointmentIntegrationTest {
         Long serviceId = objectMapper.readTree(serviceResponse).get("id").asLong();
 
         // 4. Criar Agendamento em dia util futuro (RF05, RN03, RN04)
-        LocalDateTime futureMonday = LocalDateTime.now().plusWeeks(1)
-                .with(java.time.DayOfWeek.MONDAY)
-                .withHour(9)
-                .withMinute(0)
-                .withSecond(0)
-                .withNano(0);
+        LocalDateTime futureMonday = findNextNonHolidayMonday(9);
 
         CreateAppointmentRequest appointmentReq = new CreateAppointmentRequest(
                 customerId,
@@ -196,9 +194,9 @@ class AppointmentIntegrationTest {
             Long tech2 = createTechnician("Tecnico Dois", "tecnico2@example.com", "11944444444");
             Long serviceId = createService("Manutencao", 60);
 
-            LocalDateTime monday = nextWeekday(java.time.DayOfWeek.MONDAY, 9);
-            LocalDateTime tuesday = nextWeekday(java.time.DayOfWeek.TUESDAY, 9);
-            LocalDateTime wednesday = nextWeekday(java.time.DayOfWeek.WEDNESDAY, 9);
+            LocalDateTime monday = findNextNonHolidayWeekStart(9);
+            LocalDateTime tuesday = monday.plusDays(1);
+            LocalDateTime wednesday = monday.plusDays(2);
             mondayDate = monday.toLocalDate();
             tuesdayDate = tuesday.toLocalDate();
 
@@ -378,12 +376,31 @@ class AppointmentIntegrationTest {
                 .andExpect(status().isOk());
     }
 
-    private LocalDateTime nextWeekday(java.time.DayOfWeek day, int hour) {
-        return LocalDateTime.now().plusWeeks(1)
-                .with(day)
+    private LocalDateTime findNextNonHolidayMonday(int hour) {
+        LocalDateTime dt = LocalDateTime.now().plusWeeks(1)
+                .with(java.time.DayOfWeek.MONDAY)
                 .withHour(hour)
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0);
+        while (holidayProvider.isNationalHoliday(dt.toLocalDate())) {
+            dt = dt.plusWeeks(1);
+        }
+        return dt;
+    }
+
+    private LocalDateTime findNextNonHolidayWeekStart(int hour) {
+        LocalDateTime dt = LocalDateTime.now().plusWeeks(1)
+                .with(java.time.DayOfWeek.MONDAY)
+                .withHour(hour)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+        while (holidayProvider.isNationalHoliday(dt.toLocalDate())
+                || holidayProvider.isNationalHoliday(dt.plusDays(1).toLocalDate())
+                || holidayProvider.isNationalHoliday(dt.plusDays(2).toLocalDate())) {
+            dt = dt.plusWeeks(1);
+        }
+        return dt;
     }
 }
