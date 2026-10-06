@@ -21,6 +21,72 @@ O repositório segue rigorosamente o modelo **SDD (Spec-Driven Development)**, d
 
 ---
 
+## Arquitetura e Fluxo da Aplicação
+
+O sistema opera em uma arquitetura em camadas desacoplada, garantindo que o frontend seja um cliente REST estrito e que todas as regras de negócio residam exclusivamente na camada de serviço do Spring Boot.
+
+```mermaid
+flowchart TD
+    subgraph Frontend["Frontend SPA (React 19 + TypeScript)"]
+        UI["Interface do Usuário / Agenda Operacional"]
+        APIClient["API Client Tipado (client.ts)"]
+        UI --> APIClient
+    end
+
+    subgraph Backend["Backend API (Spring Boot 3.4.5)"]
+        Controller["REST Controllers (/api/v1)"]
+        GlobalHandler["GlobalExceptionHandler (JSON ErrorResponse)"]
+        
+        subgraph DomainServices["Camada de Serviço (Regras de Domínio)"]
+            AppService["AppointmentService"]
+            HolidayService["BlockedDateService / NationalHolidayProvider"]
+            CustService["CustomerService / TechnicianService / ServiceCatalogService"]
+        end
+
+        subgraph Engine["Validações e Regras de Negócio (SDD)"]
+            V1{"Cadastros Ativos? (RN01)"}
+            V2{"Jornada Comercial 08:00-18:00 Seg-Sex? (RN04)"}
+            V3{"Antecedência Mínima >= 2h? (RN03)"}
+            V4{"Feriado ou Bloqueio Operacional? (RN08)"}
+            V5{"Sobreposição de Horário do Técnico? (RN05)"}
+        end
+
+        Repo["Spring Data Repositories (JPA)"]
+    end
+
+    subgraph Database["Camada de Dados"]
+        PG[("PostgreSQL (Docker Compose / Prod)")]
+        H2[("H2 Database (Test Harness)")]
+    end
+
+    APIClient -->|JSON / REST| Controller
+    Controller --> DomainServices
+    Controller -.->|Exceções Mapeadas| GlobalHandler
+    GlobalHandler -.->|ErrorResponse 400, 404, 409| UI
+
+    AppService --> Engine
+    Engine -->|Validação Falhou| GlobalHandler
+    Engine -->|Aprovado - endsAt calculado| Repo
+    CustService --> Repo
+    HolidayService --> Repo
+
+    Repo --> PG
+    Repo --> H2
+```
+
+### Ciclo de Vida do Agendamento (Transições de Status)
+
+```mermaid
+stateDiagram-v2
+    [*] --> SCHEDULED: Criado (startsAt >= agora + 2h, sem conflito)
+    SCHEDULED --> CANCELLED: Solicitar cancelamento com antecedência >= 2h (RN06)
+    SCHEDULED --> COMPLETED: Registrar conclusão estritamente após término previsto (RN07)
+    CANCELLED --> [*]
+    COMPLETED --> [*]
+```
+
+---
+
 ## Stack Tecnológica
 
 - **Backend:** Java 21, Spring Boot 3.4.5, Maven, Spring Data JPA, PostgreSQL e H2 Database (testes)
@@ -54,6 +120,7 @@ docker compose up --build
 
 * **Frontend (React/Nginx):** `http://localhost:5173` ou `http://localhost:80`
 * **Backend API (Spring Boot):** `http://localhost:8080/api/v1`
+* **Documentação da API (Swagger UI):** `http://localhost:8080/swagger-ui.html` (especificação OpenAPI JSON em `http://localhost:8080/v3/api-docs`)
 * **Banco PostgreSQL:** `localhost:5432`
 
 ---
@@ -111,6 +178,7 @@ O relatório consolidado de execução do Test Harness encontra-se em [docs/test
 - `main`: Branch protegida de release para produção; commits diretos são estritamente bloqueados.
 - `develop`: Branch de integração da sprint.
 - `feature/*`: Branches isoladas por Issue/tarefa.
+- **Ciclo de Vida das Branches (Limpeza Pós-Merge):** Por padrão de governança da equipe, todas as feature branches (tanto no repositório remoto quanto no ambiente local) são deletadas imediatamente após o merge de seus respectivos Pull Requests para `develop` ou `main`. Essa prática visa manter o repositório limpo, prevenir ramificações obsoletas ou desatualizadas e simplificar a manutenção do ambiente colaborativo.
 - Todo código é integrado exclusivamente via **Pull Requests** com revisão humana, verificação de CI e aprovação por outro membro da equipe.
 - Rastreamento e divisão de tarefas documentados via **Issues** e **GitHub Projects**.
 
@@ -141,3 +209,17 @@ PostgreSQL é adotado no ambiente Docker Compose por seu suporte a transações 
 ## Agentes de IA
 
 As diretrizes operacionais de assistência por IA são versionadas em [AGENTS.md](AGENTS.md), [.cursorrules](.cursorrules) e [.github/copilot-instructions.md](.github/copilot-instructions.md). Toda sugestão gerada passa por testes automatizados e code review humano rigoroso antes do merge.
+
+---
+
+## 📚 Documentação e Relatórios da Entrega 2
+
+A entrega consolidada reúne os seguintes documentos técnicos e analíticos:
+
+1. **[docs/SPEC.md](docs/SPEC.md):** Especificação Técnica Canônica do FixTime (SDD), cobrindo RF01-RF08, RN01-RN08 e contratos literais JSON.
+2. **[docs/spec-changelog.md](docs/spec-changelog.md):** Histórico evolutivo dos refinamentos e decisões de modelagem.
+3. **[docs/test-report.md](docs/test-report.md):** Relatório Consolidado de Execução do Test Harness (104 testes automatizados com 100% de sucesso).
+4. **[docs/erros-logicos.md](docs/erros-logicos.md):** Inspeção de erros lógicos identificados no ciclo, estratégias de correção, ciclo de re-especificação e relato de experiência da equipe.
+5. **[docs/relatorio-etico-ia.md](docs/relatorio-etico-ia.md):** Análise comparativa entre ferramentas (Claude Code, Codex, Cursor e Antigravity) e fundamentação crítica dos pilares éticos, segurança, privacidade (LGPD) e centralidade da homologação humana.
+6. **[docs/relatorio-entrega-2-consolidado.md](docs/relatorio-entrega-2-consolidado.md):** Documento Consolidado da Entrega 2 para submissão oficial (contém identificação dos integrantes, evidências de PRs, logs do test harness, matriz comparativa e análise ética).
+
