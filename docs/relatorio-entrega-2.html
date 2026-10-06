@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>FixTime - Relatório Consolidado da Entrega 2</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --accent: #2563eb;
+      --accent-light: #3b82f6;
+      --accent-subtle: #eff6ff;
+      --success: #059669;
+      --success-subtle: #ecfdf5;
+      --warning: #d97706;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--slate-800);
+      background-color: #ffffff;
+      line-height: 1.55;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    @page {
+      size: A4;
+      margin: 14mm 14mm 14mm 14mm;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    /* CAPA & HEADER */
+    .header-banner {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1d4ed8 100%);
+      color: white;
+      padding: 28px 32px;
+      border-radius: 14px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+    }
+
+    .header-tag {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(4px);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: #93c5fd;
+    }
+
+    .header-title {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: #cbd5e1;
+      font-weight: 400;
+      margin-bottom: 18px;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 12px;
+    }
+
+    .header-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-meta-item strong {
+      color: #93c5fd;
+    }
+
+    .repo-badge {
+      background: rgba(37, 99, 235, 0.4);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(147, 197, 253, 0.4);
+      color: #ffffff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    /* INTEGRANTES GRID */
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--slate-900);
+      margin: 22px 0 12px 0;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--slate-200);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .section-title .number {
+      background: var(--accent);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .team-card {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .team-name {
+      font-weight: 600;
+      color: var(--slate-900);
+      font-size: 12px;
+    }
+
+    .team-ra {
+      font-size: 11px;
+      color: var(--slate-600);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    /* CARDS & CONTAINERS */
+    .card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      page-break-inside: avoid;
+    }
+
+    .card-accent {
+      border-left: 4px solid var(--accent);
+    }
+
+    .card-success {
+      border-left: 4px solid var(--success);
+      background: #f0fdf4;
+    }
+
+    /* METRICAS */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .metric-box {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .metric-value.success {
+      color: var(--success);
+    }
+
+    .metric-label {
+      font-size: 10.5px;
+      color: var(--slate-600);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    /* TABELAS */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 11.5px;
+      page-break-inside: avoid;
+    }
+
+    th {
+      background: var(--slate-100);
+      color: var(--slate-700);
+      text-align: left;
+      padding: 8px 10px;
+      font-weight: 600;
+      border: 1px solid var(--slate-200);
+    }
+
+    td {
+      padding: 7px 10px;
+      border: 1px solid var(--slate-200);
+      color: var(--slate-700);
+    }
+
+    tr:nth-child(even) td {
+      background: var(--slate-50);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .badge-success {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    .badge-primary {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+
+    /* CODE & LOGS */
+    .terminal-box {
+      background: #0f172a;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #f8fafc;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      line-height: 1.45;
+      margin: 10px 0;
+      page-break-inside: avoid;
+      border: 1px solid #334155;
+    }
+
+    .terminal-box .title-bar {
+      color: #94a3b8;
+      font-size: 10px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .terminal-success {
+      color: #4ade80;
+      font-weight: 600;
+    }
+
+    /* DIAGRAMA VISUAL */
+    .diagram-flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+      page-break-inside: avoid;
+    }
+
+    .diagram-step {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 12px;
+      position: relative;
+    }
+
+    .diagram-step-title {
+      font-weight: 700;
+      font-size: 11.5px;
+      color: var(--primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .diagram-step-content {
+      font-size: 11px;
+      color: var(--slate-600);
+    }
+
+    /* PILARES ETICOS */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .pillar-card {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      padding: 12px 14px;
+      page-break-inside: avoid;
+    }
+
+    .pillar-card h4 {
+      font-size: 12px;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pillar-card p {
+      font-size: 11px;
+      color: var(--slate-600);
+      line-height: 1.5;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    /* FOOTER */
+    .report-footer {
+      margin-top: 24px;
+      padding-top: 14px;
+      border-top: 1px solid var(--slate-200);
+      text-align: center;
+      font-size: 11px;
+      color: var(--slate-600);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- CABEÇALHO / BANNER -->
+  <div class="header-banner">
+    <div class="header-tag">Bootcamp Fullstack & Engenharia de Software com IA • Entrega 2</div>
+    <h1 class="header-title">FixTime — Plataforma de Agendamento</h1>
+    <div class="header-subtitle">Relatório Consolidado de Publicação, Refinamento por Testes, Governança e Análise Ético-Técnica de IA</div>
+    
+    <div class="header-meta">
+      <div class="header-meta-item">
+        <strong>Repositório Público:</strong>
+        <a class="repo-badge" href="https://github.com/Fixtime-Bootcamp/bootcamp3" target="_blank">github.com/Fixtime-Bootcamp/bootcamp3</a>
+      </div>
+      <div class="header-meta-item">
+        <strong>Release Branch:</strong> <span style="color:#ffffff; font-family:'JetBrains Mono';">main</span>
+      </div>
+      <div class="header-meta-item">
+        <strong>Status dos Testes:</strong> <span class="badge badge-success">104 TESTES • 100% PASS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IDENTIFICAÇÃO DOS INTEGRANTES -->
+  <div class="section-title">
+    <span class="number">1</span> Identificação dos Integrantes da Equipe
+  </div>
+
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-name">Caio Boudens de Castro</div>
+      <div class="team-ra">RA: 22304522</div>
+    </div>
+    <div class="team-card">
+      <div class="team-name">Eduardo Frois Drumond</div>
+      <div class="team-ra">RA: 22303035</div>
+    </div>
+    <div class="team-card">
+      <div class="team-name">Fernando Medeiros Farias</div>
+      <div class="team-ra">RA: 22306100</div>
+    </div>
+    <div class="team-card">
+      <div class="team-name">Larissa Queiroz Ramos</div>
+      <div class="team-ra">RA: 22304308</div>
+    </div>
+    <div class="team-card">
+      <div class="team-name">Mayssa Barbosa Dias</div>
+      <div class="team-ra">RA: 22303603</div>
+    </div>
+    <div class="team-card">
+      <div class="team-name">Thiago Venâncio Gomides</div>
+      <div class="team-ra">RA: 22307398</div>
+    </div>
+  </div>
+
+  <!-- VISÃO GERAL & ARQUITETURA -->
+  <div class="section-title">
+    <span class="number">2</span> Arquitetura da Solução e Fluxo Operacional
+  </div>
+
+  <div class="card card-accent">
+    <p style="margin-bottom: 10px;">
+      O <strong>FixTime</strong> é uma aplicação completa e determinística projetada para eliminar conflitos de agendamento em pequenas e médias assistências técnicas. O sistema é baseado no modelo <strong>Spec-Driven Development (SDD)</strong>, onde a especificação formal governa 100% da implementação e dos contratos da API REST.
+    </p>
+    <div class="diagram-flow">
+      <div class="diagram-step">
+        <div class="diagram-step-title">💻 Frontend SPA</div>
+        <div class="diagram-step-content">React 19, TypeScript, Vite. Telas de agenda, cadastros de clientes/técnicos/serviços, ações de status, paginação e exportação CSV.</div>
+      </div>
+      <div class="diagram-step">
+        <div class="diagram-step-title">⚙️ Backend API</div>
+        <div class="diagram-step-content">Java 21, Spring Boot 3.4.5. Regras de negócio restritas aos Services: antecedência mínima (2h), jornada útil, feriados nacionais e conflitos.</div>
+      </div>
+      <div class="diagram-step">
+        <div class="diagram-step-title">🗄️ Persistência & Docker</div>
+        <div class="diagram-step-content">PostgreSQL em produção/Compose e H2 Database em testes. Docker Compose com inicialização via comando único.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOVERNANÇA & PULL REQUESTS -->
+  <div class="section-title">
+    <span class="number">3</span> Governança de Código e Evidências de Revisão por Pares
+  </div>
+
+  <p style="margin-bottom: 8px; color: var(--slate-600); font-size: 11.5px;">
+    A colaboração da equipe seguiu estritamente o fluxo de <strong>Feature Branches</strong> originadas a partir da branch <code>develop</code>. Todo código foi integrado exclusivamente via <strong>Pull Requests detalhados</strong> com code review entre pares, critérios formais de aceitação cumpridos e exclusão automática de branches pós-merge:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 8%;">PR</th>
+        <th style="width: 44%;">Título / Funcionalidade Integrada</th>
+        <th style="width: 20%;">Módulo</th>
+        <th style="width: 14%;">Status</th>
+        <th style="width: 14%;">Link GitHub</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>#24</strong></td>
+        <td>Definir contrato definitivo de agendamento e SDD</td>
+        <td>Fundação / SDD</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/24">Ver PR #24</a></td>
+      </tr>
+      <tr>
+        <td><strong>#25</strong></td>
+        <td>Padronizar tratamento e respostas de erros HTTP (GlobalExceptionHandler)</td>
+        <td>Backend / API</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/25">Ver PR #25</a></td>
+      </tr>
+      <tr>
+        <td><strong>#29</strong></td>
+        <td>Implementar entidade JPA e repository de agendamentos</td>
+        <td>Backend / JPA</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/29">Ver PR #29</a></td>
+      </tr>
+      <tr>
+        <td><strong>#31</strong></td>
+        <td>Expandir test harness com testes unitários e de integração</td>
+        <td>Qualidade / Testes</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/31">Ver PR #31</a></td>
+      </tr>
+      <tr>
+        <td><strong>#33</strong></td>
+        <td>Tornar docker compose e healthchecks reproduzíveis</td>
+        <td>DevOps / Docker</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/33">Ver PR #33</a></td>
+      </tr>
+      <tr>
+        <td><strong>#40</strong></td>
+        <td>Integrar cliente tipado da API no Frontend</td>
+        <td>Frontend / Client</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/40">Ver PR #40</a></td>
+      </tr>
+      <tr>
+        <td><strong>#48</strong></td>
+        <td>Implementar fluxo de criação e modal de agendamento</td>
+        <td>Frontend / UI</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/48">Ver PR #48</a></td>
+      </tr>
+      <tr>
+        <td><strong>#50</strong></td>
+        <td>Implementar agenda operacional e ações de status</td>
+        <td>Frontend / UI</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/50">Ver PR #50</a></td>
+      </tr>
+      <tr>
+        <td><strong>#51</strong></td>
+        <td>Telas de cadastro e gestão de Clientes, Técnicos e Serviços</td>
+        <td>Fullstack</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/51">Ver PR #51</a></td>
+      </tr>
+      <tr>
+        <td><strong>#52</strong></td>
+        <td>Bloqueio de feriados nacionais e indisponibilidades na agenda</td>
+        <td>Backend / Regras</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/52">Ver PR #52</a></td>
+      </tr>
+      <tr>
+        <td><strong>#58</strong></td>
+        <td>Exportação de agendamentos em CSV com streaming UTF-8 BOM (RFC 4180)</td>
+        <td>Fullstack / Export</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/58">Ver PR #58</a></td>
+      </tr>
+      <tr>
+        <td><strong>#74</strong></td>
+        <td>Documentação interativa da API com OpenAPI / Swagger UI</td>
+        <td>Docs / Swagger</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/74">Ver PR #74</a></td>
+      </tr>
+      <tr>
+        <td><strong>#77</strong></td>
+        <td>Diagramas de fluxo, relatório de erros lógicos e análise ética de IA</td>
+        <td>Governança / Docs</td>
+        <td><span class="badge badge-success">MERGED</span></td>
+        <td><a href="https://github.com/Fixtime-Bootcamp/bootcamp3/pull/77">Ver PR #77</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- QUEBRA DE PÁGINA PARA RELATÓRIO DE TESTES -->
+  <div class="page-break"></div>
+
+  <!-- TEST HARNESS E LOGS -->
+  <div class="section-title">
+    <span class="number">4</span> Relatório de Execução dos Testes Automatizados (100% Pass)
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric-box">
+      <div class="metric-value success">104</div>
+      <div class="metric-label">Testes Automatizados</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-value">44</div>
+      <div class="metric-label">Backend (JUnit 5)</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-value">60</div>
+      <div class="metric-label">Frontend (Vitest)</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-value success">100%</div>
+      <div class="metric-label">Taxa de Sucesso (Zero Falhas)</div>
+    </div>
+  </div>
+
+  <div class="terminal-box">
+    <div class="title-bar">
+      <span>LOG DE EXECUÇÃO: BACKEND (mvn clean test)</span>
+      <span class="terminal-success">BUILD SUCCESS (44/44 PASS)</span>
+    </div>
+Running com.fixtime.appointment.AppointmentCsvWriterTest (3 tests) - OK
+Running com.fixtime.AppointmentServiceTest (17 tests) - OK (Regras RN01-RN08 cobertas)
+Running com.fixtime.AppointmentIntegrationTest (11 tests) - OK (MockMvc + H2)
+Running com.fixtime.AppointmentExportIntegrationTest (4 tests) - OK (RFC 4180 / UTF-8 BOM)
+Running com.fixtime.BlockedDateIntegrationTest (5 tests) - OK (Feriados Nacionais Fixos)
+Running com.fixtime.CustomerServiceTest (3 tests) - OK
+Running com.fixtime.HealthControllerTest (1 test) - OK
+
+[INFO] Tests run: 44, Failures: 0, Errors: 0, Skipped: 0
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS - Total time: 15.341 s
+  </div>
+
+  <div class="terminal-box">
+    <div class="title-bar">
+      <span>LOG DE EXECUÇÃO: FRONTEND (vitest --run)</span>
+      <span class="terminal-success">ALL SUITES PASSED (60/60 PASS)</span>
+    </div>
+ ✓ src/utils/appointmentEligibility.test.ts (7 tests)
+ ✓ src/api/client.test.ts (3 tests)
+ ✓ src/components/AppointmentCard.test.tsx (7 tests)
+ ✓ src/pages/TechniciansPage.test.tsx (7 tests)
+ ✓ src/pages/CustomersPage.test.tsx (10 tests)
+ ✓ src/pages/ServicesPage.test.tsx (8 tests)
+ ✓ src/components/CreateAppointmentModal.test.tsx (8 tests)
+ ✓ src/App.test.tsx (10 tests)
+
+ Test Files  8 passed (8)
+      Tests  60 passed (60)
+   Duration  19.69s (100% Green)
+  </div>
+
+  <!-- INSPEÇÃO DE ERROS LÓGICOS -->
+  <div class="section-title">
+    <span class="number">5</span> Inspeção de Erros Lógicos e Loop de Re-especificação (SDD)
+  </div>
+
+  <div class="card">
+    <p style="margin-bottom: 8px;">
+      O ciclo <strong>Spec-Driven Development</strong> garantiu que nenhuma falha lógica fosse corrigida de forma empírica. Sempre que um erro sutil era revelado pelos testes automatizados, a especificação técnica formal (<code>docs/SPEC.md</code>) e o histórico de refinamentos (<code>docs/spec-changelog.md</code>) eram atualizados antes da refatoração:
+    </p>
+    <ul style="padding-left: 18px; font-size: 11.5px; color: var(--slate-700); line-height: 1.6;">
+      <li><strong>1. Duração Arbitrária de Serviços (Issues #1 e #8):</strong> O payload inicial permitia que o usuário enviasse <code>durationMinutes</code> arbitrário. Corrigido com vinculação estrita à entidade <code>ServiceEntity</code> e cálculo determinístico no backend: <code>endsAt = startsAt + service.duration</code>.</li>
+      <li><strong>2. Bloqueio Indevido de Horários Adjacentes (RN05 / Issue #10):</strong> Comparações SQL inclusivas bloqueavam visitas contíguas (ex.: 09:00-10:00 e 10:00-11:00). Corrigido com intervalos abertos nas extremidades: <code>startsAt &lt; other.endsAt AND endsAt &gt; other.startsAt</code>.</li>
+      <li><strong>3. Flutuação Temporal e Testes Flaky (RN03 / Issue #17):</strong> O uso de <code>Instant.now()</code> causava falhas aleatórias por frações de milissegundo na validação de 2h de antecedência. Solucionado com injeção de dependência de <code>java.time.Clock</code> imutável nos testes e nos services.</li>
+      <li><strong>4. Tentativa de Conclusão Prematura (RN07 / Issue #13):</strong> O sistema permitia marcar visitas como concluídas antes da realização. Bloqueado com validação estrita exigindo <code>clock.instant().isAfter(appointment.getEndsAt())</code>.</li>
+      <li><strong>5. Mojibake no CSV (RF08 / Issue #28):</strong> Exportações de clientes e serviços acentuados abriam corrompidos no Excel. Corrigido com inclusão de streaming com UTF-8 BOM (<code>0xEF, 0xBB, 0xBF</code>) e cabeçalhos RFC 4180.</li>
+    </ul>
+  </div>
+
+  <!-- QUEBRA DE PÁGINA PARA ANÁLISE ÉTICA DE IA -->
+  <div class="page-break"></div>
+
+  <!-- ANÁLISE COMPARATIVA DE IA -->
+  <div class="section-title">
+    <span class="number">6</span> Análise Comparativa e Avaliação Crítica de IA (Item 4 Obrigatório)
+  </div>
+
+  <h3 style="font-size: 13px; font-weight: 700; color: var(--slate-800); margin: 10px 0 6px 0;">6.1. Matriz Comparativa entre Ferramentas de IA Avaliadas</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 22%;">Critério de Avaliação</th>
+        <th style="width: 19%;">Claude Code (CLI)</th>
+        <th style="width: 19%;">OpenAI Codex / CLI</th>
+        <th style="width: 20%;">Cursor (IDE)</th>
+        <th style="width: 20%;">Antigravity (IDE/Agente)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Interface de Operação</strong></td>
+        <td>Terminal / CLI</td>
+        <td>Terminal / Scripts</td>
+        <td>IDE (VS Code Fork)</td>
+        <td>IDE / Agente Autônomo</td>
+      </tr>
+      <tr>
+        <td><strong>Compreensão do Repositório</strong></td>
+        <td>Alta (Busca ativa)</td>
+        <td>Média (Janela limitada)</td>
+        <td>Muito Alta (Embeddings)</td>
+        <td>Muito Alta (Knowledge Items)</td>
+      </tr>
+      <tr>
+        <td><strong>Aderência ao Modelo SDD</strong></td>
+        <td>Alta (Raciocínio lógico)</td>
+        <td>Média (Foco em boilerplate)</td>
+        <td>Alta (via <code>@docs/SPEC.md</code>)</td>
+        <td>Excelente (Regras nativas)</td>
+      </tr>
+      <tr>
+        <td><strong>Geração de Testes Automatizados</strong></td>
+        <td>Excelente (Edge cases)</td>
+        <td>Boa (Caminho feliz)</td>
+        <td>Muito Boa (Mocks rápidos)</td>
+        <td>Excelente (Docstrings/AssertJ)</td>
+      </tr>
+      <tr>
+        <td><strong>Execução Autônoma de Comandos</strong></td>
+        <td>Alta (Shell interativo)</td>
+        <td>Baixa (Requer orquestração)</td>
+        <td>Média (Terminal assistido)</td>
+        <td>Total (Builds, tasks e logs)</td>
+      </tr>
+      <tr>
+        <td><strong>Propensão a Alucinação</strong></td>
+        <td>Baixa</td>
+        <td>Média</td>
+        <td>Baixa a Média</td>
+        <td>Muito Baixa (Auto-inspeção)</td>
+      </tr>
+      <tr>
+        <td><strong>Governança de Branches / Regras</strong></td>
+        <td>Alta</td>
+        <td>Baixa</td>
+        <td>Alta (via <code>.cursorrules</code>)</td>
+        <td>Muito Alta (Força <code>AGENTS.md</code>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-size: 13px; font-weight: 700; color: var(--slate-800); margin: 14px 0 6px 0;">6.2. Discussão Ética, Limites e Segurança: Os Quatro Pilares Críticos</h3>
+
+  <div class="pillars-grid">
+    <div class="pillar-card">
+      <h4>🚨 1. Alucinação e Código Inseguro</h4>
+      <p>
+        Modelos de IA operam por previsão estatística e não por execução formal. O risco de <em>"package hallucination"</em> (sugestão de bibliotecas inexistentes que podem ser sequestradas via typosquatting) e padrões de segurança defasados (injeção SQL, supressão de exceções) foi contido no FixTime pela <strong>proibição de dependências não justificadas</strong> e testes rigorosos com compiladores estritos (Java 21 e TypeScript).
+      </p>
+    </div>
+
+    <div class="pillar-card">
+      <h4>🔒 2. Vazamento de Dados e Privacidade (LGPD)</h4>
+      <p>
+        O envio de contexto para servidores em nuvem de terceiros impõe severos riscos de exposição de segredos e PII. No FixTime, adotou-se o <strong>isolamento de segredos em variáveis de ambiente (<code>.env</code>)</strong> e o uso exclusivo de <strong>dados puramente sintéticos</strong> nos testes e sementes (nomes e e-mails fictícios), garantindo total observância à Lei Geral de Proteção de Dados (Lei nº 13.709/2018).
+      </p>
+    </div>
+
+    <div class="pillar-card">
+      <h4>⚖️ 3. Propriedade Intelectual (IP) e Copyright</h4>
+      <p>
+        O treinamento de LLMs em repositórios abertos cria o risco de contaminação por código licenciado sob copyleft restritivo (GPL/AGPL). O FixTime garantiu que os agentes atuassem como <strong>rascunhadores sintáticos</strong> da arquitetura, contratos e regras de negócio de autoria humana original da equipe, protegendo a titularidade intelectual do projeto.
+      </p>
+    </div>
+
+    <div class="pillar-card">
+      <h4>👤 4. Centralidade da Homologação Humana</h4>
+      <p>
+        O maior risco na engenharia com IA é o <em>"automation bias"</em> (a falsa confiança na correção do código pela sua aparência limpa). O fluxo SDD consolidou o princípio de que <strong>a IA propõe, mas a equipe humana homologa</strong>: nenhum PR foi aceito sem testes 100% verdes e revisão minuciosa entre pares.
+      </p>
+    </div>
+  </div>
+
+  <!-- RELATO DE EXPERIÊNCIA DA EQUIPE -->
+  <div class="section-title">
+    <span class="number">7</span> Relato de Experiência e Aprendizados da Equipe
+  </div>
+
+  <div class="card">
+    <p style="font-size: 11.5px; line-height: 1.6; color: var(--slate-700);">
+      A condução do FixTime com 6 integrantes comprovou que a maior alavanca de produtividade em software colaborativo não reside na velocidade isolada de digitação de código, mas sim na <strong>solidez da especificação técnica inicial (SDD) e na governança rígida de branches e Pull Requests</strong>. A dissociação inicial entre o backend (Spring Boot) e o frontend (React) funcionou sem conflitos porque os contratos de entrada e saída já haviam sido selados na especificação. A cultura de 104 testes automatizados conferiu segurança psicológica para refatorações ousadas, demonstrando que ferramentas de IA são catalisadores excepcionais quando aliadas ao rigor metodológico da engenharia de software tradicional.
+    </p>
+  </div>
+
+  <!-- RODAPÉ -->
+  <div class="report-footer">
+    FixTime — Bootcamp Fullstack & Engenharia de Software com IA • Documento Oficial de Submissão da Entrega 2 • Repositório: <a href="https://github.com/Fixtime-Bootcamp/bootcamp3" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">github.com/Fixtime-Bootcamp/bootcamp3</a>
+  </div>
+
+</div>
+
+</body>
+</html>
