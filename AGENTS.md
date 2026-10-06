@@ -20,7 +20,7 @@ Todo agente (GitHub Copilot, Cursor, Claude Code, Antigravity) deve seguir estri
 5. **Finalização e Transição para Done**:
    - Abra um Pull Request apontando para `develop` contendo a descrição das mudanças e referenciando `Closes #<numero-da-issue>`.
    - Atualize o status da task no GitHub Project para `In review`.
-   - Após a aprovação e merge do PR, garanta que a task no GitHub Project passe para **`Done`** e a issue seja fechada.
+   - Após a aprovação e merge do PR, garanta que a task no GitHub Project passe para **`Done`**, a issue seja fechada e a feature branch (remota e local) seja excluída para manter o ambiente limpo.
 
 ## Comandos Úteis para Agentes (GitHub CLI)
 
