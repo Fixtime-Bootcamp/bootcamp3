@@ -113,10 +113,16 @@ describe('FixTime shell & operational agenda', () => {
     ];
 
     vi.stubGlobal('fetch', vi.fn(async (url: string) => {
-      if (url.includes('date=2026-09-05')) {
-        return new Response(JSON.stringify(mockAppointments), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      if (url.includes('startDate=2026-09-05') && url.includes('endDate=2026-09-05')) {
+        return new Response(JSON.stringify({
+          content: mockAppointments,
+          totalElements: 1,
+          totalPages: 1,
+          pageNumber: 0,
+          size: 20,
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
       }
-      return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ content: [], totalElements: 0, totalPages: 0, pageNumber: 0, size: 20 }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }));
 
     render(<App />);
@@ -193,7 +199,7 @@ describe('FixTime shell & operational agenda', () => {
 
     await waitFor(() => {
       expect(screen.getByText('✕ Visita Cancelada')).toBeInTheDocument();
-      expect(screen.getByText('CANCELLED')).toBeInTheDocument();
+      expect(screen.getAllByText('Cancelado').length).toBeGreaterThan(0);
     });
   });
 
@@ -231,7 +237,7 @@ describe('FixTime shell & operational agenda', () => {
 
     await waitFor(() => {
       expect(screen.getByText('✓ Visita Concluída')).toBeInTheDocument();
-      expect(screen.getByText('COMPLETED')).toBeInTheDocument();
+      expect(screen.getAllByText('Concluído').length).toBeGreaterThan(0);
     });
   });
 
@@ -267,7 +273,7 @@ describe('FixTime shell & operational agenda', () => {
       expect(screen.getByText('Erro ao concluir agendamento #66: Erro interno ao concluir')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('SCHEDULED')).toBeInTheDocument();
+    expect(screen.getAllByText('Agendado').length).toBeGreaterThan(0);
   });
 
   /**

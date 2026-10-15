@@ -21,6 +21,26 @@ describe('API client', () => {
     expect(fetch).toHaveBeenCalledWith('/api/v1/appointments', expect.objectContaining({ headers: {} }));
   });
 
+  it('unwraps paginated appointment payloads and filters by startDate/endDate', async () => {
+    const appointments = [{ id: 11, customerId: 1, technicianId: 2, serviceId: 3, startsAt: '2026-10-16T09:00:00', endsAt: '2026-10-16T10:00:00', status: 'SCHEDULED' }];
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      content: appointments,
+      totalElements: 1,
+      totalPages: 1,
+      pageNumber: 0,
+      size: 20,
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    })));
+
+    await expect(listAppointments({ date: '2026-10-16' })).resolves.toEqual(appointments);
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/v1/appointments?startDate=2026-10-16&endDate=2026-10-16',
+      expect.objectContaining({ headers: {} }),
+    );
+  });
+
   /**
    * Valida RNF02 e RNF03: Mapeamento de erros de validação (400 Bad Request com fieldErrors).
    */
