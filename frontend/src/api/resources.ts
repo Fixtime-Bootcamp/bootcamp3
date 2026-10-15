@@ -25,6 +25,14 @@ export type ExportAppointmentsFilter = {
   status?: AppointmentStatus;
 };
 
+const unwrapListResponse = <T>(payload: T[] | { content?: T[] } | null): T[] => {
+  if (Array.isArray(payload)) return payload;
+  if (payload && typeof payload === 'object' && Array.isArray((payload as { content?: T[] }).content)) {
+    return (payload as { content: T[] }).content;
+  }
+  return [];
+};
+
 export const getAppointmentsExportUrl = (filter?: ExportAppointmentsFilter): string => {
   const params = new URLSearchParams();
   if (filter?.startDate) params.set('startDate', filter.startDate);
@@ -36,9 +44,12 @@ export const getAppointmentsExportUrl = (filter?: ExportAppointmentsFilter): str
   return queryString ? `${base}?${queryString}` : base;
 };
 
-export const listCustomers = (init?: RequestInit) => request<Customer[]>('/customers', init);
-export const listTechnicians = (init?: RequestInit) => request<Technician[]>('/technicians', init);
-export const listServices = (init?: RequestInit) => request<Service[]>('/services', init);
+export const listCustomers = (init?: RequestInit) =>
+  request<Customer[] | { content?: Customer[] }>('/customers', init).then(unwrapListResponse);
+export const listTechnicians = (init?: RequestInit) =>
+  request<Technician[] | { content?: Technician[] }>('/technicians', init).then(unwrapListResponse);
+export const listServices = (init?: RequestInit) =>
+  request<Service[] | { content?: Service[] }>('/services', init).then(unwrapListResponse);
 
 export const createCustomer = (input: CreateCustomerInput) =>
   request<Customer>('/customers', { method: 'POST', body: JSON.stringify(input) });
@@ -66,7 +77,10 @@ export const listAppointments = (
 
   if (filterOrInit && ('date' in filterOrInit || 'technicianId' in filterOrInit || 'status' in filterOrInit)) {
     const params = new URLSearchParams();
-    if (filterOrInit.date) params.set('date', filterOrInit.date);
+    if (filterOrInit.date) {
+      params.set('startDate', filterOrInit.date);
+      params.set('endDate', filterOrInit.date);
+    }
     if (filterOrInit.technicianId) params.set('technicianId', String(filterOrInit.technicianId));
     if (filterOrInit.status) params.set('status', filterOrInit.status);
     const queryString = params.toString();
@@ -77,7 +91,9 @@ export const listAppointments = (
     requestInit = filterOrInit as RequestInit;
   }
 
-  return request<Appointment[]>(`/appointments${queryParams}`, requestInit);
+  return request<Appointment[] | { content?: Appointment[] }>(`/appointments${queryParams}`, requestInit).then((payload) =>
+    unwrapListResponse<Appointment>(payload),
+  );
 };
 
 export const getTechnicianAvailability = (

@@ -72,7 +72,7 @@ export function AppointmentCard({
       case 'CANCELLED':
         return { label: 'Cancelado', className: 'status-cancelled' };
       default:
-        return { label: status, className: 'status-default' };
+        return { label: 'Desconhecido', className: 'status-default' };
     }
   };
 
@@ -113,7 +113,7 @@ export function AppointmentCard({
         <div className="card-status-box">
           <span className={`status-pill ${statusInfo.className}`}>
             <span className="status-dot"></span>
-            {appointment.status}
+            {statusInfo.label}
           </span>
           <span className="status-subtitle">{statusInfo.label}</span>
         </div>
@@ -122,21 +122,21 @@ export function AppointmentCard({
       <div className="card-body">
         <div className="info-row">
           <span className="info-label">Cliente:</span>
-          <strong className="info-value">{customer ? customer.name : `Cliente #${appointment.customerId}`}</strong>
+          <strong className="info-value">{customer ? customer.name : 'Carregando cliente...'}</strong>
           {customer?.phone && <span className="info-phone">({customer.phone})</span>}
         </div>
 
         <div className="info-row">
           <span className="info-label">Técnico:</span>
           <span className="info-value technician-value">
-            {technician ? technician.name : `Técnico #${appointment.technicianId}`}
+            {technician ? technician.name : 'Carregando técnico...'}
           </span>
         </div>
 
         <div className="info-row">
           <span className="info-label">Serviço:</span>
           <span className="info-value">
-            {service ? service.name : `Serviço #${appointment.serviceId}`}
+            {service ? service.name : 'Carregando serviço...'}
           </span>
           {service && (
             <span className="service-badge">
