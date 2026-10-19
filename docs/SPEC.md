@@ -1,8 +1,36 @@
 # Especificação Técnica (SDD): FixTime
 
-**Versão da Especificação:** 1.3  
-**Status:** Em revisão (v1.3 pendente de aprovação da equipe; v1.2 aprovada)  
+**Versão da Especificação:** 1.0.0 (As-Built)  
+**Status:** As-Built: descreve o produto exatamente como entregue na release v1.0.0. Itens planejados na proposta v1.3 e não implementados estão marcados como **Não implementado**.  
 **Documento Base:** Spec-Driven Development (SDD)  
+
+---
+
+## 0. Status de Implementação (As-Built)
+
+| Item | Situação | Observação |
+| --- | --- | --- |
+| RF01 a RF08 | Implementado | Cobertos por testes automatizados. |
+| RF09, RF10, RN09, RN10, RNF08 (autenticação JWT, perfis, segredos JWT) | **Não implementado** | Backend sem Spring Security/JWT e frontend sem login. Pendência registrada na issue #98. |
+| RF11, RF12, RF13, RN11 (página inicial, roteamento, agenda semanal, toasts/error boundary) | **Não implementado** | Frontend é uma SPA de tela única, sem React Router. |
+| RNF01, RNF03, RNF05, RNF06 | Implementado | RNF06: CI executa testes, cobertura e build. |
+| RNF02, RNF07 | Não verificado | Sem medição de P95 nem de Lighthouse/WCAG nesta versão. |
+| RNF04 | Parcial | Regras RN01-RN08 cobertas; ver cobertura medida na seção 7.1. |
+
+Endpoints efetivamente expostos (todos públicos, sem autenticação):
+
+| Método | Rota |
+| --- | --- |
+| GET | `/api/v1/health` |
+| POST, GET | `/api/v1/customers`; PATCH `/api/v1/customers/{id}/toggle-active` |
+| POST, GET | `/api/v1/technicians`; PATCH `/api/v1/technicians/{id}/toggle-active` |
+| GET | `/api/v1/technicians/{id}/availability?date=` |
+| POST, GET | `/api/v1/services`; PATCH `/api/v1/services/{id}/toggle-active` |
+| POST, GET | `/api/v1/blocked-dates` |
+| POST, GET | `/api/v1/appointments` |
+| GET | `/api/v1/appointments/export` |
+| PATCH | `/api/v1/appointments/{id}/cancel`, `/api/v1/appointments/{id}/complete` |
+| GET | `/swagger-ui.html`, `/v3/api-docs` |
 
 ---
 
@@ -36,11 +64,11 @@ O **FixTime** resolve esse cenário fornecendo uma plataforma centralizada e det
 * **RF06 - Cancelamento de Agendamento**: Cancelar agendamentos elegíveis com status `SCHEDULED` e antecedência mínima estipulada.
 * **RF07 - Conclusão de Agendamento**: Marcar agendamento com status `SCHEDULED` como `COMPLETED` estritamente após o término do horário da visita.
 * **RF08 - Exportação de Histórico em CSV**: Exportar o histórico filtrado de agendamentos em formato CSV streaming (RFC 4180) com BOM UTF-8 e cabeçalho para integração com ferramentas de planilha.
-* **RF09 - Autenticação (Issue #67)**: Operador autentica-se com e-mail e senha e recebe um token JWT; todas as demais rotas `/api/v1` exigem token válido. Frontend oferece tela de login, rota protegida e logout.
-* **RF10 - Perfis de Acesso (Issue #68)**: Usuários possuem perfil `ADMIN` ou `ATENDENTE`, que define quais operações são permitidas (ver RN10).
-* **RF11 - Página Inicial e Navegação (Issues #65 e #66)**: Frontend possui página inicial (`/`) com apresentação, atalhos e resumo dos agendamentos do dia, além de roteamento com menu de navegação e página 404.
-* **RF12 - Agenda Visual Semanal (Issue #69)**: Visualização em calendário semanal (segunda a sexta) dos agendamentos por técnico, com navegação entre semanas e criação de agendamento a partir de um horário livre.
-* **RF13 - Feedback ao Usuário (Issue #70)**: Frontend exibe estados de carregamento, notificações (toasts) de sucesso/erro e captura erros inesperados com *error boundary*, usando o `ErrorResponse` da API.
+* **RF09 - Autenticação (Issue #67) [NÃO IMPLEMENTADO]**: Operador autentica-se com e-mail e senha e recebe um token JWT; todas as demais rotas `/api/v1` exigem token válido. Frontend oferece tela de login, rota protegida e logout.
+* **RF10 - Perfis de Acesso (Issue #68) [NÃO IMPLEMENTADO]**: Usuários possuem perfil `ADMIN` ou `ATENDENTE`, que define quais operações são permitidas (ver RN10).
+* **RF11 - Página Inicial e Navegação (Issues #65 e #66) [NÃO IMPLEMENTADO]**: Frontend possui página inicial (`/`) com apresentação, atalhos e resumo dos agendamentos do dia, além de roteamento com menu de navegação e página 404.
+* **RF12 - Agenda Visual Semanal (Issue #69) [NÃO IMPLEMENTADO]**: Visualização em calendário semanal (segunda a sexta) dos agendamentos por técnico, com navegação entre semanas e criação de agendamento a partir de um horário livre.
+* **RF13 - Feedback ao Usuário (Issue #70) [NÃO IMPLEMENTADO]**: Frontend exibe estados de carregamento, notificações (toasts) de sucesso/erro e captura erros inesperados com *error boundary*, usando o `ErrorResponse` da API.
 
 ---
 
@@ -49,11 +77,11 @@ O **FixTime** resolve esse cenário fornecendo uma plataforma centralizada e det
 * **RNF01 - Arquitetura e Versionamento de API**: Todos os endpoints HTTP devem expor formato RESTful JSON sob o prefixo `/api/v1`, respondendo com `Content-Type: application/json;charset=UTF-8` (exceto exportações binárias/CSV).
 * **RNF02 - Desempenho e Latência**: Operações transacionais de leitura e escrita devem responder em menos de **300ms** no percentil 95 (P95) em condições normais de carga local.
 * **RNF03 - Consistência Estruturada de Erros**: Toda falha de validação ou de regra de negócio deve retornar payloads com formato JSON padronizado (`ErrorResponse`), contendo `status` (código HTTP numérico), `error` (descrição padrão), `message` (mensagem orientativa em PT-BR) e `fieldErrors` (mapa de campos quando aplicável), sem expor stack traces em produção.
-* **RNF04 - Cobertura do Test Harness**: A suíte de testes automatizados deve cobrir **100% das Regras de Negócio (RN01 a RN11)** e alcançar no mínimo **85% de cobertura de linhas** nas classes de serviço de domínio.
+* **RNF04 - Cobertura do Test Harness**: A suíte de testes automatizados deve cobrir **100% das Regras de Negócio (RN01 a RN11)** e alcançar no mínimo **85% de cobertura de linhas** nas classes de serviço de domínio. Medido na v1.0.0: `AppointmentService` 86,0%; `BlockedDateService` 71,4%; `CustomerService` 57,9%; `TechnicianService` 52,6%; `ServiceCatalogService` 60,9% (ver seção 7.1).
 * **RNF05 - Reprodutibilidade Total do Ambiente**: O ambiente completo (PostgreSQL, Backend Spring Boot e Frontend React) deve ser inicializável a partir de um único comando (`docker compose up --build`), sem necessidade de instalação prévia de Java, Maven ou Node.js na máquina host.
 * **RNF06 - Integração Contínua (Issue #72)**: Todo Pull Request para `develop` deve executar automaticamente `mvn test`, `npm test` e `npm run build`; o merge só é válido com o pipeline verde. O relatório de cobertura é publicado como artefato do workflow.
 * **RNF07 - Responsividade e Acessibilidade (Issue #71)**: Telas utilizáveis a partir de **360px** de largura, sem rolagem horizontal da página; formulários e modais com *labels* associados, foco visível, navegação por teclado, contraste mínimo **WCAG 2.1 AA** e pontuação de acessibilidade **>= 90** no Lighthouse nas telas principais.
-* **RNF08 - Segurança de Credenciais (Issue #67)**: Senhas armazenadas apenas como hash BCrypt; segredo de assinatura do JWT e credenciais do usuário inicial fornecidos por variáveis de ambiente (`FIXTIME_JWT_SECRET`, `FIXTIME_ADMIN_EMAIL`, `FIXTIME_ADMIN_PASSWORD`), nunca versionados no repositório. Respostas 401/403 não revelam se o e-mail existe.
+* **RNF08 - Segurança de Credenciais (Issue #67) [NÃO IMPLEMENTADO; sem segredos versionados]**: Senhas armazenadas apenas como hash BCrypt; segredo de assinatura do JWT e credenciais do usuário inicial fornecidos por variáveis de ambiente (`FIXTIME_JWT_SECRET`, `FIXTIME_ADMIN_EMAIL`, `FIXTIME_ADMIN_PASSWORD`), nunca versionados no repositório. Respostas 401/403 não revelam se o e-mail existe.
 
 ---
 
@@ -67,9 +95,9 @@ O **FixTime** resolve esse cenário fornecendo uma plataforma centralizada e det
 * **RN06 - Política de Cancelamento**: O cancelamento (`CANCELLED`) é permitido apenas para agendamentos em status `SCHEDULED` e deve ser requisitado com no mínimo **2 horas de antecedência** do horário de início (`startsAt`).
 * **RN07 - Política de Conclusão**: A conclusão (`COMPLETED`) só pode ser registrada em agendamentos em status `SCHEDULED` e **estritamente após** o horário final previsto da visita (`endsAt`).
 * **RN08 - Bloqueio de Feriados e Indisponibilidades**: Não são permitidos agendamentos em datas bloqueadas cadastradas pelo operador nem em feriados nacionais fixos brasileiros (ex.: 01/01, 21/04, 01/05, 07/09, 12/10, 02/11, 15/11, 20/11, 25/12). A consulta de disponibilidade deve retornar lista vazia nessas datas.
-* **RN09 - Autenticação e Token (Issue #67)**: O login valida e-mail e senha (hash BCrypt) de um usuário ativo. Credenciais inválidas retornam `401` com mensagem genérica. O token JWT expira em **60 minutos** e carrega e-mail e perfil. Rotas públicas: `POST /api/v1/auth/login` e `GET /api/v1/health`; qualquer outra rota sem token válido retorna `401`.
-* **RN10 - Autorização por Perfil (Issue #68)**: Aplicada na camada de service/segurança, nunca nos controllers. `ADMIN`: acesso total. `ATENDENTE`: pode listar/cadastrar clientes, listar técnicos e serviços, consultar disponibilidade e criar, listar, cancelar, concluir e exportar agendamentos. Cadastro de técnicos e serviços e criação de bloqueios de data são exclusivos de `ADMIN`; operação negada retorna `403`.
-* **RN11 - Agenda Semanal (Issue #69)**: A visão semanal exibe apenas dias úteis, faixa 08:00-18:00, agendamentos `SCHEDULED`/`COMPLETED` do técnico selecionado e destaca feriados e datas bloqueadas (RN08). Horários passados ou com menos de 2h de antecedência (RN03) não permitem criar agendamento.
+* **RN09 - Autenticação e Token (Issue #67) [NÃO IMPLEMENTADO]**: O login valida e-mail e senha (hash BCrypt) de um usuário ativo. Credenciais inválidas retornam `401` com mensagem genérica. O token JWT expira em **60 minutos** e carrega e-mail e perfil. Rotas públicas: `POST /api/v1/auth/login` e `GET /api/v1/health`; qualquer outra rota sem token válido retorna `401`.
+* **RN10 - Autorização por Perfil (Issue #68) [NÃO IMPLEMENTADO]**: Aplicada na camada de service/segurança, nunca nos controllers. `ADMIN`: acesso total. `ATENDENTE`: pode listar/cadastrar clientes, listar técnicos e serviços, consultar disponibilidade e criar, listar, cancelar, concluir e exportar agendamentos. Cadastro de técnicos e serviços e criação de bloqueios de data são exclusivos de `ADMIN`; operação negada retorna `403`.
+* **RN11 - Agenda Semanal (Issue #69) [NÃO IMPLEMENTADO]**: A visão semanal exibe apenas dias úteis, faixa 08:00-18:00, agendamentos `SCHEDULED`/`COMPLETED` do técnico selecionado e destaca feriados e datas bloqueadas (RN08). Horários passados ou com menos de 2h de antecedência (RN03) não permitem criar agendamento.
 
 ---
 
@@ -301,7 +329,7 @@ ID,Data Inicio,Data Fim,ID Cliente,Nome Cliente,ID Tecnico,Nome Tecnico,ID Servi
 
 ---
 
-### 6.7. Autenticação (Issues #67 e #68)
+### 6.7. Autenticação (Issues #67 e #68) — Não implementado (contrato planejado)
 
 #### Login
 * **Método/URL:** `POST /api/v1/auth/login` (público)
@@ -345,7 +373,7 @@ ID,Data Inicio,Data Fim,ID Cliente,Nome Cliente,ID Tecnico,Nome Tecnico,ID Servi
 
 ---
 
-### 6.8. Rotas do Frontend (Issues #65, #66, #69 e #70)
+### 6.8. Rotas do Frontend (Issues #65, #66, #69 e #70) — Não implementado (contrato planejado)
 
 | Rota | Tela | Acesso |
 | --- | --- | --- |
@@ -437,8 +465,17 @@ O sistema adota uma arquitetura em camadas com separação estrita de responsabi
 2. **Serviços de Domínio**: Testes unitários com `Clock` fixo e mocks (`AppointmentServiceTest`, `CustomerServiceTest`).
 3. **API e Controladores Web**: Testes de integração ponta a ponta com `MockMvc` e banco em memória H2 (`AppointmentIntegrationTest`, `BlockedDateIntegrationTest`, `AppointmentExportIntegrationTest`, `HealthControllerTest`).
 4. **Clientes e Componentes Web**: Testes de componentes React e funções utilitárias com `Vitest` e `@testing-library/react`.
-5. **Segurança (v1.3)**: `AuthService` (login válido, senha incorreta, usuário inativo, expiração do token) e `AuthIntegrationTest` com `MockMvc` (401 sem token, 403 por perfil, rotas públicas) para RN09 e RN10.
-6. **Navegação e UX (v1.3)**: testes de rotas protegidas e redirecionamento ao login, página inicial, agenda semanal (RN11), toasts/error boundary e verificação de acessibilidade (axe) nas telas principais.
+5. **Segurança (planejado, não implementado — issue #98)**: `AuthService` (login válido, senha incorreta, usuário inativo, expiração do token) e `AuthIntegrationTest` com `MockMvc` (401 sem token, 403 por perfil, rotas públicas) para RN09 e RN10.
+6. **Navegação e UX (planejado, não implementado)**: testes de rotas protegidas e redirecionamento ao login, página inicial, agenda semanal (RN11), toasts/error boundary e verificação de acessibilidade (axe) nas telas principais.
+
+### 7.1. Cobertura de Código Medida (v1.0.0)
+
+| Módulo | Ferramenta | Linhas | Branches |
+| --- | --- | --- | --- |
+| Backend (47 testes) | JaCoCo 0.8.12 | 80,6% | 69,4% |
+| Frontend (61 testes) | Vitest + V8 | 87,1% | 84,6% |
+
+Detalhes e comandos de reprodução em [test-report.md](test-report.md).
 
 ---
 
@@ -449,10 +486,11 @@ O histórico completo de decisões de refinamento está versionado em [docs/spec
 * **v1.0 (2026-09-02)**: Definição do escopo MVP, regras de antecedência de 2h e horário comercial (08h às 18h).
 * **v1.1 (2026-09-03)**: Duração obtida do catálogo de serviços, padronização de erros HTTP via `GlobalExceptionHandler`, suporte a intervalos adjacentes e endpoints PATCH de status.
 * **v1.2 (2026-09-12)**: Exportação streaming de agendamentos em CSV com BOM UTF-8, bloqueio automático de feriados nacionais e filtros combinados com paginação.
-* **v1.3 (2026-10-02, proposta)**: Autenticação JWT e perfis de acesso (RF09, RF10, RN09, RN10), página inicial, roteamento, agenda semanal e feedback ao usuário no frontend (RF11 a RF13, RN11), CI, responsividade/acessibilidade e segurança de credenciais (RNF06 a RNF08). Autenticação deixa de ser fora de escopo.
+* **v1.0.0 As-Built (2026-10-19)**: Consolidação do que foi entregue; itens da proposta v1.3 não implementados foram marcados como tal.
+* **v1.3 (2026-10-02, proposta, parcialmente não implementada)**: Autenticação JWT e perfis de acesso (RF09, RF10, RN09, RN10), página inicial, roteamento, agenda semanal e feedback ao usuário no frontend (RF11 a RF13, RN11), CI, responsividade/acessibilidade e segurança de credenciais (RNF06 a RNF08). Autenticação deixa de ser fora de escopo.
 
 ---
 
 ## 9. Fora de Escopo
 
-OAuth2/SSO e provedores externos de identidade, cadastro público de usuários, recuperação de senha, pagamentos online, envio de SMS/WhatsApp, geolocalização e rotas em mapa, e aplicativo mobile nativo.
+Autenticação/autorização de usuários (planejada na proposta v1.3, ver issue #98), OAuth2/SSO e provedores externos de identidade, cadastro público de usuários, recuperação de senha, pagamentos online, envio de SMS/WhatsApp, geolocalização e rotas em mapa, e aplicativo mobile nativo.
