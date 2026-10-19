@@ -30,3 +30,18 @@ services:
       - "80:80"
     depends_on:
       - backend
+
+  backend-tests:
+    profiles: ["test"]
+    build:
+      context: ./backend
+      target: test
+    volumes:
+      - ./backend/target:/app/target
+  frontend-tests:
+    profiles: ["test"]
+    build:
+      context: ./frontend
+      target: test
+    volumes:
+      - ./frontend/coverage:/app/coverage
