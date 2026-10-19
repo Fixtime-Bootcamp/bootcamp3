@@ -220,7 +220,7 @@ A entrega consolidada reúne os seguintes documentos técnicos e analíticos:
 
 1. **[docs/SPEC.md](docs/SPEC.md):** Especificação Técnica Canônica do FixTime (SDD), cobrindo RF01-RF08, RN01-RN08 e contratos literais JSON.
 2. **[docs/spec-changelog.md](docs/spec-changelog.md):** Histórico evolutivo dos refinamentos e decisões de modelagem.
-3. **[docs/test-report.md](docs/test-report.md):** Relatório Consolidado de Execução do Test Harness (104 testes automatizados com 100% de sucesso).
+3. **[docs/test-report.md](docs/test-report.md):** Relatório Consolidado de Execução do Test Harness (108 testes automatizados com 100% de sucesso).
 4. **[docs/erros-logicos.md](docs/erros-logicos.md):** Inspeção de erros lógicos identificados no ciclo, estratégias de correção, ciclo de re-especificação e relato de experiência da equipe.
 5. **[docs/relatorio-etico-ia.md](docs/relatorio-etico-ia.md):** Análise comparativa entre ferramentas (Claude Code, Codex, Cursor e Antigravity) e fundamentação crítica dos pilares éticos, segurança, privacidade (LGPD) e centralidade da homologação humana.
 6. **[docs/relatorio-entrega-2-consolidado.md](docs/relatorio-entrega-2-consolidado.md):** Documento Consolidado da Entrega 2 para submissão oficial (disponível também em versão formatada estilizada em [docs/relatorio-entrega-2-consolidado.pdf](docs/relatorio-entrega-2-consolidado.pdf)).

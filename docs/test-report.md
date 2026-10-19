@@ -1,13 +1,13 @@
 # Relatório Consolidado de Execução do Test Harness - FixTime
 
-**Data da Execução:** 2026-09-12  
+**Data da Execução:** 2026-10-19  
 **Status Geral:** ✅ **PASS (100% de Sucesso / Zero Falhas)**  
-**Total de Testes Automatizados:** 104 testes aprovados (44 backend + 60 frontend)  
+**Total de Testes Automatizados:** 108 testes aprovados (47 backend + 61 frontend)  
 **Rastreabilidade:** 100% dos testes referenciam as Regras de Negócio (`RN01` a `RN08`) e Requisitos Funcionais (`RF01` a `RF08`) via docstrings.
 
 ---
 
-## 1. Backend (Java 21/25 & Spring Boot 3.4.5)
+## 1. Backend (Java 21 & Spring Boot 3.4.5)
 
 ### Comandos de Execução:
 ```bash
@@ -15,23 +15,23 @@
 cd backend
 mvn clean test
 
-# Ou execução via Docker (comando único):
-docker compose run --rm backend mvn test
+# Ou execução via Docker (comando único para backend e frontend, com cobertura):
+docker compose --profile test up --build --abort-on-container-exit backend-tests frontend-tests
 ```
 
 ### Resumo da Suíte Backend:
-* **Classes de Teste:** 7
-* **Testes Executados:** 44
+* **Classes de Teste:** 8
+* **Testes Executados:** 47
 * **Falhas (Failures):** 0
 * **Erros (Errors):** 0
 * **Ignorados (Skipped):** 0
-* **Tempo Total:** ~15.3 segundos
+* **Tempo Total:** ~40 segundos
 * **Status:** **BUILD SUCCESS**
 
 ```text
 [INFO] Results:
 [INFO] 
-[INFO] Tests run: 44, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 47, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
@@ -79,14 +79,14 @@ docker compose run --rm backend mvn test
 ### Comandos de Execução:
 ```bash
 cd frontend
-npm test -- --run
+npm run test:coverage
 npm run build
 ```
 
 ### Resultados da Suíte Frontend:
 ```text
  ✓ src/utils/appointmentEligibility.test.ts (7 tests)
- ✓ src/api/client.test.ts (3 tests)
+ ✓ src/api/client.test.ts (4 tests)
  ✓ src/components/AppointmentCard.test.tsx (7 tests)
  ✓ src/pages/TechniciansPage.test.tsx (7 tests)
  ✓ src/pages/CustomersPage.test.tsx (10 tests)
@@ -95,16 +95,29 @@ npm run build
  ✓ src/App.test.tsx (10 tests)
 
  Test Files  8 passed (8)
-      Tests  60 passed (60)
+      Tests  61 passed (61)
    Duration  ~6.05s
 ```
 
 * **Test Files:** 8 aprovados (100%)
-* **Testes Executados:** 60 aprovados (100%)
+* **Testes Executados:** 61 aprovados (100%)
 * **Build de Produção:** Concluído com sucesso via Vite e TypeScript (`tsc -b`).
 
 ---
 
-## 3. Conclusão da Validação
+## 3. Cobertura de Código
 
-O Test Harness executa de maneira determinística com 104 testes automatizados em verde, cobrindo todas as regras de negócio especificadas em [docs/SPEC.md](SPEC.md) e proporcionando rastreabilidade direta entre especificação, implementação e testes automatizados.
+Relatórios HTML: `backend/target/site/jacoco/index.html` e `frontend/coverage/index.html`.
+
+| Módulo | Linhas | Instruções/Stmts | Branches |
+| --- | --- | --- | --- |
+| Backend (JaCoCo) | 80,6% | 83,9% | 69,4% |
+| Frontend (Vitest/V8) | 87,1% | 84,3% | 84,6% |
+
+Classes críticas do backend (linhas / branches): `AppointmentService` 86,0% / 63,8%; `AppointmentController` 93,8% / 100%; `AppointmentCsvWriter` 87,2% / 59,1%; `BlockedDateService` 71,4% / 57,1%; `GlobalExceptionHandler` 57,7% / 100%; `CustomerService` 57,9% / 50,0%; `ServiceCatalogService` 60,9% / 25,0%; `TechnicianService` 52,6% / 25,0%.
+
+Limitações conhecidas: serviços de cadastro (clientes, técnicos, serviços) e `client.ts` do frontend (45,7% das linhas) ficam abaixo da meta de 85% da RNF04. Autenticação e perfis de acesso estão fora de escopo na v1.0.0 (SPEC seção 0), portanto não há testes desse tipo.
+
+## 4. Conclusão da Validação
+
+O Test Harness executa de maneira determinística com 108 testes automatizados em verde, cobrindo todas as regras de negócio especificadas em [docs/SPEC.md](SPEC.md) e proporcionando rastreabilidade direta entre especificação, implementação e testes automatizados.
