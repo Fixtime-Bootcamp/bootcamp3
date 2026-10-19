@@ -12,4 +12,4 @@
 | 2026-10-02 | Autenticacao JWT e perfis ADMIN/ATENDENTE incluidos (RF09, RF10, RN09, RN10; Issues #67 e #68) | Reverte a decisao de 2026-09-02: sistema passa a ter operadores identificados e permissoes por perfil. |
 | 2026-10-02 | Pagina inicial, roteamento, agenda semanal e feedback no frontend (RF11 a RF13, RN11; Issues #65, #66, #69, #70) | Frontend so possuia agenda e cadastros sem navegacao; reutiliza endpoints existentes, sem novas rotas de backend. |
 | 2026-10-02 | CI, responsividade/acessibilidade e seguranca de credenciais (RNF06 a RNF08; Issues #71 e #72) | Garantir qualidade verificavel e evitar segredos no repositorio. |
-| 2026-10-19 | Especificacao As-Built v1.0.0 (Issue #81) | Spec passa a refletir o entregue; RF09-RF13, RN09-RN11 e RNF08 (v1.3) marcados como nao implementados; autenticacao rastreada na issue #98. |
+| 2026-10-19 | Especificacao As-Built v1.0.0 (Issue #81) | Spec passa a refletir o entregue; RF11-RF13 e RN11 (v1.3) marcados como nao implementados; autenticacao JWT/perfis (RF09, RF10, RN09, RN10, RNF08) retirada do escopo da v1.0.0 por decisao da equipe (issue #98 encerrada). |

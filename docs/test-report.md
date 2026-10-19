@@ -116,7 +116,7 @@ Relatórios HTML: `backend/target/site/jacoco/index.html` e `frontend/coverage/i
 
 Classes críticas do backend (linhas / branches): `AppointmentService` 86,0% / 63,8%; `AppointmentController` 93,8% / 100%; `AppointmentCsvWriter` 87,2% / 59,1%; `BlockedDateService` 71,4% / 57,1%; `GlobalExceptionHandler` 57,7% / 100%; `CustomerService` 57,9% / 50,0%; `ServiceCatalogService` 60,9% / 25,0%; `TechnicianService` 52,6% / 25,0%.
 
-Limitações conhecidas: serviços de cadastro (clientes, técnicos, serviços) e `client.ts` do frontend (45,7% das linhas) ficam abaixo da meta de 85% da RNF04. Não há testes de autenticação porque o recurso não foi implementado (SPEC seção 0, issue #98).
+Limitações conhecidas: serviços de cadastro (clientes, técnicos, serviços) e `client.ts` do frontend (45,7% das linhas) ficam abaixo da meta de 85% da RNF04. Autenticação e perfis de acesso estão fora de escopo na v1.0.0 (SPEC seção 0), portanto não há testes desse tipo.
 
 ## 4. Conclusão da Validação
 
