@@ -151,8 +151,9 @@ A suíte cobre 100% dos Requisitos Funcionais (`RF01` a `RF08`) e Regras de Neg�
 
 ### Executar Testes com Docker (Comando Único)
 ```bash
-docker compose run --rm backend mvn test
+docker compose --profile test up --build --abort-on-container-exit backend-tests frontend-tests
 ```
+Executa as suítes do backend e do frontend com cobertura, sem exigir Java, Maven ou Node.js locais. Os relatórios ficam em `backend/target/site/jacoco/index.html` (JaCoCo) e `frontend/coverage/index.html` (Vitest/V8).
 
 ### Executar Testes Localmente
 
@@ -167,6 +168,7 @@ mvn clean test
 cd frontend
 npm install
 npm test -- --run
+npm run test:coverage   # com relatório de cobertura
 ```
 
 O relatório consolidado de execução do Test Harness encontra-se em [docs/test-report.md](docs/test-report.md).
