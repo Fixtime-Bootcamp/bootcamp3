@@ -17,6 +17,20 @@
 | RNF02, RNF07 | Não verificado | Sem medição de P95 nem de Lighthouse/WCAG nesta versão. |
 | RNF04 | Parcial | Regras RN01-RN08 cobertas; ver cobertura medida na seção 7.1. |
 
+Rastreabilidade das issues da proposta v1.3 (conferida contra o código da v1.0.0):
+
+| Issue | Tema | Situação na v1.0.0 |
+| --- | --- | --- |
+| #65 | Página inicial | Não implementada (sem rota `/`) |
+| #66 | Roteamento e menu | Não implementada (sem React Router; navegação por abas em `App.tsx`) |
+| #67 | Login JWT e rota protegida | Fora de escopo (sem Spring Security) |
+| #68 | Perfis de acesso | Fora de escopo |
+| #69 | Agenda semanal | Não implementada (agenda em lista) |
+| #70 | Toasts, loading e error boundary | Não implementada (apenas mensagens de erro inline) |
+| #71 | Responsividade e acessibilidade | Parcial (`@media` e atributos ARIA pontuais; sem auditoria Lighthouse/WCAG) |
+| #72 | Pipeline de CI | Implementada (`.github/workflows/ci.yml`: testes, cobertura e build) |
+| #98 | Spring Security + JWT e perfis | Encerrada como não planejada |
+
 Endpoints efetivamente expostos (todos sem autenticação, pois o controle de acesso está fora de escopo):
 
 | Método | Rota |
