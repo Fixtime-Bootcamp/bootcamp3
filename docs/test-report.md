@@ -1,8 +1,9 @@
 # Relatório Consolidado de Execução do Test Harness - FixTime
 
-**Data da Execução:** 2026-10-21  
+**Data da Execução Final:** 2026-10-21  
 **Status Geral:** ✅ **PASS (100% de Sucesso / Zero Falhas)**  
 **Total de Testes Automatizados:** 152 testes aprovados (72 backend + 80 frontend)  
+**Log Consolidado do Harness:** [logs_testes_final.txt](../logs_testes_final.txt)  
 **Rastreabilidade:** 100% dos testes referenciam as Regras de Negócio (`RN01` a `RN08`) e Requisitos Funcionais (`RF01` a `RF08`) via docstrings.
 
 ---
@@ -120,6 +121,12 @@ Relatórios HTML: `backend/target/site/jacoco/index.html` e `frontend/coverage/i
 Classes críticas do backend (linhas / branches): `AppointmentService` 86,0% / 63,8%; `AppointmentController` 93,8% / 100%; `AppointmentCsvWriter` 87,2% / 59,1%; `BlockedDateService` 71,4% / 57,1%; `GlobalExceptionHandler` 57,7% / 100%; `CustomerService` 100% / 100%; `ServiceCatalogService` 100% / 100%; `TechnicianService` 100% / 100%. No frontend, `client.ts` passou a 100% de linhas e branches (antes 45,7% das linhas), cobrindo mapeamento de erros por status HTTP, falha de rede, corpo não-JSON, download de CSV e leitura do `Content-Disposition` (issue #104).
 
 Limitações conhecidas: `GlobalExceptionHandler` (57,7%) e `BlockedDateService` (71,4%) seguem abaixo da meta de 85% da RNF04 por classe, embora a cobertura total de linhas do backend (85,5%) e do frontend (91,6%) já atinja a meta. Autenticação e perfis de acesso estão fora de escopo na v1.0.0 (SPEC seção 0), portanto não há testes desse tipo.
+
+### Evidências Visuais e Artefatos Capturados:
+* **Resumo Geral dos Testes:** [evidencia_resumo_testes.png](evidencia_resumo_testes.png)
+* **Relatório JaCoCo (Backend):** [evidencia_jacoco.png](evidencia_jacoco.png)
+* **Relatório Vitest (Frontend):** [evidencia_vitest.png](evidencia_vitest.png)
+* **Log Completo de Execução:** [logs_testes_final.txt](../logs_testes_final.txt)
 
 ## 4. Conclusão da Validação
 

@@ -171,7 +171,7 @@ npm test -- --run
 npm run test:coverage   # com relatório de cobertura
 ```
 
-O relatório consolidado de execução do Test Harness encontra-se em [docs/test-report.md](docs/test-report.md).
+O relatório consolidado de execução do Test Harness encontra-se em [docs/test-report.md](docs/test-report.md), e o log íntegro da execução via Docker Compose está versionado em [logs_testes_final.txt](logs_testes_final.txt).
 
 ### Roteiro de Demonstração
 
