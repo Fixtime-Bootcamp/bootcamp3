@@ -173,6 +173,10 @@ npm run test:coverage   # com relatório de cobertura
 
 O relatório consolidado de execução do Test Harness encontra-se em [docs/test-report.md](docs/test-report.md).
 
+### Roteiro de Demonstração
+
+O passo a passo do fluxo principal para apresentação e gravação do vídeo (cadastros, agendamento, conflito, cancelamento/conclusão, CSV, Swagger e testes em tempo real) está em [docs/DEMO.md](docs/DEMO.md).
+
 ---
 
 ## Governança do Repositório
