@@ -1,0 +1,212 @@
+Attaching to backend-tests-1, frontend-tests-1
+ Container bootcamp3-backend-tests-1 Starting 
+ Container bootcamp3-frontend-tests-1 Starting 
+ Container bootcamp3-backend-tests-1 Started 
+ Container bootcamp3-frontend-tests-1 Started 
+frontend-tests-1  | 
+frontend-tests-1  | > fixtime-web@0.0.1 test:coverage
+frontend-tests-1  | > vitest --run --coverage --coverage.clean=false
+frontend-tests-1  | 
+frontend-tests-1  | 
+frontend-tests-1  | [1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/app[39m
+frontend-tests-1  |       [2mCoverage enabled with [22m[33mv8[39m
+frontend-tests-1  | 
+backend-tests-1   | [INFO] Scanning for projects...
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] ----------------------< com.fixtime:fixtime-api >-----------------------
+backend-tests-1   | [INFO] Building fixtime-api 0.0.1-SNAPSHOT
+backend-tests-1   | [INFO]   from pom.xml
+backend-tests-1   | [INFO] --------------------------------[ jar ]---------------------------------
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- jacoco:0.8.12:prepare-agent (prepare-agent) @ fixtime-api ---
+frontend-tests-1  |  [32m✓[39m src/utils/appointmentEligibility.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+frontend-tests-1  |  [32m✓[39m src/api/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+backend-tests-1   | [INFO] argLine set to -javaagent:/root/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=/app/target/jacoco.exec
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- resources:3.3.1:resources (default-resources) @ fixtime-api ---
+backend-tests-1   | [INFO] Copying 1 resource from src/main/resources to target/classes
+backend-tests-1   | [INFO] Copying 0 resource from src/main/resources to target/classes
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- compiler:3.13.0:compile (default-compile) @ fixtime-api ---
+frontend-tests-1  |  [32m✓[39m src/components/AppointmentCard.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 826[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m enables cancel and disables complete when more than 2h before visit [33m 341[2mms[22m[39m
+backend-tests-1   | [INFO] Nothing to compile - all classes are up to date.
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- resources:3.3.1:testResources (default-testResources) @ fixtime-api ---
+backend-tests-1   | [INFO] skip non existing resourceDirectory /app/src/test/resources
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ fixtime-api ---
+frontend-tests-1  |  [32m✓[39m src/pages/TechniciansPage.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1129[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m valida campos obrigatórios ao tentar cadastrar [33m 444[2mms[22m[39m
+backend-tests-1   | [INFO] Nothing to compile - all classes are up to date.
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- surefire:3.5.3:test (default-test) @ fixtime-api ---
+frontend-tests-1  |  [32m✓[39m src/pages/CustomersPage.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1282[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m valida campos obrigatórios antes de enviar o formulário [33m 415[2mms[22m[39m
+frontend-tests-1  |  [32m✓[39m src/pages/ServicesPage.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1303[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m valida campos obrigatórios ao tentar cadastrar [33m 452[2mms[22m[39m
+backend-tests-1   | [INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] -------------------------------------------------------
+backend-tests-1   | [INFO]  T E S T S
+backend-tests-1   | [INFO] -------------------------------------------------------
+frontend-tests-1  |  [32m✓[39m src/components/CreateAppointmentModal.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1603[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m validates required fields on submit without inputs [33m 487[2mms[22m[39m
+frontend-tests-1  |  [32m✓[39m src/App.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 2296[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m presents loading and then the empty agenda state [33m 323[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m presents a standardized conflict error [33m 369[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m opens appointment modal and refreshes agenda on successful creation [33m 768[2mms[22m[39m
+frontend-tests-1  | 
+frontend-tests-1  | [2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+frontend-tests-1  | [2m      Tests [22m [1m[32m61 passed[39m[22m[90m (61)[39m
+frontend-tests-1  | [2m   Start at [22m 20:20:53
+frontend-tests-1  | [2m   Duration [22m 5.37s[2m (transform 2.23s, setup 2.83s, import 3.30s, tests 8.48s, environment 12.94s)[22m
+frontend-tests-1  | 
+frontend-tests-1  | [34m % [39m[2mCoverage report from [22m[33mv8[39m
+frontend-tests-1  | -------------------|---------|----------|---------|---------|-------------------
+frontend-tests-1  | File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+frontend-tests-1  | -------------------|---------|----------|---------|---------|-------------------
+frontend-tests-1  | All files          |   84.33 |    84.61 |   86.41 |   87.09 |                   
+frontend-tests-1  |  src               |   67.14 |    82.45 |   61.11 |   66.66 |                   
+frontend-tests-1  |   App.tsx          |   67.14 |    82.45 |   61.11 |   66.66 | ...79,301-335,361 
+frontend-tests-1  |   vite-env.d.ts    |       0 |        0 |       0 |       0 |                   
+frontend-tests-1  |  src/api           |    64.1 |     67.6 |      68 |   67.96 |                   
+frontend-tests-1  |   client.ts        |   43.39 |    57.14 |      75 |   45.65 | 54-69,82-99       
+frontend-tests-1  |   resources.ts     |   81.25 |    77.77 |    64.7 |   85.96 | ...61,64,67,70,91 
+frontend-tests-1  |  src/components    |   90.25 |    84.91 |   96.96 |   92.64 |                   
+frontend-tests-1  |   ...tmentCard.tsx |   84.09 |    86.95 |     100 |   90.24 | 43,53-55,75       
+frontend-tests-1  |   ...mentModal.tsx |   92.72 |    84.21 |   96.15 |   93.68 | 76,81-83,142,164  
+frontend-tests-1  |  src/hooks         |   90.99 |    58.06 |   86.66 |    97.8 |                   
+frontend-tests-1  |   ...tResources.ts |   91.42 |    71.42 |      80 |     100 | 49-51             
+frontend-tests-1  |   ...pointments.ts |   90.56 |    55.55 |     100 |   95.34 | 71,84             
+frontend-tests-1  |   useEntityList.ts |    91.3 |       50 |   71.42 |     100 | 21-29             
+frontend-tests-1  |  src/pages         |   94.01 |    94.38 |   96.07 |   97.03 |                   
+frontend-tests-1  |   ...omersPage.tsx |   96.36 |    96.77 |     100 |   97.72 | 59                
+frontend-tests-1  |   ServicesPage.tsx |   91.22 |    91.66 |   89.47 |   95.74 | 67,142            
+frontend-tests-1  |   ...ciansPage.tsx |   94.54 |    95.16 |     100 |   97.72 | 59                
+frontend-tests-1  |  src/types         |     100 |      100 |     100 |     100 |                   
+frontend-tests-1  |   index.ts         |     100 |      100 |     100 |     100 |                   
+frontend-tests-1  |  src/utils         |   92.59 |    91.66 |     100 |     100 |                   
+frontend-tests-1  |   ...ligibility.ts |   92.59 |    91.66 |     100 |     100 | 13,26             
+frontend-tests-1  | -------------------|---------|----------|---------|---------|-------------------
+frontend-tests-1  | 
+frontend-tests-1  | =============================== Coverage summary ===============================
+frontend-tests-1  | Statements   : 84.33% ( 549/651 )
+frontend-tests-1  | Branches     : 84.61% ( 473/559 )
+frontend-tests-1  | Functions    : 86.41% ( 140/162 )
+frontend-tests-1  | Lines        : 87.09% ( 486/558 )
+frontend-tests-1  | ================================================================================
+[Kfrontend-tests-1 exited with code 0
+backend-tests-1   | [INFO] Running com.fixtime.appointment.AppointmentCsvWriterTest
+backend-tests-1   | [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.691 s -- in com.fixtime.appointment.AppointmentCsvWriterTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentExportIntegrationTest
+backend-tests-1   | 20:21:01.963 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.fixtime.AppointmentExportIntegrationTest]: AppointmentExportIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 20:21:02.582 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.AppointmentExportIntegrationTest
+backend-tests-1   | 
+backend-tests-1   |   .   ____          _            __ _ _
+backend-tests-1   |  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+backend-tests-1   | ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+backend-tests-1   |  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+backend-tests-1   |   '  |____| .__|_| |_|_| |_\__, | / / / /
+backend-tests-1   |  =========|_|==============|___/=/_/_/_/
+backend-tests-1   | 
+backend-tests-1   |  :: Spring Boot ::                (v3.4.5)
+backend-tests-1   | 
+backend-tests-1   | 2026-10-21T20:21:04.803Z  INFO 84 --- [fixtime-api] [           main] c.f.AppointmentExportIntegrationTest     : Starting AppointmentExportIntegrationTest using Java 21.0.7 with PID 84 (started by root in /app)
+backend-tests-1   | 2026-10-21T20:21:04.805Z  INFO 84 --- [fixtime-api] [           main] c.f.AppointmentExportIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+backend-tests-1   | 2026-10-21T20:21:08.552Z  INFO 84 --- [fixtime-api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+backend-tests-1   | 2026-10-21T20:21:09.115Z  INFO 84 --- [fixtime-api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 514 ms. Found 5 JPA repository interfaces.
+backend-tests-1   | 2026-10-21T20:21:10.968Z  INFO 84 --- [fixtime-api] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+backend-tests-1   | 2026-10-21T20:21:11.375Z  INFO 84 --- [fixtime-api] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.13.Final
+backend-tests-1   | 2026-10-21T20:21:11.576Z  INFO 84 --- [fixtime-api] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+backend-tests-1   | 2026-10-21T20:21:13.306Z  INFO 84 --- [fixtime-api] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+backend-tests-1   | 2026-10-21T20:21:13.501Z  INFO 84 --- [fixtime-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+backend-tests-1   | 2026-10-21T20:21:14.692Z  INFO 84 --- [fixtime-api] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:fixtime user=SA
+backend-tests-1   | 2026-10-21T20:21:14.703Z  INFO 84 --- [fixtime-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+backend-tests-1   | 2026-10-21T20:21:15.012Z  INFO 84 --- [fixtime-api] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+backend-tests-1   | 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+backend-tests-1   | 	Database driver: undefined/unknown
+backend-tests-1   | 	Database version: 2.3.232
+backend-tests-1   | 	Autocommit mode: undefined/unknown
+backend-tests-1   | 	Isolation level: undefined/unknown
+backend-tests-1   | 	Minimum pool size: undefined/unknown
+backend-tests-1   | 	Maximum pool size: undefined/unknown
+backend-tests-1   | 2026-10-21T20:21:19.897Z  INFO 84 --- [fixtime-api] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+backend-tests-1   | 2026-10-21T20:21:20.230Z  INFO 84 --- [fixtime-api] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+backend-tests-1   | 2026-10-21T20:21:21.180Z  INFO 84 --- [fixtime-api] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+backend-tests-1   | 2026-10-21T20:21:27.137Z  INFO 84 --- [fixtime-api] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+backend-tests-1   | 2026-10-21T20:21:27.137Z  INFO 84 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+backend-tests-1   | 2026-10-21T20:21:27.140Z  INFO 84 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+backend-tests-1   | 2026-10-21T20:21:27.201Z  INFO 84 --- [fixtime-api] [           main] c.f.AppointmentExportIntegrationTest     : Started AppointmentExportIntegrationTest in 23.826 seconds (process running for 28.948)
+backend-tests-1   | Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+backend-tests-1   | OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.74 s -- in com.fixtime.AppointmentExportIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentIntegrationTest
+backend-tests-1   | 2026-10-21T20:21:30.055Z  INFO 84 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.AppointmentIntegrationTest]: AppointmentIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T20:21:30.068Z  INFO 84 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.AppointmentIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentIntegrationTest$ListingPaginationTests
+backend-tests-1   | 2026-10-21T20:21:30.321Z  INFO 84 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.AppointmentIntegrationTest$ListingPaginationTests]: ListingPaginationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T20:21:30.329Z  INFO 84 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.AppointmentIntegrationTest$ListingPaginationTests
+backend-tests-1   | [INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.830 s -- in com.fixtime.AppointmentIntegrationTest$ListingPaginationTests
+backend-tests-1   | [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.098 s -- in com.fixtime.AppointmentIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$TransitionTests
+backend-tests-1   | [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.100 s -- in com.fixtime.AppointmentServiceTest$TransitionTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$AvailabilityTests
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in com.fixtime.AppointmentServiceTest$AvailabilityTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$CreationTests
+backend-tests-1   | [INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.080 s -- in com.fixtime.AppointmentServiceTest$CreationTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$ExportTests
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.028 s -- in com.fixtime.AppointmentServiceTest$ExportTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$ListingTests
+backend-tests-1   | [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.015 s -- in com.fixtime.AppointmentServiceTest$ListingTests
+backend-tests-1   | [INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.342 s -- in com.fixtime.AppointmentServiceTest
+backend-tests-1   | [INFO] Running com.fixtime.BlockedDateIntegrationTest
+backend-tests-1   | 2026-10-21T20:21:33.514Z  INFO 84 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.BlockedDateIntegrationTest]: BlockedDateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T20:21:33.543Z  INFO 84 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.BlockedDateIntegrationTest
+backend-tests-1   | [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.608 s -- in com.fixtime.BlockedDateIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.CustomerServiceTest
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in com.fixtime.CustomerServiceTest
+backend-tests-1   | [INFO] Running com.fixtime.HealthControllerTest
+backend-tests-1   | 2026-10-21T20:21:34.149Z  INFO 84 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.HealthControllerTest]: HealthControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T20:21:34.274Z  INFO 84 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.HealthControllerTest
+backend-tests-1   | 
+backend-tests-1   |   .   ____          _            __ _ _
+backend-tests-1   |  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+backend-tests-1   | ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+backend-tests-1   |  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+backend-tests-1   |   '  |____| .__|_| |_|_| |_\__, | / / / /
+backend-tests-1   |  =========|_|==============|___/=/_/_/_/
+backend-tests-1   | 
+backend-tests-1   |  :: Spring Boot ::                (v3.4.5)
+backend-tests-1   | 
+backend-tests-1   | 2026-10-21T20:21:34.443Z  INFO 84 --- [fixtime-api] [           main] com.fixtime.HealthControllerTest         : Starting HealthControllerTest using Java 21.0.7 with PID 84 (started by root in /app)
+backend-tests-1   | 2026-10-21T20:21:34.443Z  INFO 84 --- [fixtime-api] [           main] com.fixtime.HealthControllerTest         : No active profile set, falling back to 1 default profile: "default"
+backend-tests-1   | 2026-10-21T20:21:36.133Z  INFO 84 --- [fixtime-api] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+backend-tests-1   | 2026-10-21T20:21:36.134Z  INFO 84 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+backend-tests-1   | 2026-10-21T20:21:36.135Z  INFO 84 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+backend-tests-1   | 2026-10-21T20:21:36.148Z  INFO 84 --- [fixtime-api] [           main] com.fixtime.HealthControllerTest         : Started HealthControllerTest in 1.862 seconds (process running for 37.897)
+backend-tests-1   | [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.057 s -- in com.fixtime.HealthControllerTest
+backend-tests-1   | [INFO] Running com.fixtime.OpenApiDocumentationTest
+backend-tests-1   | 2026-10-21T20:21:36.192Z  INFO 84 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.OpenApiDocumentationTest]: OpenApiDocumentationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T20:21:36.202Z  INFO 84 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.OpenApiDocumentationTest
+backend-tests-1   | 2026-10-21T20:21:36.711Z  WARN 84 --- [fixtime-api] [           main] o.springdoc.core.service.OpenAPIService  : Json Processing Exception occurred: additionalProperties must be either a Boolean or a Schema instance
+backend-tests-1   |  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 7525] (through reference chain: io.swagger.v3.oas.models.OpenAPI["components"]->io.swagger.v3.oas.models.Components["schemas"]->java.util.LinkedHashMap["ErrorResponse"]->io.swagger.v3.oas.models.media.Schema["properties"]->java.util.LinkedHashMap["fieldErrors"]->io.swagger.v3.oas.models.media.Schema["additionalProperties"])
+backend-tests-1   | 2026-10-21T20:21:37.964Z  INFO 84 --- [fixtime-api] [           main] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 1708 ms
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.964 s -- in com.fixtime.OpenApiDocumentationTest
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] Results:
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] Tests run: 47, Failures: 0, Errors: 0, Skipped: 0
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- jacoco:0.8.12:report (report) @ fixtime-api ---
+backend-tests-1   | [INFO] Loading execution data file /app/target/jacoco.exec
+backend-tests-1   | [INFO] Analyzed bundle 'fixtime-api' with 42 classes
+backend-tests-1   | [INFO] ------------------------------------------------------------------------
+backend-tests-1   | [INFO] BUILD SUCCESS
+backend-tests-1   | [INFO] ------------------------------------------------------------------------
+backend-tests-1   | [INFO] Total time:  57.027 s
+backend-tests-1   | [INFO] Finished at: 2026-10-21T20:21:51Z
+backend-tests-1   | [INFO] ------------------------------------------------------------------------
+[Kbackend-tests-1 exited with code 0
