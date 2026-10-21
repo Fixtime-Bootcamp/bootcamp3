@@ -2,7 +2,7 @@
 
 **Data da Execução Final:** 2026-10-21  
 **Status Geral:** ✅ **PASS (100% de Sucesso / Zero Falhas)**  
-**Total de Testes Automatizados:** 108 testes aprovados (47 backend + 61 frontend)  
+**Total de Testes Automatizados:** 152 testes aprovados (72 backend + 80 frontend)  
 **Log Consolidado do Harness:** [logs_testes_final.txt](../logs_testes_final.txt)  
 **Rastreabilidade:** 100% dos testes referenciam as Regras de Negócio (`RN01` a `RN08`) e Requisitos Funcionais (`RF01` a `RF08`) via docstrings.
 
@@ -21,8 +21,8 @@ docker compose --profile test up --build --abort-on-container-exit backend-tests
 ```
 
 ### Resumo da Suíte Backend:
-* **Classes de Teste:** 8
-* **Testes Executados:** 47
+* **Classes de Teste:** 10
+* **Testes Executados:** 72
 * **Falhas (Failures):** 0
 * **Erros (Errors):** 0
 * **Ignorados (Skipped):** 0
@@ -32,7 +32,7 @@ docker compose --profile test up --build --abort-on-container-exit backend-tests
 ```text
 [INFO] Results:
 [INFO] 
-[INFO] Tests run: 47, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 72, Failures: 0, Errors: 0, Skipped: 0
 [INFO] 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
@@ -68,8 +68,11 @@ docker compose --profile test up --build --abort-on-container-exit backend-tests
    * `RF08`: Exportação streaming em formato CSV com UTF-8 BOM (`0xEF, 0xBB, 0xBF`), cabeçalho RFC 4180 e caracteres acentuados.
    * `RF08`: Exportação de cabeçalho quando o filtro não encontra registros.
    * `RF08 & RNF03`: Retorno de `400 Bad Request` padronizado quando `startDate > endDate`.
-5. **`CustomerServiceTest`:**
-   * `RF01 & RN01`: Criação de cliente ativo, busca por ID inexistente (`404 Not Found`) e cliente inativo.
+5. **`CustomerServiceTest`, `TechnicianServiceTest` e `ServiceCatalogServiceTest` (Serviços de Cadastro):**
+   * `RF01, RF02 & RF03`: Criação de cliente, técnico e serviço sempre ativos; listagem com e sem registros.
+   * `RN01`: Alternância de status (ativar/inativar), busca de cadastro ativo e rejeição de cadastro inativo.
+   * `RN02`: Serviço preserva duração e preço informados; descrição opcional.
+   * `RNF03`: `ResourceNotFoundException` para ID inexistente na busca e na alternância de status, sem persistir alterações.
 6. **`HealthControllerTest`:**
    * `RNF01`: Verificação de integridade do serviço em `/api/v1/health` retornando `200 OK` e status `UP`.
 
@@ -87,7 +90,7 @@ npm run build
 ### Resultados da Suíte Frontend:
 ```text
  ✓ src/utils/appointmentEligibility.test.ts (7 tests)
- ✓ src/api/client.test.ts (4 tests)
+ ✓ src/api/client.test.ts (23 tests)
  ✓ src/components/AppointmentCard.test.tsx (7 tests)
  ✓ src/pages/TechniciansPage.test.tsx (7 tests)
  ✓ src/pages/CustomersPage.test.tsx (10 tests)
@@ -96,12 +99,12 @@ npm run build
  ✓ src/App.test.tsx (10 tests)
 
  Test Files  8 passed (8)
-      Tests  61 passed (61)
+      Tests  80 passed (80)
    Duration  ~6.05s
 ```
 
 * **Test Files:** 8 aprovados (100%)
-* **Testes Executados:** 61 aprovados (100%)
+* **Testes Executados:** 80 aprovados (100%)
 * **Build de Produção:** Concluído com sucesso via Vite e TypeScript (`tsc -b`).
 
 ---
@@ -112,12 +115,12 @@ Relatórios HTML: `backend/target/site/jacoco/index.html` e `frontend/coverage/i
 
 | Módulo | Linhas | Instruções/Stmts | Branches |
 | --- | --- | --- | --- |
-| Backend (JaCoCo) | 80,6% | 83,9% | 69,4% |
-| Frontend (Vitest/V8) | 87,1% | 84,3% | 84,6% |
+| Backend (JaCoCo) | 85,5% | 89,0% | 73,9% |
+| Frontend (Vitest/V8) | 91,6% | 88,9% | 87,3% |
 
-Classes críticas do backend (linhas / branches): `AppointmentService` 86,0% / 63,8%; `AppointmentController` 93,8% / 100%; `AppointmentCsvWriter` 87,2% / 59,1%; `BlockedDateService` 71,4% / 57,1%; `GlobalExceptionHandler` 57,7% / 100%; `CustomerService` 57,9% / 50,0%; `ServiceCatalogService` 60,9% / 25,0%; `TechnicianService` 52,6% / 25,0%.
+Classes críticas do backend (linhas / branches): `AppointmentService` 86,0% / 63,8%; `AppointmentController` 93,8% / 100%; `AppointmentCsvWriter` 87,2% / 59,1%; `BlockedDateService` 71,4% / 57,1%; `GlobalExceptionHandler` 57,7% / 100%; `CustomerService` 100% / 100%; `ServiceCatalogService` 100% / 100%; `TechnicianService` 100% / 100%. No frontend, `client.ts` passou a 100% de linhas e branches (antes 45,7% das linhas), cobrindo mapeamento de erros por status HTTP, falha de rede, corpo não-JSON, download de CSV e leitura do `Content-Disposition` (issue #104).
 
-Limitações conhecidas: serviços de cadastro (clientes, técnicos, serviços) e `client.ts` do frontend (45,7% das linhas) ficam abaixo da meta de 85% da RNF04. Autenticação e perfis de acesso estão fora de escopo na v1.0.0 (SPEC seção 0), portanto não há testes desse tipo.
+Limitações conhecidas: `GlobalExceptionHandler` (57,7%) e `BlockedDateService` (71,4%) seguem abaixo da meta de 85% da RNF04 por classe, embora a cobertura total de linhas do backend (85,5%) e do frontend (91,6%) já atinja a meta. Autenticação e perfis de acesso estão fora de escopo na v1.0.0 (SPEC seção 0), portanto não há testes desse tipo.
 
 ### Evidências Visuais e Artefatos Capturados:
 * **Resumo Geral dos Testes:** [evidencia_resumo_testes.png](evidencia_resumo_testes.png)
@@ -127,4 +130,4 @@ Limitações conhecidas: serviços de cadastro (clientes, técnicos, serviços) 
 
 ## 4. Conclusão da Validação
 
-O Test Harness executa de maneira determinística com 108 testes automatizados em verde, cobrindo todas as regras de negócio especificadas em [docs/SPEC.md](SPEC.md) e proporcionando rastreabilidade direta entre especificação, implementação e testes automatizados.
+O Test Harness executa de maneira determinística com 152 testes automatizados em verde, cobrindo todas as regras de negócio especificadas em [docs/SPEC.md](SPEC.md) e proporcionando rastreabilidade direta entre especificação, implementação e testes automatizados.
