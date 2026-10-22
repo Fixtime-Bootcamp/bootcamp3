@@ -110,6 +110,44 @@ cd bootcamp3
 
 ---
 
+### Variáveis de Ambiente
+
+Antes de subir os serviços via Docker, copie os arquivos de exemplo de variáveis de
+ambiente:
+
+```bash
+cp .env.example .env
+cp frontend/.env.example frontend/.env
+```
+
+**`.env` (raiz — lido pelo `docker-compose.yml` / PostgreSQL):**
+
+| Variável | Descrição | Valor de exemplo |
+|---|---|---|
+| `POSTGRES_DB` | Nome do banco de dados PostgreSQL | `fixtime` |
+| `POSTGRES_USER` | Usuário do PostgreSQL | `fixtime` |
+| `POSTGRES_PASSWORD` | Senha do PostgreSQL | `fixtime` |
+| `SPRING_DATASOURCE_URL` | URL JDBC usada pelo backend para conectar ao banco | `jdbc:postgresql://localhost:5432/fixtime` |
+| `SPRING_DATASOURCE_USERNAME` | Usuário usado pelo backend para autenticar no banco | `fixtime` |
+| `SPRING_DATASOURCE_PASSWORD` | Senha usada pelo backend para autenticar no banco | `fixtime` |
+
+**`frontend/.env` (lido pelo Vite):**
+
+| Variável | Descrição | Valor de exemplo |
+|---|---|---|
+| `VITE_API_URL` | URL base da API consumida pelo frontend | `http://localhost:8080/api/v1` |
+
+> ⚠️ **Atenção:** os valores de `.env.example` (incluindo usuário e senha do banco)
+> são **apenas exemplos para ambiente local de desenvolvimento**. Nunca utilize essas
+> credenciais padrão em homologação ou produção — defina valores próprios e seguros
+> antes de qualquer deploy real.
+
+A **Execução Local Nativa** (sem Docker, próxima seção) não depende desses arquivos: o
+backend usa o banco H2 em memória por padrão e o frontend já aponta para
+`http://localhost:8080/api/v1` mesmo sem `frontend/.env`.
+
+---
+
 ### 🚀 Execução Completa com Docker (Recomendado)
 
 Inicie toda a aplicação (Banco PostgreSQL + API Backend + SPA Frontend) com um único comando:
@@ -224,7 +262,7 @@ A entrega consolidada reúne os seguintes documentos técnicos e analíticos:
 
 1. **[docs/SPEC.md](docs/SPEC.md):** Especificação Técnica Canônica do FixTime (SDD), cobrindo RF01-RF08, RN01-RN08 e contratos literais JSON.
 2. **[docs/spec-changelog.md](docs/spec-changelog.md):** Histórico evolutivo dos refinamentos e decisões de modelagem.
-3. **[docs/test-report.md](docs/test-report.md):** Relatório Consolidado de Execução do Test Harness (108 testes automatizados com 100% de sucesso).
+3. **[docs/test-report.md](docs/test-report.md):** Relatório Consolidado de Execução do Test Harness (152 testes automatizados — 72 backend + 80 frontend — com 100% de sucesso).
 4. **[docs/erros-logicos.md](docs/erros-logicos.md):** Inspeção de erros lógicos identificados no ciclo, estratégias de correção, ciclo de re-especificação e relato de experiência da equipe.
 5. **[docs/relatorio-etico-ia.md](docs/relatorio-etico-ia.md):** Análise comparativa entre ferramentas (Claude Code, Codex, Cursor e Antigravity) e fundamentação crítica dos pilares éticos, segurança, privacidade (LGPD) e centralidade da homologação humana.
 6. **[docs/relatorio-entrega-2-consolidado.md](docs/relatorio-entrega-2-consolidado.md):** Documento Consolidado da Entrega 2 para submissão oficial (disponível também em versão formatada estilizada em [docs/relatorio-entrega-2-consolidado.pdf](docs/relatorio-entrega-2-consolidado.pdf)).
