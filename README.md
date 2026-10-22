@@ -1,5 +1,9 @@
 # FixTime
 
+![CI](https://github.com/Fixtime-Bootcamp/bootcamp3/actions/workflows/ci.yml/badge.svg?branch=main)
+![Release](https://img.shields.io/github/v/release/Fixtime-Bootcamp/bootcamp3)
+![License](https://img.shields.io/badge/license-não%20definida-lightgrey)
+
 ## Visão Geral do Projeto
 
 O **FixTime** é uma plataforma determinística e escalável de agendamento de visitas para pequenas e médias assistências técnicas. Centraliza cadastros de clientes, técnicos e catálogo de serviços para eliminar conflitos de agenda, perda de histórico e falta de visibilidade comum em controles informais por telefone e planilhas.
@@ -99,7 +103,7 @@ stateDiagram-v2
 
 ### Pré-requisitos
 - **Git** para clonagem do repositório.
-- **Docker & Docker Compose** (método recomendado — não exige Java, Maven ou Node.js instalados na máquina).
+- **Docker Engine 24+ e Docker Compose v2.20+** (método recomendado — não exige Java, Maven ou Node.js instalados na máquina). Verifique com `docker --version` e `docker compose version`.
 - *Opcional para desenvolvimento nativo local:* JDK 21, Maven 3.9+ e Node.js 22+.
 
 Clone o repositório:
@@ -195,9 +199,10 @@ A suíte cobre 100% dos Requisitos Funcionais (`RF01` a `RF08`) e Regras de Neg�
 
 ### Executar Testes com Docker (Comando Único)
 ```bash
-docker compose --profile test up --build --abort-on-container-exit backend-tests frontend-tests
+./scripts/test.sh        # Linux/macOS/Git Bash
+./scripts/test.ps1       # Windows PowerShell
 ```
-Executa as suítes do backend e do frontend com cobertura, sem exigir Java, Maven ou Node.js locais. Os relatórios ficam em `backend/target/site/jacoco/index.html` (JaCoCo) e `frontend/coverage/index.html` (Vitest/V8).
+Builda e executa as suítes do backend e do frontend com cobertura, sem exigir Java, Maven ou Node.js locais, retornando código de saída diferente de zero se qualquer suíte falhar. (Preferimos esse script a `docker compose --profile test up --abort-on-container-exit`: o `up` não propaga o exit code dos containers de teste, então o script usa `docker compose run` para cada serviço e falha explicitamente.) Os relatórios ficam em `backend/target/site/jacoco/index.html` (JaCoCo) e `frontend/coverage/index.html` (Vitest/V8).
 
 ### Executar Testes Localmente
 
@@ -223,6 +228,19 @@ O passo a passo do fluxo principal para apresentação e gravação do vídeo (c
 
 ---
 
+## Troubleshooting
+
+- **Porta já em uso (`5173`, `80`, `8080` ou `5432`):** outro processo ou container está usando a porta. Finalize-o ou altere o mapeamento de portas em `docker-compose.yml` (ex.: `"8081:8080"`).
+- **Banco com dados antigos ou schema divergente:** remova o volume do PostgreSQL e recrie os containers do zero:
+  ```bash
+  docker compose down -v
+  docker compose up --build
+  ```
+- **Backend não fica "healthy" / frontend não consegue falar com a API:** confira os logs com `docker compose logs backend` e valide manualmente o endpoint `http://localhost:8080/api/v1/health`.
+- **Alterações no código não refletem no container:** rode `docker compose up --build` (o `--build` força a reconstrução das imagens) ou `docker compose build --no-cache` em último caso.
+
+---
+
 ## Governança do Repositório
 
 - `main`: Branch protegida de release para produção; commits diretos são estritamente bloqueados.
@@ -236,7 +254,9 @@ O passo a passo do fluxo principal para apresentação e gravação do vídeo (c
 
 ## Especificação Técnica (SDD)
 
-A especificação canônica do FixTime encontra-se em [docs/SPEC.md](docs/SPEC.md), e o histórico evolutivo de refinamentos em [docs/spec-changelog.md](docs/spec-changelog.md).
+A especificação canônica do FixTime encontra-se em [docs/SPEC.md](docs/SPEC.md) (ver também [docs/specification.md](docs/specification.md)), e o histórico evolutivo de refinamentos em [docs/spec-changelog.md](docs/spec-changelog.md).
+
+O histórico de versões da release encontra-se em [CHANGELOG.md](CHANGELOG.md), e o relatório consolidado de testes em [docs/test-report.md](docs/test-report.md).
 
 O ciclo de desenvolvimento segue o fluxo:  
 `Specification` ➔ `Plan` ➔ `Implement` ➔ `Test` ➔ `Review`

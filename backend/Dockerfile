@@ -10,8 +10,8 @@ CMD ["mvn", "-B", "test"]
 FROM build AS package
 RUN mvn package -DskipTests -B
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=package /app/target/fixtime-api-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=package /app/target/fixtime-api-1.0.0.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
