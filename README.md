@@ -135,16 +135,22 @@ cp frontend/.env.example frontend/.env
 
 | Variável | Descrição | Valor de exemplo |
 |---|---|---|
-| `VITE_API_URL` | URL base da API consumida pelo frontend | `http://localhost:8080/api/v1` |
+| `VITE_API_URL` | URL base da API consumida pelo frontend | `/api/v1` |
 
 > ⚠️ **Atenção:** os valores de `.env.example` (incluindo usuário e senha do banco)
 > são **apenas exemplos para ambiente local de desenvolvimento**. Nunca utilize essas
 > credenciais padrão em homologação ou produção — defina valores próprios e seguros
 > antes de qualquer deploy real.
+>
+> **Importante:** mantenha `VITE_API_URL` como caminho relativo (`/api/v1`). Tanto o
+> `nginx.conf` do container do frontend quanto o proxy do Vite (`npm run dev`) já
+> encaminham `/api/*` para o backend; apontar para uma URL absoluta
+> (`http://localhost:8080/...`) faz o navegador chamar o backend diretamente,
+> gerando uma requisição cross-origin que o backend rejeita (sem CORS configurado).
 
 A **Execução Local Nativa** (sem Docker, próxima seção) não depende desses arquivos: o
-backend usa o banco H2 em memória por padrão e o frontend já aponta para
-`http://localhost:8080/api/v1` mesmo sem `frontend/.env`.
+backend usa o banco H2 em memória por padrão e o frontend já aponta para `/api/v1`
+mesmo sem `frontend/.env`, resolvido pelo proxy do Vite em `npm run dev`.
 
 ---
 
