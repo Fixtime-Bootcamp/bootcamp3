@@ -126,20 +126,25 @@ cp frontend/.env.example frontend/.env
 
 **`.env` (raiz — lido pelo `docker-compose.yml` / PostgreSQL):**
 
-| Variável | Descrição | Valor de exemplo |
-|---|---|---|
-| `POSTGRES_DB` | Nome do banco de dados PostgreSQL | `fixtime` |
-| `POSTGRES_USER` | Usuário do PostgreSQL | `fixtime` |
-| `POSTGRES_PASSWORD` | Senha do PostgreSQL | `fixtime` |
-| `SPRING_DATASOURCE_URL` | URL JDBC usada pelo backend para conectar ao banco | `jdbc:postgresql://localhost:5432/fixtime` |
-| `SPRING_DATASOURCE_USERNAME` | Usuário usado pelo backend para autenticar no banco | `fixtime` |
-| `SPRING_DATASOURCE_PASSWORD` | Senha usada pelo backend para autenticar no banco | `fixtime` |
+| Variável | Descrição | Valor padrão | Obrigatória |
+|---|---|---|---|
+| `POSTGRES_DB` | Nome do banco de dados PostgreSQL | `fixtime` | Não¹ |
+| `POSTGRES_USER` | Usuário do PostgreSQL | `fixtime` | Não¹ |
+| `POSTGRES_PASSWORD` | Senha do PostgreSQL | `fixtime` | Não¹ |
+| `SPRING_DATASOURCE_URL` | URL JDBC usada pelo backend para conectar ao banco (execução nativa local) | `jdbc:postgresql://localhost:5432/fixtime` | Não² |
+| `SPRING_DATASOURCE_USERNAME` | Usuário usado pelo backend para autenticar no banco (execução nativa local) | `fixtime` | Não² |
+| `SPRING_DATASOURCE_PASSWORD` | Senha usada pelo backend para autenticar no banco (execução nativa local) | `fixtime` | Não² |
+
+¹ `docker-compose.yml` já define esses valores como fallback (`${POSTGRES_DB:-fixtime}` etc.); o `.env` só é necessário para sobrescrever as credenciais padrão.
+² Usadas apenas se você rodar o backend fora do Docker contra um PostgreSQL real; sem elas, o `mvn spring-boot:run` usa o banco H2 em memória por padrão.
 
 **`frontend/.env` (lido pelo Vite):**
 
-| Variável | Descrição | Valor de exemplo |
-|---|---|---|
-| `VITE_API_URL` | URL base da API consumida pelo frontend | `/api/v1` |
+| Variável | Descrição | Valor padrão | Obrigatória |
+|---|---|---|---|
+| `VITE_API_URL` | URL base da API consumida pelo frontend | `/api/v1` | Não³ |
+
+³ O proxy do Vite (`npm run dev`) e o `nginx.conf` do container já assumem `/api/v1` como padrão; só é necessário definir explicitamente se o backend estiver em outro caminho.
 
 > ⚠️ **Atenção:** os valores de `.env.example` (incluindo usuário e senha do banco)
 > são **apenas exemplos para ambiente local de desenvolvimento**. Nunca utilize essas
