@@ -120,8 +120,15 @@ Antes de subir os serviços via Docker, copie os arquivos de exemplo de variáve
 ambiente:
 
 ```bash
+# Linux / macOS / Git Bash
 cp .env.example .env
 cp frontend/.env.example frontend/.env
+```
+
+```powershell
+# Windows PowerShell
+Copy-Item .env.example .env
+Copy-Item frontend\.env.example frontend\.env
 ```
 
 **`.env` (raiz — lido pelo `docker-compose.yml` / PostgreSQL):**
@@ -248,11 +255,10 @@ O passo a passo do fluxo principal para apresentação e gravação do vídeo (c
 
 ## Governança do Repositório
 
-- `main`: Branch protegida de release para produção; commits diretos são estritamente bloqueados.
-- `develop`: Branch de integração da sprint.
-- `feature/*`: Branches isoladas por Issue/tarefa.
-- **Ciclo de Vida das Branches (Limpeza Pós-Merge):** Por padrão de governança da equipe, todas as feature branches (tanto no repositório remoto quanto no ambiente local) são deletadas imediatamente após o merge de seus respectivos Pull Requests para `develop` ou `main`. Essa prática visa manter o repositório limpo, prevenir ramificações obsoletas ou desatualizadas e simplificar a manutenção do ambiente colaborativo.
-- Todo código é integrado exclusivamente via **Pull Requests** com revisão humana, verificação de CI e aprovação por outro membro da equipe.
+- Fluxo de branches: trabalho em `feature/*` → Pull Request para `develop` → merge de `develop` em `main` (branch de release).
+- O workflow de CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) executa em todo `pull_request` e em pushes para `main` e `develop`, rodando as suítes de testes de backend e frontend.
+- Pull Requests seguem o template em [.github/pull_request_template.md](.github/pull_request_template.md).
+- **Ciclo de Vida das Branches (Limpeza Pós-Merge):** por convenção da equipe, feature branches (remota e local) são deletadas após o merge do respectivo Pull Request, para manter o repositório limpo.
 - Rastreamento e divisão de tarefas documentados via **Issues** e **GitHub Projects**.
 
 ---
@@ -283,18 +289,24 @@ PostgreSQL é adotado no ambiente Docker Compose por seu suporte a transações 
 
 ## Agentes de IA
 
-As diretrizes operacionais de assistência por IA são versionadas em [AGENTS.md](AGENTS.md), [.cursorrules](.cursorrules) e [.github/copilot-instructions.md](.github/copilot-instructions.md). Toda sugestão gerada passa por testes automatizados e code review humano rigoroso antes do merge.
+As diretrizes operacionais de assistência por IA são versionadas em [AGENTS.md](AGENTS.md), [.cursorrules](.cursorrules) e [.github/copilot-instructions.md](.github/copilot-instructions.md). O código gerado passa pela suíte de testes automatizados do CI antes do merge.
 
 ---
 
-## 📚 Documentação e Relatórios da Entrega 2
+## 📚 Documentação e Relatórios da Entrega 3
 
-A entrega consolidada reúne os seguintes documentos técnicos e analíticos:
+A entrega final (release v1.0.0) reúne os seguintes documentos e evidências:
+
+1. **[docs/test-report.md](docs/test-report.md):** Relatório Consolidado de Execução do Test Harness (152 testes automatizados — 72 backend + 80 frontend — com 100% de sucesso).
+2. **Evidências de cobertura:** [docs/evidencia_jacoco.png](docs/evidencia_jacoco.png) (cobertura do backend via JaCoCo), [docs/evidencia_vitest.png](docs/evidencia_vitest.png) (cobertura do frontend via Vitest) e [docs/evidencia_resumo_testes.png](docs/evidencia_resumo_testes.png) (resumo consolidado da execução).
+3. **[CHANGELOG.md](CHANGELOG.md):** histórico de versões no formato Keep a Changelog, com a seção `[1.0.0]`.
+4. **Release v1.0.0:** https://github.com/Fixtime-Bootcamp/bootcamp3/releases/tag/v1.0.0 (notas também disponíveis em [docs/release-notes-v1.0.0.md](docs/release-notes-v1.0.0.md)).
+
+### Documentação da Entrega 2 (histórico)
 
 1. **[docs/SPEC.md](docs/SPEC.md):** Especificação Técnica Canônica do FixTime (SDD), cobrindo RF01-RF08, RN01-RN08 e contratos literais JSON.
 2. **[docs/spec-changelog.md](docs/spec-changelog.md):** Histórico evolutivo dos refinamentos e decisões de modelagem.
-3. **[docs/test-report.md](docs/test-report.md):** Relatório Consolidado de Execução do Test Harness (152 testes automatizados — 72 backend + 80 frontend — com 100% de sucesso).
-4. **[docs/erros-logicos.md](docs/erros-logicos.md):** Inspeção de erros lógicos identificados no ciclo, estratégias de correção, ciclo de re-especificação e relato de experiência da equipe.
-5. **[docs/relatorio-etico-ia.md](docs/relatorio-etico-ia.md):** Análise comparativa entre ferramentas (Claude Code, Codex, Cursor e Antigravity) e fundamentação crítica dos pilares éticos, segurança, privacidade (LGPD) e centralidade da homologação humana.
-6. **[docs/relatorio-entrega-2-consolidado.md](docs/relatorio-entrega-2-consolidado.md):** Documento Consolidado da Entrega 2 para submissão oficial (disponível também em versão formatada estilizada em [docs/relatorio-entrega-2-consolidado.pdf](docs/relatorio-entrega-2-consolidado.pdf)).
+3. **[docs/erros-logicos.md](docs/erros-logicos.md):** Inspeção de erros lógicos identificados no ciclo, estratégias de correção, ciclo de re-especificação e relato de experiência da equipe.
+4. **[docs/relatorio-etico-ia.md](docs/relatorio-etico-ia.md):** Análise comparativa entre ferramentas (Claude Code, Codex, Cursor e Antigravity) e fundamentação crítica dos pilares éticos, segurança, privacidade (LGPD) e centralidade da homologação humana.
+5. **[docs/relatorio-entrega-2-consolidado.md](docs/relatorio-entrega-2-consolidado.md):** Documento Consolidado da Entrega 2 para submissão oficial (disponível também em versão formatada estilizada em [docs/relatorio-entrega-2-consolidado.pdf](docs/relatorio-entrega-2-consolidado.pdf)).
 
