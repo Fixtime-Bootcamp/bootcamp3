@@ -1,10 +1,76 @@
-target/
-node_modules/
-dist/
-.env
-.idea/
-.vscode/
+# ==============================================================================
+# FixTime — Git Ignore Rules (Higienização & Governança)
+# ==============================================================================
+
+# OS & System artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Environment variables & Secrets (LGPD & Security)
+*.env
+*.env.*
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+!.env.example
+!frontend/.env.example
+
+# Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Backend (Java / Maven / Spring Boot)
+target/
+**/target/
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# Frontend (Node / TypeScript / Vite)
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+*.tsbuildinfo
+.vite/
+.eslintcache
+
+# Test & Coverage Reports
+coverage/
+**/coverage/
+.nyc_output/
+*.lcov
+test-results/
+
+# IDEs & Editors
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+
+# Temporary docs / scratchpads
 docs/github-tasks.md
 atividade.md
-*.tsbuildinfo

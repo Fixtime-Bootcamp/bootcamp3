@@ -1,0 +1,411 @@
+ Image bootcamp3-backend-tests Building 
+ Image bootcamp3-frontend-tests Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.12kB 0.1s done
+#1 DONE 0.1s
+
+#2 [frontend-tests internal] load build definition from Dockerfile
+#2 transferring dockerfile: 449B 0.0s done
+#2 DONE 0.0s
+
+#3 [backend-tests internal] load build definition from Dockerfile
+#3 transferring dockerfile: 441B 0.0s done
+#3 DONE 0.0s
+
+#4 [backend-tests internal] load metadata for docker.io/library/maven:3.9.9-eclipse-temurin-21
+#4 ...
+
+#5 [frontend-tests internal] load metadata for docker.io/library/node:22-alpine
+#5 DONE 1.6s
+
+#4 [backend-tests internal] load metadata for docker.io/library/maven:3.9.9-eclipse-temurin-21
+#4 DONE 1.6s
+
+#6 [frontend-tests internal] load .dockerignore
+#6 transferring context: 66B done
+#6 DONE 0.0s
+
+#7 [backend-tests internal] load .dockerignore
+#7 transferring context: 68B done
+#7 DONE 0.0s
+
+#8 [backend-tests internal] load build context
+#8 transferring context: 25.27kB 0.0s done
+#8 DONE 0.0s
+
+#9 [backend-tests build 1/5] FROM docker.io/library/maven:3.9.9-eclipse-temurin-21@sha256:3a4ab3276a087bf276f79cae96b1af04f53731bec53fb2e651aca79e4b10211e
+#9 resolve docker.io/library/maven:3.9.9-eclipse-temurin-21@sha256:3a4ab3276a087bf276f79cae96b1af04f53731bec53fb2e651aca79e4b10211e 0.0s done
+#9 DONE 0.0s
+
+#10 [frontend-tests build 1/5] FROM docker.io/library/node:22-alpine@sha256:ce8d97f7cfc7c5386421eb932df20a29df99b1a7f469f6157d5c9956702ffadc
+#10 resolve docker.io/library/node:22-alpine@sha256:ce8d97f7cfc7c5386421eb932df20a29df99b1a7f469f6157d5c9956702ffadc 0.0s done
+#10 DONE 0.0s
+
+#11 [backend-tests build 2/5] WORKDIR /app
+#11 CACHED
+
+#12 [backend-tests build 3/5] COPY pom.xml .
+#12 CACHED
+
+#13 [backend-tests build 4/5] RUN mvn dependency:go-offline -B
+#13 CACHED
+
+#14 [frontend-tests internal] load build context
+#14 transferring context: 873.87kB 0.1s done
+#14 DONE 0.1s
+
+#15 [frontend-tests build 2/5] WORKDIR /app
+#15 CACHED
+
+#16 [frontend-tests build 3/5] COPY package.json package-lock.json ./
+#16 CACHED
+
+#17 [frontend-tests build 4/5] RUN npm ci
+#17 CACHED
+
+#18 [backend-tests build 5/5] COPY src ./src
+#18 DONE 0.1s
+
+#19 [frontend-tests build 5/5] COPY . .
+#19 DONE 0.1s
+
+#20 [frontend-tests] exporting to image
+#20 exporting layers
+#20 exporting layers 0.1s done
+#20 ...
+
+#21 [backend-tests] exporting to image
+#21 exporting layers 0.1s done
+#21 exporting manifest sha256:ba488460052186d4e747c4a7dd9af8dcb4ba5cb22be55d9f0241796f2554855e 0.0s done
+#21 exporting config sha256:a79142b998fe610bd7eceaf826af28a8941a013e029fd8da155912c0ab8f8ec1 0.0s done
+#21 exporting attestation manifest sha256:c200d7fca2edeab68a4f28578df80f2d222de858b8db4b294efcf8ee29e22bbc 0.0s done
+#21 exporting manifest list sha256:f77a899efe44b637c0632319c8267b76a037b4230b254abe249e3d44ad6c5eed 0.0s done
+#21 naming to docker.io/library/bootcamp3-backend-tests:latest done
+#21 unpacking to docker.io/library/bootcamp3-backend-tests:latest 0.1s done
+#21 DONE 0.3s
+
+#20 [frontend-tests] exporting to image
+#20 exporting manifest sha256:c2ff093243510beebcc04575e6069a6478b8093a35cf7780a3e8d1b5686a70fc 0.0s done
+#20 exporting config sha256:411f7bef2ab2e614c4061b9b7d25939567d7eeae0b357fe94797ea9044caf0c4 0.0s done
+#20 exporting attestation manifest sha256:f115d0073e8d3e3c8b23a9e9ea2b766d9fe0548a692529bf20c9a7c855a47d33 0.0s done
+#20 exporting manifest list sha256:8bf69132d81d2dacabcdfc95f348bdf44fac11f025e37db868bbd77af34afeda 0.0s done
+#20 naming to docker.io/library/bootcamp3-frontend-tests:latest done
+#20 unpacking to docker.io/library/bootcamp3-frontend-tests:latest 0.1s done
+#20 DONE 0.3s
+
+#22 [backend-tests] resolving provenance for metadata file
+#22 DONE 0.0s
+
+#23 [frontend-tests] resolving provenance for metadata file
+#23 DONE 0.0s
+ Image bootcamp3-backend-tests Built 
+ Image bootcamp3-frontend-tests Built 
+ Container bootcamp3-frontend-tests-1 Recreate 
+ Container bootcamp3-backend-tests-1 Recreate 
+ Container bootcamp3-frontend-tests-1 Recreated 
+ Container bootcamp3-backend-tests-1 Recreated 
+Attaching to backend-tests-1, frontend-tests-1
+ Container bootcamp3-frontend-tests-1 Starting 
+ Container bootcamp3-backend-tests-1 Starting 
+ Container bootcamp3-frontend-tests-1 Started 
+ Container bootcamp3-backend-tests-1 Started 
+frontend-tests-1  | 
+frontend-tests-1  | > fixtime-web@0.0.1 test:coverage
+frontend-tests-1  | > vitest --run --coverage --coverage.clean=false
+frontend-tests-1  | 
+frontend-tests-1  | 
+frontend-tests-1  | [1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/app[39m
+frontend-tests-1  |       [2mCoverage enabled with [22m[33mv8[39m
+frontend-tests-1  | 
+backend-tests-1   | [INFO] Scanning for projects...
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] ----------------------< com.fixtime:fixtime-api >-----------------------
+backend-tests-1   | [INFO] Building fixtime-api 0.0.1-SNAPSHOT
+backend-tests-1   | [INFO]   from pom.xml
+backend-tests-1   | [INFO] --------------------------------[ jar ]---------------------------------
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-observation/1.14.6/micrometer-observation-1.14.6.pom
+frontend-tests-1  |  [32m✓[39m src/utils/appointmentEligibility.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+frontend-tests-1  |  [32m✓[39m src/api/client.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 89[2mms[22m[39m
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-observation/1.14.6/micrometer-observation-1.14.6.pom (3.8 kB at 4.3 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-commons/1.14.6/micrometer-commons-1.14.6.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-commons/1.14.6/micrometer-commons-1.14.6.pom (3.4 kB at 59 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.pom (18 kB at 206 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/jboss/logging/logging-parent/1.0.3.Final/logging-parent-1.0.3.Final.pom
+frontend-tests-1  |  [32m✓[39m src/components/AppointmentCard.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 698[2mms[22m[39m
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/jboss/logging/logging-parent/1.0.3.Final/logging-parent-1.0.3.Final.pom (5.7 kB at 58 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/jboss/jboss-parent/42/jboss-parent-42.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/jboss/jboss-parent/42/jboss-parent-42.pom (76 kB at 1.1 MB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/fasterxml/classmate/1.7.0/classmate-1.7.0.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/fasterxml/classmate/1.7.0/classmate-1.7.0.pom (7.0 kB at 108 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/fasterxml/oss-parent/56/oss-parent-56.pom
+frontend-tests-1  |  [32m✓[39m src/pages/TechniciansPage.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 948[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m valida campos obrigatórios ao tentar cadastrar [33m 371[2mms[22m[39m
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/fasterxml/oss-parent/56/oss-parent-56.pom (24 kB at 201 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-runtime/4.0.5/jaxb-runtime-4.0.5.pom
+frontend-tests-1  |  [32m✓[39m src/pages/ServicesPage.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1134[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m valida campos obrigatórios ao tentar cadastrar [33m 424[2mms[22m[39m
+frontend-tests-1  |  [32m✓[39m src/pages/CustomersPage.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1142[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m valida campos obrigatórios antes de enviar o formulário [33m 419[2mms[22m[39m
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-runtime/4.0.5/jaxb-runtime-4.0.5.pom (11 kB at 193 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/mvn/jaxb-runtime-parent/4.0.5/jaxb-runtime-parent-4.0.5.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/mvn/jaxb-runtime-parent/4.0.5/jaxb-runtime-parent-4.0.5.pom (1.2 kB at 22 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/mvn/jaxb-parent/4.0.5/jaxb-parent-4.0.5.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/mvn/jaxb-parent/4.0.5/jaxb-parent-4.0.5.pom (35 kB at 389 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/jaxb-bom-ext/4.0.5/jaxb-bom-ext-4.0.5.pom
+frontend-tests-1  |  [32m✓[39m src/components/CreateAppointmentModal.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 1391[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m validates required fields on submit without inputs [33m 442[2mms[22m[39m
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/jaxb-bom-ext/4.0.5/jaxb-bom-ext-4.0.5.pom (3.5 kB at 46 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-core/4.0.5/jaxb-core-4.0.5.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-core/4.0.5/jaxb-core-4.0.5.pom (3.7 kB at 69 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/angus/angus-activation/2.0.2/angus-activation-2.0.2.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/angus/angus-activation/2.0.2/angus-activation-2.0.2.pom (4.0 kB at 60 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/angus/angus-activation-project/2.0.2/angus-activation-project-2.0.2.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/angus/angus-activation-project/2.0.2/angus-activation-project-2.0.2.pom (21 kB at 286 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/txw2/4.0.5/txw2-4.0.5.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/txw2/4.0.5/txw2-4.0.5.pom (1.8 kB at 23 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/mvn/jaxb-txw-parent/4.0.5/jaxb-txw-parent-4.0.5.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/sun/xml/bind/mvn/jaxb-txw-parent/4.0.5/jaxb-txw-parent-4.0.5.pom (1.2 kB at 20 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/istack/istack-commons-runtime/4.1.2/istack-commons-runtime-4.1.2.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/sun/istack/istack-commons-runtime/4.1.2/istack-commons-runtime-4.1.2.pom (1.6 kB at 30 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/istack/istack-commons/4.1.2/istack-commons-4.1.2.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/sun/istack/istack-commons/4.1.2/istack-commons-4.1.2.pom (26 kB at 405 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/aspectj/aspectjweaver/1.9.24/aspectjweaver-1.9.24.pom
+frontend-tests-1  |  [32m✓[39m src/App.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1967[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m presents a standardized conflict error [33m 332[2mms[22m[39m
+frontend-tests-1  |      [33m[2m✓[22m[39m opens appointment modal and refreshes agenda on successful creation [33m 706[2mms[22m[39m
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/aspectj/aspectjweaver/1.9.24/aspectjweaver-1.9.24.pom (2.2 kB at 44 kB/s)
+frontend-tests-1  | 
+frontend-tests-1  | [2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+frontend-tests-1  | [2m      Tests [22m [1m[32m80 passed[39m[22m[90m (80)[39m
+frontend-tests-1  | [2m   Start at [22m 21:26:56
+frontend-tests-1  | [2m   Duration [22m 5.73s[2m (transform 2.14s, setup 3.07s, import 2.95s, tests 7.38s, environment 18.08s)[22m
+frontend-tests-1  | 
+frontend-tests-1  | [34m % [39m[2mCoverage report from [22m[33mv8[39m
+frontend-tests-1  | -------------------|---------|----------|---------|---------|-------------------
+frontend-tests-1  | File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+frontend-tests-1  | -------------------|---------|----------|---------|---------|-------------------
+frontend-tests-1  | All files          |   88.94 |    87.29 |   87.65 |   91.57 |                   
+frontend-tests-1  |  src               |   67.14 |    82.45 |   61.11 |   66.66 |                   
+frontend-tests-1  |   App.tsx          |   67.14 |    82.45 |   61.11 |   66.66 | ...79,301-335,361 
+frontend-tests-1  |   vite-env.d.ts    |       0 |        0 |       0 |       0 |                   
+frontend-tests-1  |  src/api           |   89.74 |    88.73 |      76 |   92.23 |                   
+frontend-tests-1  |   client.ts        |     100 |      100 |     100 |     100 |                   
+frontend-tests-1  |   resources.ts     |   81.25 |    77.77 |    64.7 |   85.96 | ...61,64,67,70,91 
+frontend-tests-1  |  src/components    |   90.25 |    84.91 |   96.96 |   92.64 |                   
+frontend-tests-1  |   ...tmentCard.tsx |   84.09 |    86.95 |     100 |   90.24 | 43,53-55,75       
+frontend-tests-1  |   ...mentModal.tsx |   92.72 |    84.21 |   96.15 |   93.68 | 76,81-83,142,164  
+frontend-tests-1  |  src/hooks         |   90.99 |    58.06 |   86.66 |    97.8 |                   
+frontend-tests-1  |   ...tResources.ts |   91.42 |    71.42 |      80 |     100 | 49-51             
+frontend-tests-1  |   ...pointments.ts |   90.56 |    55.55 |     100 |   95.34 | 71,84             
+frontend-tests-1  |   useEntityList.ts |    91.3 |       50 |   71.42 |     100 | 21-29             
+frontend-tests-1  |  src/pages         |   94.01 |    94.38 |   96.07 |   97.03 |                   
+frontend-tests-1  |   ...omersPage.tsx |   96.36 |    96.77 |     100 |   97.72 | 59                
+frontend-tests-1  |   ServicesPage.tsx |   91.22 |    91.66 |   89.47 |   95.74 | 67,142            
+frontend-tests-1  |   ...ciansPage.tsx |   94.54 |    95.16 |     100 |   97.72 | 59                
+frontend-tests-1  |  src/types         |     100 |      100 |     100 |     100 |                   
+frontend-tests-1  |   index.ts         |     100 |      100 |     100 |     100 |                   
+frontend-tests-1  |  src/utils         |   92.59 |    91.66 |     100 |     100 |                   
+frontend-tests-1  |   ...ligibility.ts |   92.59 |    91.66 |     100 |     100 | 13,26             
+frontend-tests-1  | -------------------|---------|----------|---------|---------|-------------------
+frontend-tests-1  | 
+frontend-tests-1  | =============================== Coverage summary ===============================
+frontend-tests-1  | Statements   : 88.94% ( 579/651 )
+frontend-tests-1  | Branches     : 87.29% ( 488/559 )
+frontend-tests-1  | Functions    : 87.65% ( 142/162 )
+frontend-tests-1  | Lines        : 91.57% ( 511/558 )
+frontend-tests-1  | ================================================================================
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.pom (12 kB at 167 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-observation/1.14.6/micrometer-observation-1.14.6.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-observation/1.14.6/micrometer-observation-1.14.6.jar (75 kB at 728 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-commons/1.14.6/micrometer-commons-1.14.6.jar
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.jar
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/fasterxml/classmate/1.7.0/classmate-1.7.0.jar
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-runtime/4.0.5/jaxb-runtime-4.0.5.jar
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-core/4.0.5/jaxb-core-4.0.5.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/io/micrometer/micrometer-commons/1.14.6/micrometer-commons-1.14.6.jar (48 kB at 538 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/eclipse/angus/angus-activation/2.0.2/angus-activation-2.0.2.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.jar (62 kB at 272 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/txw2/4.0.5/txw2-4.0.5.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/eclipse/angus/angus-activation/2.0.2/angus-activation-2.0.2.jar (27 kB at 122 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/com/sun/istack/istack-commons-runtime/4.1.2/istack-commons-runtime-4.1.2.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/fasterxml/classmate/1.7.0/classmate-1.7.0.jar (69 kB at 218 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/aspectj/aspectjweaver/1.9.24/aspectjweaver-1.9.24.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/sun/istack/istack-commons-runtime/4.1.2/istack-commons-runtime-4.1.2.jar (26 kB at 80 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-core/4.0.5/jaxb-core-4.0.5.jar (139 kB at 418 kB/s)
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/txw2/4.0.5/txw2-4.0.5.jar (73 kB at 213 kB/s)
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar (365 kB at 479 kB/s)
+[Kfrontend-tests-1 exited with code 0
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/glassfish/jaxb/jaxb-runtime/4.0.5/jaxb-runtime-4.0.5.jar (920 kB at 991 kB/s)
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/aspectj/aspectjweaver/1.9.24/aspectjweaver-1.9.24.jar (2.2 MB at 1.3 MB/s)
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- jacoco:0.8.12:prepare-agent (prepare-agent) @ fixtime-api ---
+backend-tests-1   | [INFO] argLine set to -javaagent:/root/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=/app/target/jacoco.exec
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- resources:3.3.1:resources (default-resources) @ fixtime-api ---
+backend-tests-1   | [INFO] Copying 1 resource from src/main/resources to target/classes
+backend-tests-1   | [INFO] Copying 0 resource from src/main/resources to target/classes
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- compiler:3.13.0:compile (default-compile) @ fixtime-api ---
+backend-tests-1   | [INFO] Nothing to compile - all classes are up to date.
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- resources:3.3.1:testResources (default-testResources) @ fixtime-api ---
+backend-tests-1   | [INFO] skip non existing resourceDirectory /app/src/test/resources
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ fixtime-api ---
+backend-tests-1   | [INFO] Recompiling the module because of added or removed source files.
+backend-tests-1   | [INFO] Compiling 10 source files with javac [debug parameters release 21] to target/test-classes
+backend-tests-1   | [INFO] /app/src/test/java/com/fixtime/AppointmentServiceTest.java: /app/src/test/java/com/fixtime/AppointmentServiceTest.java uses unchecked or unsafe operations.
+backend-tests-1   | [INFO] /app/src/test/java/com/fixtime/AppointmentServiceTest.java: Recompile with -Xlint:unchecked for details.
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- surefire:3.5.3:test (default-test) @ fixtime-api ---
+backend-tests-1   | [INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.3/surefire-junit-platform-3.5.3.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.3/surefire-junit-platform-3.5.3.pom (5.2 kB at 103 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-providers/3.5.3/surefire-providers-3.5.3.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-providers/3.5.3/surefire-providers-3.5.3.pom (2.5 kB at 59 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.3/common-java5-3.5.3.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.3/common-java5-3.5.3.pom (3.1 kB at 60 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.1/junit-platform-engine-1.12.1.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.1/junit-platform-engine-1.12.1.pom (3.2 kB at 60 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.1/junit-platform-commons-1.12.1.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.1/junit-platform-commons-1.12.1.pom (2.8 kB at 44 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.1/junit-platform-launcher-1.12.1.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.1/junit-platform-launcher-1.12.1.pom (3.0 kB at 58 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.3/surefire-junit-platform-3.5.3.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/surefire-junit-platform/3.5.3/surefire-junit-platform-3.5.3.jar (27 kB at 524 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.3/common-java5-3.5.3.jar
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.1/junit-platform-engine-1.12.1.jar
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.1/junit-platform-commons-1.12.1.jar
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.1/junit-platform-launcher-1.12.1.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/surefire/common-java5/3.5.3/common-java5-3.5.3.jar (18 kB at 332 kB/s)
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.1/junit-platform-commons-1.12.1.jar (152 kB at 1.3 MB/s)
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.12.1/junit-platform-launcher-1.12.1.jar (208 kB at 1.4 MB/s)
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.1/junit-platform-engine-1.12.1.jar (256 kB at 1.1 MB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.11.4/junit-platform-launcher-1.11.4.pom
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.11.4/junit-platform-launcher-1.11.4.pom (3.0 kB at 67 kB/s)
+backend-tests-1   | [INFO] Downloading from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.11.4/junit-platform-launcher-1.11.4.jar
+backend-tests-1   | [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-launcher/1.11.4/junit-platform-launcher-1.11.4.jar (189 kB at 1.1 MB/s)
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] -------------------------------------------------------
+backend-tests-1   | [INFO]  T E S T S
+backend-tests-1   | [INFO] -------------------------------------------------------
+backend-tests-1   | [INFO] Running com.fixtime.appointment.AppointmentCsvWriterTest
+backend-tests-1   | [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.480 s -- in com.fixtime.appointment.AppointmentCsvWriterTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentExportIntegrationTest
+backend-tests-1   | 21:27:13.816 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.fixtime.AppointmentExportIntegrationTest]: AppointmentExportIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 21:27:14.512 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.AppointmentExportIntegrationTest
+backend-tests-1   | 
+backend-tests-1   |   .   ____          _            __ _ _
+backend-tests-1   |  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+backend-tests-1   | ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+backend-tests-1   |  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+backend-tests-1   |   '  |____| .__|_| |_|_| |_\__, | / / / /
+backend-tests-1   |  =========|_|==============|___/=/_/_/_/
+backend-tests-1   | 
+backend-tests-1   |  :: Spring Boot ::                (v3.4.5)
+backend-tests-1   | 
+backend-tests-1   | 2026-10-21T21:27:16.843Z  INFO 122 --- [fixtime-api] [           main] c.f.AppointmentExportIntegrationTest     : Starting AppointmentExportIntegrationTest using Java 21.0.7 with PID 122 (started by root in /app)
+backend-tests-1   | 2026-10-21T21:27:16.846Z  INFO 122 --- [fixtime-api] [           main] c.f.AppointmentExportIntegrationTest     : No active profile set, falling back to 1 default profile: "default"
+backend-tests-1   | 2026-10-21T21:27:20.685Z  INFO 122 --- [fixtime-api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+backend-tests-1   | 2026-10-21T21:27:21.277Z  INFO 122 --- [fixtime-api] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 545 ms. Found 5 JPA repository interfaces.
+backend-tests-1   | 2026-10-21T21:27:23.371Z  INFO 122 --- [fixtime-api] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+backend-tests-1   | 2026-10-21T21:27:23.786Z  INFO 122 --- [fixtime-api] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.13.Final
+backend-tests-1   | 2026-10-21T21:27:24.012Z  INFO 122 --- [fixtime-api] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+backend-tests-1   | 2026-10-21T21:27:25.897Z  INFO 122 --- [fixtime-api] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+backend-tests-1   | 2026-10-21T21:27:26.102Z  INFO 122 --- [fixtime-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+backend-tests-1   | 2026-10-21T21:27:27.414Z  INFO 122 --- [fixtime-api] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:fixtime user=SA
+backend-tests-1   | 2026-10-21T21:27:27.426Z  INFO 122 --- [fixtime-api] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+backend-tests-1   | 2026-10-21T21:27:27.739Z  INFO 122 --- [fixtime-api] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+backend-tests-1   | 	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+backend-tests-1   | 	Database driver: undefined/unknown
+backend-tests-1   | 	Database version: 2.3.232
+backend-tests-1   | 	Autocommit mode: undefined/unknown
+backend-tests-1   | 	Isolation level: undefined/unknown
+backend-tests-1   | 	Minimum pool size: undefined/unknown
+backend-tests-1   | 	Maximum pool size: undefined/unknown
+backend-tests-1   | 2026-10-21T21:27:33.042Z  INFO 122 --- [fixtime-api] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+backend-tests-1   | 2026-10-21T21:27:33.381Z  INFO 122 --- [fixtime-api] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+backend-tests-1   | 2026-10-21T21:27:34.558Z  INFO 122 --- [fixtime-api] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+backend-tests-1   | 2026-10-21T21:27:41.223Z  INFO 122 --- [fixtime-api] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+backend-tests-1   | 2026-10-21T21:27:41.224Z  INFO 122 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+backend-tests-1   | 2026-10-21T21:27:41.226Z  INFO 122 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+backend-tests-1   | 2026-10-21T21:27:41.298Z  INFO 122 --- [fixtime-api] [           main] c.f.AppointmentExportIntegrationTest     : Started AppointmentExportIntegrationTest in 25.948 seconds (process running for 30.841)
+backend-tests-1   | Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+backend-tests-1   | OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 31.20 s -- in com.fixtime.AppointmentExportIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentIntegrationTest
+backend-tests-1   | 2026-10-21T21:27:44.385Z  INFO 122 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.AppointmentIntegrationTest]: AppointmentIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T21:27:44.399Z  INFO 122 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.AppointmentIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentIntegrationTest$ListingPaginationTests
+backend-tests-1   | 2026-10-21T21:27:44.598Z  INFO 122 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.AppointmentIntegrationTest$ListingPaginationTests]: ListingPaginationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T21:27:44.606Z  INFO 122 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.AppointmentIntegrationTest$ListingPaginationTests
+backend-tests-1   | [INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.755 s -- in com.fixtime.AppointmentIntegrationTest$ListingPaginationTests
+backend-tests-1   | [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.970 s -- in com.fixtime.AppointmentIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$TransitionTests
+backend-tests-1   | [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.310 s -- in com.fixtime.AppointmentServiceTest$TransitionTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$AvailabilityTests
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.103 s -- in com.fixtime.AppointmentServiceTest$AvailabilityTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$CreationTests
+backend-tests-1   | [INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.085 s -- in com.fixtime.AppointmentServiceTest$CreationTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$ExportTests
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.022 s -- in com.fixtime.AppointmentServiceTest$ExportTests
+backend-tests-1   | [INFO] Running com.fixtime.AppointmentServiceTest$ListingTests
+backend-tests-1   | [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.014 s -- in com.fixtime.AppointmentServiceTest$ListingTests
+backend-tests-1   | [INFO] Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.560 s -- in com.fixtime.AppointmentServiceTest
+backend-tests-1   | [INFO] Running com.fixtime.BlockedDateIntegrationTest
+backend-tests-1   | 2026-10-21T21:27:47.937Z  INFO 122 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.BlockedDateIntegrationTest]: BlockedDateIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T21:27:47.967Z  INFO 122 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.BlockedDateIntegrationTest
+backend-tests-1   | [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.661 s -- in com.fixtime.BlockedDateIntegrationTest
+backend-tests-1   | [INFO] Running com.fixtime.CustomerServiceTest
+backend-tests-1   | [INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.072 s -- in com.fixtime.CustomerServiceTest
+backend-tests-1   | [INFO] Running com.fixtime.HealthControllerTest
+backend-tests-1   | 2026-10-21T21:27:48.694Z  INFO 122 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.HealthControllerTest]: HealthControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T21:27:48.822Z  INFO 122 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.HealthControllerTest
+backend-tests-1   | 
+backend-tests-1   |   .   ____          _            __ _ _
+backend-tests-1   |  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+backend-tests-1   | ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+backend-tests-1   |  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+backend-tests-1   |   '  |____| .__|_| |_|_| |_\__, | / / / /
+backend-tests-1   |  =========|_|==============|___/=/_/_/_/
+backend-tests-1   | 
+backend-tests-1   |  :: Spring Boot ::                (v3.4.5)
+backend-tests-1   | 
+backend-tests-1   | 2026-10-21T21:27:49.054Z  INFO 122 --- [fixtime-api] [           main] com.fixtime.HealthControllerTest         : Starting HealthControllerTest using Java 21.0.7 with PID 122 (started by root in /app)
+backend-tests-1   | 2026-10-21T21:27:49.055Z  INFO 122 --- [fixtime-api] [           main] com.fixtime.HealthControllerTest         : No active profile set, falling back to 1 default profile: "default"
+backend-tests-1   | 2026-10-21T21:27:50.318Z  INFO 122 --- [fixtime-api] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+backend-tests-1   | 2026-10-21T21:27:50.318Z  INFO 122 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+backend-tests-1   | 2026-10-21T21:27:50.319Z  INFO 122 --- [fixtime-api] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+backend-tests-1   | 2026-10-21T21:27:50.331Z  INFO 122 --- [fixtime-api] [           main] com.fixtime.HealthControllerTest         : Started HealthControllerTest in 1.496 seconds (process running for 39.875)
+backend-tests-1   | [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.707 s -- in com.fixtime.HealthControllerTest
+backend-tests-1   | [INFO] Running com.fixtime.OpenApiDocumentationTest
+backend-tests-1   | 2026-10-21T21:27:50.368Z  INFO 122 --- [fixtime-api] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.fixtime.OpenApiDocumentationTest]: OpenApiDocumentationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+backend-tests-1   | 2026-10-21T21:27:50.376Z  INFO 122 --- [fixtime-api] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.fixtime.FixTimeApplication for test class com.fixtime.OpenApiDocumentationTest
+backend-tests-1   | 2026-10-21T21:27:50.873Z  WARN 122 --- [fixtime-api] [           main] o.springdoc.core.service.OpenAPIService  : Json Processing Exception occurred: additionalProperties must be either a Boolean or a Schema instance
+backend-tests-1   |  at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 7525] (through reference chain: io.swagger.v3.oas.models.OpenAPI["components"]->io.swagger.v3.oas.models.Components["schemas"]->java.util.LinkedHashMap["ErrorResponse"]->io.swagger.v3.oas.models.media.Schema["properties"]->java.util.LinkedHashMap["fieldErrors"]->io.swagger.v3.oas.models.media.Schema["additionalProperties"])
+backend-tests-1   | 2026-10-21T21:27:52.236Z  INFO 122 --- [fixtime-api] [           main] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 1823 ms
+backend-tests-1   | [INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.063 s -- in com.fixtime.OpenApiDocumentationTest
+backend-tests-1   | [INFO] Running com.fixtime.ServiceCatalogServiceTest
+backend-tests-1   | [INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 s -- in com.fixtime.ServiceCatalogServiceTest
+backend-tests-1   | [INFO] Running com.fixtime.TechnicianServiceTest
+backend-tests-1   | [INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.033 s -- in com.fixtime.TechnicianServiceTest
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] Results:
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] Tests run: 72, Failures: 0, Errors: 0, Skipped: 0
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] 
+backend-tests-1   | [INFO] --- jacoco:0.8.12:report (report) @ fixtime-api ---
+backend-tests-1   | [INFO] Loading execution data file /app/target/jacoco.exec
+backend-tests-1   | [INFO] Analyzed bundle 'fixtime-api' with 42 classes
+backend-tests-1   | [INFO] ------------------------------------------------------------------------
+backend-tests-1   | [INFO] BUILD SUCCESS
+backend-tests-1   | [INFO] ------------------------------------------------------------------------
+backend-tests-1   | [INFO] Total time:  01:07 min
+backend-tests-1   | [INFO] Finished at: 2026-10-21T21:28:05Z
+backend-tests-1   | [INFO] ------------------------------------------------------------------------
+[Kbackend-tests-1 exited with code 0

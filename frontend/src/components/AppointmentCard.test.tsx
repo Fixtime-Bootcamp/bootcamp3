@@ -42,7 +42,7 @@ describe('AppointmentCard', () => {
     expect(screen.getByText('Troca de compressor')).toBeInTheDocument();
     expect(screen.getByText('14:00')).toBeInTheDocument();
     expect(screen.getByText('15:30')).toBeInTheDocument();
-    expect(screen.getByText('SCHEDULED')).toBeInTheDocument();
+    expect(screen.getAllByText('Agendado').length).toBeGreaterThan(0);
   });
 
   /**

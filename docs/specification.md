@@ -1,5 +1,5 @@
 # Especificação Técnica: FixTime
 
-> **Aviso:** A especificação técnica canônica e completa (SDD) encontra-se em [docs/SPEC.md](SPEC.md).
+> **Aviso:** A especificação técnica canônica (SDD As-Built v1.0.0) encontra-se em [docs/SPEC.md](SPEC.md).
 
-Consulte o documento completo em [docs/SPEC.md](SPEC.md) para todos os detalhes de Requisitos Funcionais, Não-Funcionais mensuráveis, Regras de Negócio numeradas (RN01 a RN08), Contratos Literais JSON e Decomposição em Unidades Testáveis.
+O documento descreve Requisitos Funcionais e Não-Funcionais, Regras de Negócio (RN01 a RN11), contratos JSON, status de implementação (seção 0) e cobertura medida (seção 7.1). Relatório de testes: [test-report.md](test-report.md).
